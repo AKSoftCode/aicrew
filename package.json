@@ -1,0 +1,27 @@
+{
+  "name": "aicrew",
+  "version": "0.1.0",
+  "description": "Adaptive AI development pipeline — /dev, /conclude, /update-skills for Claude Code, Cursor, and Codex",
+  "keywords": ["claude-code", "ai-agents", "sdlc", "tdd", "cursor", "codex", "hooks"],
+  "homepage": "https://github.com/abhimanyuaryan/aicrew",
+  "license": "MIT",
+  "main": "src/index.js",
+  "bin": {
+    "aicrew": "bin/aicrew.js"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "skills/",
+    "templates/",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "node src/index.js --version"
+  }
+}
