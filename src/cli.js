@@ -4,14 +4,12 @@
 //
 // Commands:
 //   aicrew install        — global setup: install skills, symlinks, hooks
-//   aicrew add-project    — generate .ai/skills/ for the current project
 //   aicrew update         — re-run install to pick up new skills (merge, no overwrites)
 //   aicrew status         — show what is installed
 //   aicrew --version / -v
 
 const pkg       = require('../package.json');
 const installer = require('./installer');
-const project   = require('./project');
 const { menu }  = require('./utils');
 
 const args = process.argv.slice(2);
@@ -34,11 +32,6 @@ async function main() {
     return;
   }
 
-  if (cmd === 'add-project') {
-    await project.addProject(process.cwd());
-    return;
-  }
-
   if (cmd === 'update') {
     console.log('Re-running install to merge new skills...');
     installer.install();
@@ -53,8 +46,7 @@ async function main() {
   // No command — interactive menu
   printBanner();
   const choice = await menu('What would you like to do?', [
-    'install          — global setup (skills, symlinks, hooks)',
-    'add-project      — add .ai/skills/ to this project',
+    'install          — first-time setup (skills, symlinks, hooks)',
     'update           — update global skills (merge, keeps your edits)',
     'status           — show what is installed',
     'exit',
@@ -62,10 +54,9 @@ async function main() {
 
   switch (choice) {
     case 1: installer.install(); break;
-    case 2: await project.addProject(process.cwd()); break;
-    case 3: installer.install(); break;
-    case 4: showStatus(); break;
-    case 5: break;
+    case 2: installer.install(); break;
+    case 3: showStatus(); break;
+    case 4: break;
   }
 }
 
@@ -83,29 +74,31 @@ function printHelp() {
 aicrew v${pkg.version} — Adaptive AI development pipeline
 
 USAGE
-  aicrew [command]
+  npx aicrew [command]
 
 COMMANDS
   install        Install skills globally (~/.claude/skills/, hooks, symlinks)
-  add-project    Generate .ai/skills/ for the current project
   update         Re-run install to pick up new skills (preserves your edits)
   status         Show installed skills and active hooks
   --version      Show version
 
 AFTER INSTALL
-  In Claude Code:
-    /dev             — start the adaptive development pipeline
-    /conclude        — wrap up a session and save learnings
-    /update-skills   — maintain and evolve the skills system
+  Open Claude Code in any project directory and type:
 
-  Project skills live in .ai/skills/ — commit them to your repo.
+    /dev             — full development pipeline (bug fix, feature, refactor)
+    /fix             — fast bug fix (3 questions, no ceremony)
+    /conclude        — save session learnings to memory
+    /update-skills   — maintain skills + generate project-specific skills
+
+  To add project-specific skills (audit, domain hooks, cursor rules):
+    Open Claude Code in your repo, then type: /update-skills
+    Choose option 2 "Generate project skills".
 `);
 }
 
 function showStatus() {
   const fs   = require('fs');
   const path = require('path');
-  const os   = require('os');
   const { expandHome } = require('./utils');
 
   const skillsDir   = expandHome('~/.claude/skills');
@@ -162,7 +155,7 @@ function showStatus() {
       }
     }
   } else {
-    console.log('\nProject skills: none (run: aicrew add-project)');
+    console.log('\nProject skills: none (use /update-skills in Claude Code to generate)');
   }
 }
 
