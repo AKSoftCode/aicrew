@@ -122,19 +122,24 @@ Use TodoWrite to create tasks for each INCLUDED phase once confirmed.
 
 **Goal:** Understand the affected code before touching anything. No guessing.
 
-Use Glob, Grep, and Read to:
+**For bug fixes — use the bug analyst agent:**
+- Project agent: `.ai/skills/agents/bug-analyst.md` (if exists)
+- Generic fallback: `~/.claude/skills/agents/bug-analyst.md`
+
+The bug analyst traces symptom → entry point → call chain → confirmed root cause.
+Do not proceed to Phase 3 until root cause is confirmed (not suspected).
+
+**For features and refactors — use Glob, Grep, Read:**
 - Trace the affected code paths end-to-end
 - Identify which files will need changing
 - Find existing tests that cover this area
 - Spot invariants, contracts, or constraints that must be preserved
-- For features: find the closest existing pattern to follow as a template
+- Find the closest existing pattern in the codebase to follow as a template
 
 For complex areas, launch a parallel sub-agent (subagent_type: Explore):
-> "Trace [affected area] end-to-end. Return: key files to read, existing test coverage, invariants at risk."
+> "Trace [affected area] end-to-end. Return: key files, existing test coverage, invariants at risk."
 
-Read the files the sub-agent identifies before continuing.
-
-**Output:** List of key files, gap in test coverage, risks.
+**Output:** Confirmed root cause (bug) or key files + risks (feature/refactor).
 
 ---
 
@@ -156,24 +161,18 @@ Generate 3 concrete approaches with trade-offs. Recommend one with rationale.
 
 **Goal:** A clear spec before a single line changes.
 
-For features:
-- Define the interface: API endpoints, function signatures, data model changes
-- Confirm no existing contracts are broken
-- Note if a migration is needed
+**Always use the architect agent — in priority order:**
+1. Project team role: `.ai/team/roles/architect.md` (if exists)
+2. Project agent: `.ai/skills/agents/architect.md` (if exists)
+3. Generic fallback: `~/.claude/skills/agents/architect.md`
 
-For bug fixes:
-- State the root cause (confirmed, not suspected)
-- Describe the fix and why it solves the root cause
-- Check: does the same bug exist elsewhere?
+The architect agent:
+- Checks API contracts that must not break
+- Produces a typed interface spec (endpoints, functions, data model)
+- Flags over/under-engineering
+- Outputs a structured DESIGN SPEC
 
-For refactors:
-- Define the target structure
-- Migration path: how do you get from here to there?
-- Rollback plan: what if something breaks?
-
-Use project architect role (`.ai/team/roles/architect.md`) if available.
-
-**Present the spec. Get user confirmation before implementation.**
+**Present the spec. Get user confirmation (number 1/2/3) before implementation.**
 
 ---
 
@@ -294,16 +293,18 @@ Use cloud expert agent:
 
 ## Pipeline tracker
 
-Maintain this via TodoWrite throughout. Each task reflects the agreed pipeline:
+Use TaskCreate to create one task per included phase at the start of Phase 1.
+Use TaskUpdate to mark each phase completed as you finish it.
+
 ```
-[ ] PHASE 0: Intake — pipeline confirmed, acceptance criteria confirmed
-[ ] PHASE 1: Research — key files identified
-[ ] PHASE 2: Brainstorm — approach confirmed    ← remove if skipped
-[ ] PHASE 3: Design — spec confirmed
-[ ] PHASE 4: Implement — TDD complete
-[ ] PHASE 5: Tests — all green, edge cases covered
-[ ] PHASE 6: Security — PASS                   ← remove if skipped
-[ ] PHASE 7: Audit — PASS                      ← remove if skipped
-[ ] PHASE 8: Cloud/Infra — PASS                ← remove if not triggered
-[ ] PHASE 9: Conclude — memory saved, commit message ready
+Phase 0: Intake — pipeline confirmed, acceptance criteria confirmed
+Phase 1: Research — root cause (bug) or key files (feature) identified
+Phase 2: Brainstorm — approach confirmed    ← omit if skipped
+Phase 3: Design — spec confirmed
+Phase 4: Implement — TDD complete
+Phase 5: Tests — all green, edge cases covered
+Phase 6: Security — PASS                   ← omit if skipped
+Phase 7: Audit — PASS                      ← omit if skipped
+Phase 8: Cloud/Infra — PASS                ← omit if not triggered
+Phase 9: Conclude — memory saved, commit message ready
 ```
