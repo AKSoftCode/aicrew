@@ -28,97 +28,93 @@ Store what you find. Use project-specific roles where they exist; use generic ag
 
 Initial arguments: `$ARGUMENTS`
 
-### Step 0a: Work type
+Intake has 3 natural checkpoints. Stop and wait at each. Do not combine them.
 
-If work type is not clear from arguments, ask:
+---
+
+### Checkpoint A — Work type
+
+If not already in `$ARGUMENTS`, ask:
 
 > What are we working on today?
-> 1. **Bug Fix** — something is broken
-> 2. **Feature** — new capability
-> 3. **Refactor** — restructure without changing behavior
-> 4. **Review** — security or code review only
-> 5. **Audit** — compliance / traceability check only
+> 1. Bug Fix — something is broken
+> 2. Feature — new capability
+> 3. Refactor — restructure without changing behavior
+> 4. Review — security or code review only
+> 5. Audit — compliance / traceability check only
 
-### Step 0b: Clarifying questions
+**Wait for answer.**
 
-Ask ALL questions in a single message. Wait for complete answers.
+---
+
+### Checkpoint B — Clarifying questions
+
+Once the work type is known, ask all the questions for that type in one message.
 
 **Bug Fix:**
-1. Exact symptom or error message?
-2. Which area of the codebase? (module, file, endpoint, screen)
-3. Is this blocking production?
-4. Steps to reproduce?
-5. Anything already tried?
+> Got it. To make sure I understand the bug:
+> 1. What's the exact symptom or error message?
+> 2. Which part of the codebase? (module, file, endpoint, screen)
+> 3. Is this blocking production?
+> 4. Steps to reproduce?
+> 5. Anything already tried?
 
 **Feature:**
-1. What user problem does this solve?
-2. Which users or roles are affected?
-3. What does "done" look like?
-4. Any constraints? (performance, backward compat, migration needed?)
-5. Is there existing similar functionality in the codebase?
+> Got it. To scope the feature properly:
+> 1. What user problem does this solve?
+> 2. Which users or roles are affected?
+> 3. What does "done" look like — describe the expected behavior
+> 4. Any constraints? (performance, backward compat, migration needed?)
+> 5. Is there similar existing functionality in the codebase?
 
 **Refactor:**
-1. What is the motivation? (performance / readability / test coverage / debt)
-2. What must NOT change? (API contracts, data format, public behavior)
-3. What is the current test coverage of the area being refactored?
+> Got it. To understand what's safe to change:
+> 1. What's the motivation? (performance / readability / test coverage / debt)
+> 2. What must NOT change? (API contracts, data formats, public behavior)
+> 3. What is the current test coverage in the area being refactored?
 
-### Step 0c: Acceptance criteria
+**Review / Audit:** skip directly to Checkpoint C.
 
-Write 3–5 acceptance criteria based on the answers.
+**Wait for answers.**
 
-### Step 0d: Pipeline plan — present and confirm
+---
 
-Based on the work type, propose a default pipeline. Present it clearly, explain what each stage does in one line, and ask which optional stages to include.
+### Checkpoint C — Acceptance criteria + pipeline, together
 
-**Default pipelines by work type:**
+After the answers come in, present both in one message:
 
-| Stage | Bug Fix | Feature | Refactor | Review | Audit |
-|---|---|---|---|---|---|
-| 1. Research | ✓ ON | ✓ ON | ✓ ON | — | — |
-| 2. Brainstorm | — OFF | ✓ ON | ✓ ON | — | — |
-| 3. Design | ✓ ON | ✓ ON | ✓ ON | — | — |
-| 4. Implement (TDD) | ✓ ON | ✓ ON | ✓ ON | — | — |
-| 5. Tests | ✓ ON | ✓ ON | ✓ ON | — | — |
-| 6. Security | ✓ ON | ✓ ON | ✓ ON | ✓ ON | — |
-| 7. Project Audit | auto | auto | auto | — | ✓ ON |
-| 8. Cloud/Infra | auto | auto | auto | — | — |
-| 9. Conclude | ✓ ON | ✓ ON | ✓ ON | ✓ ON | ✓ ON |
+**First, the acceptance criteria:**
+> Here's what I'll use to know we're done:
+> 1. [criterion]
+> 2. [criterion]
+> 3. [criterion]
 
-Present the proposed pipeline with checkmarks. Then ask:
+**Then immediately below, the pipeline + numbered choices for customisation:**
 
-> **Pipeline customisation (press Enter to accept defaults):**
-> - Add Brainstorm to this bug fix? (y/N)  ← only for bug fix
-> - Use strict TDD (RED→GREEN→REFACTOR per criterion, test must FAIL first)?  (Y/n)
-> - Run Security Review? (Y/n)
-> - Skip anything else? (e.g. "skip research — I already know the files")
+> Pipeline for this [Bug Fix / Feature / Refactor]:
+> ```
+> [✓] Phase 1: Research       — trace affected code before touching anything
+> [✓/—] Phase 2: Brainstorm  — 3 alternatives with trade-offs
+> [✓] Phase 3: Design         — spec confirmed before any code changes
+> [✓] Phase 4: Implement      — TDD strict (RED → GREEN → REFACTOR)
+> [✓] Phase 5: Tests          — full suite + edge cases
+> [✓] Phase 6: Security       — changed files only
+> [✓/—] Phase 7: Audit       — project compliance check
+> [~] Phase 8: Cloud/Infra    — auto-triggers if infra files change
+> [✓] Phase 9: Conclude       — memory saved, commit message ready
+> ```
+>
+> Adjust the pipeline (or type **go** to accept defaults):
+> 1. Add Brainstorm ← only shown for bug fixes (off by default)
+> 2. TDD: switch to relaxed (write tests after implementation)
+> 3. Skip Security review
+> 4. go — accept and start
 
-Wait for answers. Update the pipeline plan based on responses.
+**Wait for a number (1/2/3) or "go" before starting Phase 1.**
 
-**Present the final pipeline plan + acceptance criteria together:**
+After any adjustment, re-show the updated pipeline and ask again until the user says **go**.
 
-```
-PIPELINE PLAN
-=============
-[✓] Phase 0: Intake — done
-[✓] Phase 1: Research
-[ ] Phase 2: Brainstorm    ← INCLUDED / SKIPPED
-[ ] Phase 3: Design
-[ ] Phase 4: Implement (TDD: strict / relaxed)
-[ ] Phase 5: Tests
-[ ] Phase 6: Security
-[ ] Phase 7: Audit         ← INCLUDED / SKIPPED
-[ ] Phase 8: Cloud/Infra   ← auto (trigger if infra files change)
-[ ] Phase 9: Conclude
-
-ACCEPTANCE CRITERIA
-===================
-1. ...
-2. ...
-```
-
-**Wait for explicit confirmation ("yes", "go", "looks good") before starting Phase 1.**
-
-Use TodoWrite to create tasks for each INCLUDED phase.
+Use TodoWrite to create tasks for each INCLUDED phase once confirmed.
 
 ---
 

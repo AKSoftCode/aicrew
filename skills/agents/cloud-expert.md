@@ -63,3 +63,13 @@ Blocking: YES — [reason] | NO
 ```
 
 If no issues found in any area: output all as PASS, `Issues: None`, `Blocking: NO`.
+
+After the report, ask:
+
+> **Blocking: [YES / NO]**
+>
+> 1. Fix blocking issues now
+> 2. Show details for a specific finding
+> 3. Proceed anyway (only if Blocking: NO)
+
+If Blocking: NO with no issues, state "Infra check clear. Proceeding to Phase 9." without waiting.
