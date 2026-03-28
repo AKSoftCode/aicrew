@@ -48,10 +48,15 @@ PATTERNS: list[tuple[re.Pattern, str, str]] = [
     ),
     (
         re.compile(
-            r'(?i)(?:execute|query|cursor\.execute|db\.run)\s*\(\s*(?:f["\']|["\'].*%s|["\'].*\+)'
+            r'(?i)(?:execute|query|cursor\.execute|db\.run|session\.execute|conn\.execute)\s*\(\s*(?:f["\']|["\'].*%s|["\'].*\+)'
         ),
         "WARN",
         "Possible SQL injection — use parameterized queries instead of string formatting",
+    ),
+    (
+        re.compile(r'render_template_string\s*\('),
+        "WARN",
+        "render_template_string() — verify content is never user-controlled (template injection risk)",
     ),
     (
         re.compile(r'(?i)subprocess\.(?:call|run|Popen)\s*\([^)]*\+'),
@@ -97,6 +102,12 @@ SKIP_FRAGMENTS: frozenset[str] = frozenset({
     "package-lock",
     "yarn.lock",
     "poetry.lock",
+    "test_",           # test files legitimately contain example credentials
+    "_test.",
+    "/tests/",
+    "conftest",
+    ".spec.",
+    "_spec.",
 })
 
 
