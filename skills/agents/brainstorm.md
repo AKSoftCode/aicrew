@@ -73,4 +73,12 @@ RECOMMENDATION: Option [X]
 WARNINGS: [anti-pattern flags, one per line, or "None"]
 ```
 
-Present this to the user and wait for their confirmation before the pipeline proceeds.
+Present this output and then ask:
+
+> Which option do you want to go with?
+> 1. Option A — [name]
+> 2. Option B — [name]
+> 3. Option C — [name]
+> 4. Modify one of these (tell me what to change)
+
+Wait for the user to pick a number or give feedback. Do not proceed to Phase 3 until a choice is confirmed.

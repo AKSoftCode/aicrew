@@ -62,3 +62,12 @@ Verdict: PASS — safe to proceed
 ```
 
 If no findings: output `Status: PASS` and `Verdict: PASS — safe to proceed` with no findings section.
+
+After the report, if there are any Critical or High findings, ask:
+
+> Found [N] issue(s) that need fixing.
+> 1. Fix them now (I'll address each finding)
+> 2. Show me details for a specific finding
+> 3. Accept risk and proceed anyway
+
+If Status is PASS, no prompt needed — state "Security clear. Proceeding to next phase."

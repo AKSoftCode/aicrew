@@ -29,11 +29,13 @@ This is idempotent — already-linked files are skipped. Report what was created
 If `$ARGUMENTS` is not provided, ask:
 
 > What would you like to do?
-> 1. **Update global skills** — review and refresh `~/.claude/skills/`
-> 2. **Generate project skills** — analyze this project, create `.ai/skills/` add-ons
-> 3. **Internet research** — find new best practices, skills, agents to add or replace
-> 4. **Full evolution** — all three in sequence
-> 5. **Review only** — audit what exists, show gaps, no writes
+> 1. Update global skills — review and refresh `~/.claude/skills/`
+> 2. Generate project skills — analyze this project, create `.ai/skills/` add-ons
+> 3. Internet research — find new best practices, skills, agents to add or replace
+> 4. Full evolution — all three in sequence
+> 5. Review only — audit what exists, show gaps, no writes
+
+Type a number (1–5). Wait for answer before proceeding.
 
 ---
 
@@ -53,12 +55,20 @@ For each skill:
 
 ### A3: Present recommendations
 
-Show the user:
-- Skills that look stale (with reason)
-- Skills that could be sharpened based on observed patterns
-- Gaps: workflows that happen often but have no skill
+Show the user a numbered list:
 
-Ask which to update. Wait for selection before writing anything.
+```
+GLOBAL SKILLS REVIEW
+====================
+1. [skill name]  — [status: OK / STALE / GAP]  [brief reason]
+2. [skill name]  — ...
+...
+```
+
+Then ask:
+> Which would you like to update? Type numbers (e.g. "1 3") or "all" or "none".
+
+Wait for selection before writing anything.
 
 ### A4: Update selected skills
 
