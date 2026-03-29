@@ -62,7 +62,7 @@ Phase 3:   Design          — architect agent: contract checks, interface spec
 Phase 4:   Implement       — TDD: RED → GREEN → REFACTOR per criterion
 Phase 5:   Tests           — full suite, edge cases, smoke path
 Phase 6:   Security        — changed files only, no noise
-Phase 7:   Project Audit   — domain compliance (if project has /audit)
+Phase 7:   Audit           — domain compliance (if project has /audit)
 Phase 8:   Cloud/Infra     — auto-triggers if infra files change
 Phase 9:   Conclude        — memory saved, commit message ready
 ```
@@ -72,7 +72,7 @@ Default stages by work type:
 | Stage | Bug Fix | Feature | Refactor |
 |---|---|---|---|
 | Research | ON | ON | ON |
-| Brainstorm | off | ON | ON |
+| Brainstorm | OFF | ON | ON |
 | Design | ON | ON | ON |
 | Implement (TDD) | ON | ON | ON |
 | Tests | ON | ON | ON |
@@ -146,6 +146,21 @@ npx aicrew --help
 - **Zero external dependencies** — hooks use Python stdlib only, CLI uses Node stdlib only
 - **Generic base, project overrides** — global skills work in any repo; project layer adds domain knowledge
 - **Low noise** — hooks skip test files, migrations, docs; security reviewer only covers changed files
+
+## Interactive Checkpoints
+
+Every command and agent skill includes checkpoints where the AI **must pause and wait** for your input before continuing. This works across all supported platforms:
+
+| Platform | How checkpoints work |
+|---|---|
+| **Claude Code** (chat) | AI ends its response, waits for your next message |
+| **Cursor** (chat panel) | AI ends its response, waits for your next message |
+| **Antigravity** (chat) | AI ends its response, waits for your next message |
+| **Gemini CLI** | AI calls `askQuestion` or similar tool if available, otherwise yields |
+| **Codex CLI** | AI calls `ask_human` or similar tool if available, otherwise yields |
+| **Autonomous agents** | AI stops execution and yields control — never fabricates your answer |
+
+The pipeline will **never** skip a checkpoint or invent your response, regardless of which tool runs it.
 
 ## License
 

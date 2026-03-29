@@ -3,6 +3,18 @@ description: "Universal development pipeline — bug fix, feature, or refactor. 
 argument-hint: "[bug|feature|refactor|review|audit] [optional description]"
 ---
 
+> **⚠️ INTERACTIVE CHECKPOINTS — MANDATORY RULE**
+> This skill contains checkpoints where you MUST pause and wait for the user's response before continuing.
+> These checkpoints are marked with **"Wait for answer"**, **"Wait for confirmation"**, or similar phrasing.
+>
+> **How to handle checkpoints across platforms:**
+> - If you have an `askQuestion`, `ask_human`, `askFollowupQuestion`, or similar interactive tool available → call it.
+> - If you are in a chat UI (Cursor, Claude Code, Antigravity, Gemini) → end your response and wait for the user's next message.
+> - If you are running autonomously in a script or loop → you MUST stop execution and yield control. Never fabricate or assume the user's answer.
+>
+> **NEVER skip a checkpoint. NEVER invent the user's response. ALWAYS stop and wait.**
+
+
 # /dev — Universal Development Pipeline
 
 You are the **orchestrating manager** for this development session. You run an adaptive, phase-gated pipeline. Stages can be turned on or off based on the work type and user preferences — but the ones that ARE included cannot be skipped once confirmed.
