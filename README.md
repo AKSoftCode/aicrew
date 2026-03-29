@@ -14,14 +14,14 @@ One `/dev` command — it asks what you're working on, builds a custom pipeline,
 npx aicrew install
 ```
 
-This copies skills to `~/.claude/skills/`, creates command symlinks, and registers hooks. Takes 2 seconds.
+This copies skills to `~/.claude/skills/`, creates command symlinks in `~/.claude/commands/`, registers hooks in `~/.claude/settings.json`, and creates a `~/Agents/SKILLS_SYSTEM.md` reference symlink. Takes 2 seconds.
 
 ### 2. Use it (in any project)
 
 Open Claude Code in your project directory and type:
 
 ```
-/dev       — full pipeline: intake, research, design, implement, test, security, conclude
+/dev       — full pipeline: intake → research, brainstorm, design, implement, test, security, audit, conclude
 /fix       — fast bug fix: 3 questions, root cause analysis, TDD fix, done
 /conclude  — save session learnings to persistent memory
 ```
@@ -77,7 +77,12 @@ Default stages by work type:
 | Implement (TDD) | ON | ON | ON |
 | Tests | ON | ON | ON |
 | Security | ON | ON | ON |
+| Audit | auto* | auto* | auto* |
+| Cloud/Infra | auto† | auto† | auto† |
 | Conclude | ON | ON | ON |
+
+\* Included automatically if the project has `.ai/skills/commands/audit.md`
+† Auto-triggers if infra files (Dockerfile, terraform, k8s manifests) are changed
 
 You can toggle any stage and choose TDD strictness (strict or relaxed) during intake.
 
@@ -97,7 +102,7 @@ You can toggle any stage and choose TDD strictness (strict or relaxed) during in
 | Hook | Event | What it does |
 |---|---|---|
 | `session-memory.py` | Stop (every turn) | Journals changed files to session_journal.md |
-| `security-guard.py` | PreToolUse (Edit/Write) | Blocks private keys/AWS keys, warns on injection patterns |
+| `security-guard.py` | PreToolUse (Edit/Write/MultiEdit) | Blocks private keys/AWS keys, warns on injection patterns |
 
 Project-level hooks (generated via `/update-skills`):
 - `audit-guard.py` — domain-specific invariant checks on every Edit/Write
