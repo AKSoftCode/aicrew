@@ -3,6 +3,18 @@ description: "Fast bug fix — 3 questions, straight to root cause and fix. No c
 argument-hint: "[description of the bug]"
 ---
 
+> **⚠️ INTERACTIVE CHECKPOINTS — MANDATORY RULE**
+> This skill contains checkpoints where you MUST pause and wait for the user's response before continuing.
+> These checkpoints are marked with **"Wait for answer"**, **"Wait for confirmation"**, or similar phrasing.
+>
+> **How to handle checkpoints across platforms:**
+> - If you have an `askQuestion`, `ask_human`, `askFollowupQuestion`, or similar interactive tool available → call it.
+> - If you are in a chat UI (Cursor, Claude Code, Antigravity, Gemini) → end your response and wait for the user's next message.
+> - If you are running autonomously in a script or loop → you MUST stop execution and yield control. Never fabricate or assume the user's answer.
+>
+> **NEVER skip a checkpoint. NEVER invent the user's response. ALWAYS stop and wait.**
+
+
 # /fix — Fast Bug Fix
 
 Streamlined entry point for bug fixes. Skips the full intake ceremony.
