@@ -2,7 +2,7 @@
 
 Universal AI development pipeline for Claude Code, Cursor, Codex, Antigravity, and Gemini.
 
-One `/dev` command — TDD-first by default, expert agent routing based on what files you're changing. Runs the right specialist automatically at each stage.
+One `/dev` command — TDD-first by default, expert agent routing based on what files you're changing. Runs the right specialist automatically at each stage. In Codex, use the `aicrew-*` skills (no slash commands).
 
 ---
 
@@ -14,15 +14,25 @@ One `/dev` command — TDD-first by default, expert agent routing based on what 
 npx aicrew install
 ```
 
-Sets `~/Agents/` as the source of truth (platform-agnostic, not inside any tool directory). Creates symlinks from `~/.claude/commands/`, `~/.claude/skills/`, `~/.cursor/rules/`, and `~/Workspace/aicrew/skills/` all pointing to `~/Agents/`. Registers hooks in `~/.claude/settings.json`. Takes 2 seconds.
+Sets `~/Agents/` as the source of truth (platform-agnostic, not inside any tool directory). Creates symlinks from `~/.claude/commands/`, `~/.claude/skills/`, `~/.cursor/rules/`, and `~/Workspace/aicrew/skills/` all pointing to `~/Agents/`. Installs Codex skills under `~/.codex/skills/`. Registers hooks in `~/.claude/settings.json`. Takes 2 seconds.
 
 ### 2. Use it (in any project)
 
+Claude Code commands:
 ```
 /dev            — full 9-phase pipeline: intake → research → design → TDD → test → security → conclude
 /fix            — fast bug fix: 3 questions, root cause, TDD, done
 /conclude       — save session learnings to persistent memory
 /harness-audit  — audit the AI harness itself for health and completeness
+```
+
+Codex skills:
+```
+aicrew-dev            — full 9-phase pipeline
+aicrew-fix            — fast bug fix
+aicrew-conclude       — wrap up session + commit message
+aicrew-harness-audit  — audit the AI harness itself
+aicrew-update-skills  — maintain skills + project generation
 ```
 
 The pipeline asks what you're working on (bug/feature/refactor), shows which stages will run, and lets you customise before starting.
@@ -33,11 +43,13 @@ The pipeline asks what you're working on (bug/feature/refactor), shows which sta
 /update-skills
 ```
 
-Choose option **2** (Generate project skills). Analyzes your codebase and generates `.ai/skills/` with project-specific knowledge. Commit the generated files — every team member gets the same guardrails.
+Choose option **2** (Generate project skills). Analyzes your codebase and generates `.ai/skills/` with project-specific knowledge. Commit the generated files — every team member gets the same guardrails. In Codex, run `npx aicrew update` from the repo root.
 
 ---
 
 ## Commands
+
+In Codex, use the `aicrew-*` skills instead of slash commands.
 
 | Command | When to use |
 |---|---|
@@ -149,6 +161,7 @@ Project-level hooks (generated via `/update-skills`):
 ~/.claude/commands/            symlinks → ~/Agents/commands/
 ~/.claude/skills/              symlinks → ~/Agents/ subdirs
 ~/.cursor/rules/               symlinks → ~/Agents/agents/ (Cursor)
+~/.codex/skills/               aicrew-* Codex skills (installed)
 ~/Workspace/aicrew/skills/     symlinks → ~/Agents/ (this package)
 
 [repo]/.ai/skills/             project layer (version controlled)

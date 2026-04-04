@@ -10,11 +10,13 @@ const path = require('path');
 const { expandHome, mkdirp, symlink, copyDir, run } = require('./utils');
 const { registerStopHook, registerPreToolUseHook }  = require('./settings');
 
-const SKILLS_PACKAGE_DIR = path.join(__dirname, '..', 'skills');
-const SKILLS_TARGET_DIR  = expandHome('~/.claude/skills');
-const COMMANDS_DIR       = expandHome('~/.claude/commands');
-const SETTINGS_FILE      = expandHome('~/.claude/settings.json');
-const AGENTS_DIR         = expandHome('~/Agents');
+const SKILLS_PACKAGE_DIR      = path.join(__dirname, '..', 'skills');
+const SKILLS_TARGET_DIR       = expandHome('~/.claude/skills');
+const COMMANDS_DIR            = expandHome('~/.claude/commands');
+const SETTINGS_FILE           = expandHome('~/.claude/settings.json');
+const AGENTS_DIR              = expandHome('~/Agents');
+const CODEX_SKILLS_PACKAGE_DIR = path.join(__dirname, '..', 'codex-skills');
+const CODEX_SKILLS_TARGET_DIR  = expandHome('~/.codex/skills');
 
 function install() {
   console.log('\n=== aicrew — Global Install ===\n');
@@ -26,7 +28,7 @@ function install() {
     console.log(`  ✓  Copied skills to   ${SKILLS_TARGET_DIR}`);
   } else {
     // Merge: only copy files that don't exist yet (don't overwrite user edits)
-    mergeSkills(SKILLS_PACKAGE_DIR, SKILLS_TARGET_DIR);
+    mergeSkills(SKILLS_PACKAGE_DIR, SKILLS_TARGET_DIR, SKILLS_TARGET_DIR);
   }
 
   // 2. Command symlinks: ~/.claude/commands/*.md → ~/.claude/skills/commands/*.md
@@ -54,6 +56,19 @@ function install() {
   const docLink = path.join(AGENTS_DIR, 'SKILLS_SYSTEM.md');
   if (fs.existsSync(docSrc)) symlink(docSrc, docLink);
 
+  // 3.5 Codex skills (tool-agnostic entry points)
+  console.log('\nCodex skills:');
+  if (fs.existsSync(CODEX_SKILLS_PACKAGE_DIR)) {
+    if (!fs.existsSync(CODEX_SKILLS_TARGET_DIR)) {
+      copyDir(CODEX_SKILLS_PACKAGE_DIR, CODEX_SKILLS_TARGET_DIR);
+      console.log(`  ✓  Copied skills to   ${CODEX_SKILLS_TARGET_DIR}`);
+    } else {
+      mergeSkills(CODEX_SKILLS_PACKAGE_DIR, CODEX_SKILLS_TARGET_DIR, CODEX_SKILLS_TARGET_DIR);
+    }
+  } else {
+    console.log(`  ⚠  Missing:           ${CODEX_SKILLS_PACKAGE_DIR}`);
+  }
+
   // Summary
   const cmdCount = fs.existsSync(COMMANDS_DIR)
     ? fs.readdirSync(COMMANDS_DIR).filter(f => f.endsWith('.md')).length
@@ -68,18 +83,18 @@ function install() {
 }
 
 // Copy files from src that don't already exist in dest (preserve user edits)
-function mergeSkills(src, dest) {
+function mergeSkills(src, dest, baseDir) {
   for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
     const s = path.join(src, entry.name);
     const d = path.join(dest, entry.name);
     if (entry.isDirectory()) {
       mkdirp(d);
-      mergeSkills(s, d);
+      mergeSkills(s, d, baseDir);
     } else if (!fs.existsSync(d)) {
       fs.copyFileSync(s, d);
-      console.log(`  ✓  Added:            ${path.relative(SKILLS_TARGET_DIR, d)}`);
+      console.log(`  ✓  Added:            ${path.relative(baseDir, d)}`);
     } else {
-      console.log(`  ↻  Exists, kept:     ${path.relative(SKILLS_TARGET_DIR, d)}`);
+      console.log(`  ↻  Exists, kept:     ${path.relative(baseDir, d)}`);
     }
   }
 }
