@@ -13,6 +13,7 @@
     "bin/",
     "src/",
     "skills/",
+    "codex-skills/",
     "templates/",
     "README.md"
   ],

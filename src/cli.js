@@ -77,7 +77,7 @@ USAGE
   npx aicrew [command]
 
 COMMANDS
-  install        Install skills globally (~/.claude/skills/, hooks, symlinks)
+  install        Install skills globally (~/.claude/skills/, ~/.codex/skills, hooks, symlinks)
   update         Re-run install to pick up new skills (preserves your edits)
   status         Show installed skills and active hooks
   --version      Show version
@@ -89,6 +89,8 @@ AFTER INSTALL
     /fix             — fast bug fix (3 questions, no ceremony)
     /conclude        — save session learnings to memory
     /update-skills   — maintain skills + generate project-specific skills
+
+  In Codex, use the aicrew-* skills (no slash commands).
 
   To add project-specific skills (audit, domain hooks, cursor rules):
     Open Claude Code in your repo, then type: /update-skills
@@ -104,6 +106,7 @@ function showStatus() {
   const skillsDir   = expandHome('~/.claude/skills');
   const commandsDir = expandHome('~/.claude/commands');
   const settingsFile = expandHome('~/.claude/settings.json');
+  const codexSkillsDir = expandHome('~/.codex/skills');
 
   console.log('\n=== aicrew status ===\n');
 
@@ -141,6 +144,13 @@ function showStatus() {
     } catch (_) {
       console.log('\nHooks: (could not read settings.json)');
     }
+  }
+
+  // Codex skills
+  if (fs.existsSync(codexSkillsDir)) {
+    const codexSkills = fs.readdirSync(codexSkillsDir)
+      .filter(d => d.startsWith('aicrew-'));
+    console.log(`\nCodex skills: ${codexSkills.length ? codexSkills.join(', ') : '(not installed)'}`);
   }
 
   // Project skills
