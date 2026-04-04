@@ -1,8 +1,8 @@
 # aicrew
 
-Adaptive AI development pipeline for Claude Code, Cursor, and Codex.
+Universal AI development pipeline for Claude Code, Cursor, Codex, Antigravity, and Gemini.
 
-One `/dev` command — it asks what you're working on, builds a custom pipeline, and runs expert agents at each stage: architect, TDD developer, security reviewer, bug analyst, and cloud/infra expert.
+One `/dev` command — TDD-first by default, expert agent routing based on what files you're changing. Runs the right specialist (frontend, backend, DB migration, performance) automatically at each stage.
 
 ---
 
@@ -14,7 +14,7 @@ One `/dev` command — it asks what you're working on, builds a custom pipeline,
 npx aicrew install
 ```
 
-This copies skills to `~/.claude/skills/`, creates command symlinks in `~/.claude/commands/`, registers hooks in `~/.claude/settings.json`, and creates a `~/Agents/SKILLS_SYSTEM.md` reference symlink. Takes 2 seconds.
+Sets `~/Agents/` as the source of truth, creates symlinks from `~/.claude/commands/`, `~/.claude/skills/`, `~/.cursor/rules/`, and `~/Workspace/aicrew/skills/` all pointing to `~/Agents/`. Registers hooks in `~/.claude/settings.json`. Takes 2 seconds.
 
 ### 2. Use it (in any project)
 
@@ -59,43 +59,48 @@ Intake:    What are we working on? → Clarifying questions → ACs + pipeline p
 Phase 1:   Research        — bug analyst (bugs) or codebase exploration (features)
 Phase 2:   Brainstorm      — 3 alternatives with trade-offs (features/refactors)
 Phase 3:   Design          — architect agent: contract checks, interface spec
-Phase 4:   Implement       — TDD: RED → GREEN → REFACTOR per criterion
-Phase 5:   Tests           — full suite, edge cases, smoke path
+Phase 4:   Implement       — TDD-first (default): RED → GREEN → REFACTOR per criterion
+                             + auto-routed specialists (frontend/backend/db/performance)
+Phase 5:   Tests           — test engineer: pyramid, coverage ≥80%, quality, smoke path
 Phase 6:   Security        — changed files only, no noise
 Phase 7:   Audit           — domain compliance (if project has /audit)
 Phase 8:   Cloud/Infra     — auto-triggers if infra files change
 Phase 9:   Conclude        — memory saved, commit message ready
 ```
 
-Default stages by work type:
+**TDD is on by default.** Relaxed mode (write tests after) requires explicit opt-out at intake.
 
-| Stage | Bug Fix | Feature | Refactor |
-|---|---|---|---|
-| Research | ON | ON | ON |
-| Brainstorm | OFF | ON | ON |
-| Design | ON | ON | ON |
-| Implement (TDD) | ON | ON | ON |
-| Tests | ON | ON | ON |
-| Security | ON | ON | ON |
-| Audit | auto* | auto* | auto* |
-| Cloud/Infra | auto† | auto† | auto† |
-| Conclude | ON | ON | ON |
+**Specialist routing (Phase 4 — auto from Research):**
 
-\* Included automatically if the project has `.ai/skills/commands/audit.md`
-† Auto-triggers if infra files (Dockerfile, terraform, k8s manifests) are changed
-
-You can toggle any stage and choose TDD strictness (strict or relaxed) during intake.
+| Changed files | Specialist invoked |
+|---|---|
+| `*.tsx`, `*.vue`, `*/components/*` | `frontend-specialist` — React/Vue, a11y, RTL TDD |
+| `*/api/*`, `*/routes/*`, `*/services/*` | `backend-specialist` — REST, auth, service layer |
+| `*/migrations/*`, `*models*`, `*schema*` | `db-migration` — schema safety, rollback, null safety |
+| Performance is an acceptance criterion | `performance` — profiling, N+1, benchmarks |
 
 ## Agents
 
-| Agent | Role | Used in |
+### Core agents
+
+| Agent | Phase | Role |
 |---|---|---|
-| `architect` | Contract checks, interface spec, over/under-engineering flags | Phase 3 |
-| `bug-analyst` | Symptom → entry point → call chain → confirmed root cause | Phase 1 (bugs) |
-| `brainstorm` | 3 genuinely different approaches with trade-off matrix | Phase 2 |
-| `tdd-developer` | Strict RED → GREEN → REFACTOR per acceptance criterion | Phase 4 |
-| `security-reviewer` | Real vulnerabilities only, no false positives | Phase 6 |
-| `cloud-expert` | Migration safety, dependency risk, env assumptions | Phase 8 |
+| `bug-analyst` | 1 | Symptom → entry point → call chain → confirmed root cause |
+| `brainstorm` | 2 | 3 genuinely different approaches with trade-off matrix |
+| `architect` | 3 | Contract checks, interface spec, over/under-engineering flags |
+| `tdd-developer` | 4 | Strict RED → GREEN → REFACTOR per acceptance criterion |
+| `test-engineer` | 5 | Pyramid balance, coverage gaps, test quality, smoke path |
+| `security-reviewer` | 6 | Real vulnerabilities only, no false positives |
+| `cloud-expert` | 8 | Migration safety, dependency risk, env assumptions |
+
+### Specialist agents (Phase 4 — auto-routed)
+
+| Agent | Expertise |
+|---|---|
+| `frontend-specialist` | React/Vue/TS, a11y, RTL TDD, bundle analysis, state management |
+| `backend-specialist` | REST API design, auth/authz, service layer, error handling |
+| `db-migration` | Schema safety, rollback, null safety, idempotency, index planning |
+| `performance` | Profiling, N+1 detection, bundle analysis, caching strategy |
 
 ## Hooks
 
@@ -110,19 +115,21 @@ Project-level hooks (generated via `/update-skills`):
 ## Architecture
 
 ```
-~/.claude/skills/              global source of truth
+~/Agents/                      source of truth (platform-agnostic)
   commands/                    /dev, /fix, /conclude, /update-skills
-  agents/                      architect, bug-analyst, brainstorm, security-reviewer,
-                               cloud-expert, tdd-developer
+  agents/                      11 agents: core + specialists
   hooks/                       session-memory.py, security-guard.py
   SKILLS_SYSTEM.md             full system documentation
-  setup.sh                     creates symlinks + registers hooks
+  setup.sh                     creates all platform symlinks + registers hooks
 
-~/.claude/commands/            symlinks into skills/commands/
+~/.claude/commands/            symlinks → ~/Agents/commands/
+~/.claude/skills/              symlinks → ~/Agents/ subdirs
+~/.cursor/rules/               symlinks → ~/Agents/agents/ (Cursor)
+~/Workspace/aicrew/skills/     symlinks → ~/Agents/ (this package)
 
 [repo]/.ai/skills/             project layer (version controlled)
   commands/audit.md            domain compliance check
-  agents/cloud-expert.md       stack-specific infra override
+  agents/[specialist].md       project-specific specialist override
   hooks/audit-guard.py         domain invariant checks
   cursor-rules/[project].mdc   Cursor rules
   AGENTS.md                    Codex entry point
@@ -142,7 +149,7 @@ npx aicrew --help
 ## Design Principles
 
 - **Written from scratch** — no external code copied, no unknown security issues
-- **Single source of truth** — skills live in `~/.claude/skills/`, symlinks everywhere
+- **Single source of truth** — skills live in `~/Agents/` (platform-agnostic), symlinks everywhere
 - **Zero external dependencies** — hooks use Python stdlib only, CLI uses Node stdlib only
 - **Generic base, project overrides** — global skills work in any repo; project layer adds domain knowledge
 - **Low noise** — hooks skip test files, migrations, docs; security reviewer only covers changed files
