@@ -1,0 +1,8 @@
+interface:
+  display_name: "AICrew Update Skills"
+  short_description: "Update global and project aicrew skills"
+  brand_color: "#0369A1"
+  default_prompt: "Use $aicrew-update-skills to update installed aicrew skills and regenerate project overrides."
+
+policy:
+  allow_implicit_invocation: true

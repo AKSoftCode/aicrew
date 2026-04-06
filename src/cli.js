@@ -90,7 +90,7 @@ AFTER INSTALL
     /conclude        — save session learnings to memory
     /update-skills   — maintain skills + generate project-specific skills
 
-  In Codex, use the aicrew-* skills (no slash commands).
+  In Codex, use the aicrew-* skills and $brainstorm (no slash commands).
 
   To add project-specific skills (audit, domain hooks, cursor rules):
     Open Claude Code in your repo, then type: /update-skills
@@ -107,8 +107,11 @@ function showStatus() {
   const commandsDir = expandHome('~/.claude/commands');
   const settingsFile = expandHome('~/.claude/settings.json');
   const codexSkillsDir = expandHome('~/.codex/skills');
+  const sharedDir = expandHome('~/Agents');
 
   console.log('\n=== aicrew status ===\n');
+
+  console.log(`Shared assets: ${fs.existsSync(sharedDir) ? sharedDir : '(not installed)'}`);
 
   // Global skills
   const dirs = ['commands', 'agents', 'hooks'];
@@ -149,7 +152,7 @@ function showStatus() {
   // Codex skills
   if (fs.existsSync(codexSkillsDir)) {
     const codexSkills = fs.readdirSync(codexSkillsDir)
-      .filter(d => d.startsWith('aicrew-'));
+      .filter(d => d.startsWith('aicrew-') || d === 'brainstorm');
     console.log(`\nCodex skills: ${codexSkills.length ? codexSkills.join(', ') : '(not installed)'}`);
   }
 

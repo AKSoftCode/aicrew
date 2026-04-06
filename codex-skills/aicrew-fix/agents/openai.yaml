@@ -1,0 +1,8 @@
+interface:
+  display_name: "AICrew Fix"
+  short_description: "Run a fast TDD-first bug fix workflow"
+  brand_color: "#B45309"
+  default_prompt: "Use $aicrew-fix to triage, reproduce, fix, and verify this bug."
+
+policy:
+  allow_implicit_invocation: true

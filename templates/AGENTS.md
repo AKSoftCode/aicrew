@@ -24,6 +24,18 @@ This repo uses the **aicrew** skills system. Agents working in this codebase mus
 - All new endpoints/routes must have authentication/authorization checks
 - Run the test suite and confirm it passes before marking work done
 - Follow the existing naming and file structure conventions
+- Prefer TDD-first for behavior changes: write the smallest failing automated test first
+- Keep diffs minimal and avoid unrelated refactors
+
+## AICrew project overrides
+
+This repo may define project-specific `.ai/skills/` files that refine how `aicrew-dev` and `brainstorm` operate.
+
+- `.ai/skills/commands/dev.md` — phased scope, planner templates, anti-hallucination rules, git safety, validation steps
+- `.ai/skills/commands/audit.md` — project audit checks
+- `.ai/skills/agents/brainstorm.md` — design-decision and options workflow
+
+In Codex, `.ai/skills/` files are repo-local overrides, not globally installed skills by themselves.
 
 ## Key patterns
 
