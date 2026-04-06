@@ -1,0 +1,8 @@
+interface:
+  display_name: "AICrew Harness Audit"
+  short_description: "Audit the aicrew Codex harness and wiring"
+  brand_color: "#7C3AED"
+  default_prompt: "Use $aicrew-harness-audit to audit the aicrew skill and harness setup in Codex."
+
+policy:
+  allow_implicit_invocation: true

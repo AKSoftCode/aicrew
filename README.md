@@ -2,7 +2,7 @@
 
 Universal AI development pipeline for Claude Code, Cursor, Codex, Antigravity, and Gemini.
 
-One `/dev` command — TDD-first by default, expert agent routing based on what files you're changing. Runs the right specialist automatically at each stage. In Codex, use the `aicrew-*` skills (no slash commands).
+One `/dev` command — TDD-first by default, expert agent routing based on what files you're changing. Runs the right specialist automatically at each stage. In Codex, use the `aicrew-*` skills plus `brainstorm` (no slash commands).
 
 ---
 
@@ -14,7 +14,7 @@ One `/dev` command — TDD-first by default, expert agent routing based on what 
 npx aicrew install
 ```
 
-Sets `~/Agents/` as the source of truth (platform-agnostic, not inside any tool directory). Creates symlinks from `~/.claude/commands/`, `~/.claude/skills/`, `~/.cursor/rules/`, and `~/Workspace/aicrew/skills/` all pointing to `~/Agents/`. Installs Codex skills under `~/.codex/skills/`. Registers hooks in `~/.claude/settings.json`. Takes 2 seconds.
+Installs the shared command, agent, and hook assets into `~/Agents/`, copies Claude-facing skills into `~/.claude/skills/`, links `~/.claude/commands/` to the shared command files, and installs Codex skills under `~/.codex/skills/`. Registers hooks in `~/.claude/settings.json`. Takes 2 seconds.
 
 ### 2. Use it (in any project)
 
@@ -29,6 +29,7 @@ Claude Code commands:
 Codex skills:
 ```
 aicrew-dev            — full 9-phase pipeline
+brainstorm            — compare implementation options before coding
 aicrew-fix            — fast bug fix
 aicrew-conclude       — wrap up session + commit message
 aicrew-harness-audit  — audit the AI harness itself
@@ -45,11 +46,20 @@ The pipeline asks what you're working on (bug/feature/refactor), shows which sta
 
 Choose option **2** (Generate project skills). Analyzes your codebase and generates `.ai/skills/` with project-specific knowledge. Commit the generated files — every team member gets the same guardrails. In Codex, run `npx aicrew update` from the repo root.
 
+Generated project overrides can include:
+- phased scope and planner templates
+- anti-hallucination rules
+- architectural constraints
+- git safety checks
+- concrete end-to-end demo scenarios
+- validation steps per phase
+- brainstorm decision frameworks
+
 ---
 
 ## Commands
 
-In Codex, use the `aicrew-*` skills instead of slash commands.
+In Codex, use the `aicrew-*` skills and `brainstorm` instead of slash commands.
 
 | Command | When to use |
 |---|---|
@@ -68,7 +78,7 @@ Intake:    What are we working on? → Clarifying questions → ACs + pipeline p
            /compact after each phase
            ↓
 Phase 1:   Research        — bug analyst (bugs) or codebase exploration (features)
-Phase 2:   Brainstorm      — 3 alternatives with trade-offs (features/refactors)
+Phase 2:   Brainstorm      — 3 alternatives with trade-offs and pre-coding design decisions
 Phase 3:   Design          — architect: contract checks, interface spec, over/under flags
 Phase 4:   Implement       — TDD-first (default): RED → GREEN → REFACTOR per criterion
                              + auto-routed specialist agents
@@ -83,6 +93,16 @@ Phase 9:   Conclude        — memory saved, commit message ready
 **TDD is on by default.** Relaxed mode requires explicit opt-out at intake.
 
 **Context:** `/compact` runs after each phase to prevent context bloat.
+
+### Project override model
+
+`aicrew-dev` ships the generic flow. Projects can make it concrete through committed `.ai/skills/` overrides:
+
+- `.ai/skills/commands/dev.md` for planner templates, phase goals, micro-phases, validation steps, git safety, and architectural constraints
+- `.ai/skills/agents/brainstorm.md` for pre-coding decisions and option analysis
+- `.ai/skills/commands/audit.md` for domain-specific audit gates
+
+This keeps the base package reusable while allowing each repo to encode its real constraints.
 
 ### Specialist routing (Phase 4 — auto from Research)
 
@@ -102,6 +122,19 @@ For multi-file or complex changes, each task dispatches a fresh subagent with ex
 
 Each subagent returns a status: `DONE` / `DONE_WITH_CONCERNS` / `NEEDS_CONTEXT` / `BLOCKED`.
 
+### What good project templates include
+
+- phased scope with planner templates
+- anti-hallucination checks
+- architectural constraints
+- git safety rules
+- concrete end-to-end demo scenario proving the phases
+- validation steps per phase
+- micro-phases and phase goals
+- team roster
+- brainstorm questions with 5 design decisions before coding
+- skill and specialist activation guidance
+
 ---
 
 ## Agents
@@ -111,7 +144,7 @@ Each subagent returns a status: `DONE` / `DONE_WITH_CONCERNS` / `NEEDS_CONTEXT` 
 | Agent | Phase | Role |
 |---|---|---|
 | `bug-analyst` | 1 | Symptom → entry point → call chain → confirmed root cause |
-| `brainstorm` | 2 | 3 genuinely different approaches with trade-off matrix |
+| `brainstorm` | 2 | 3 genuinely different approaches with trade-off matrix and design decisions |
 | `architect` | 3 | Contract checks, interface spec, over/under-engineering flags |
 | `tdd-developer` | 4 | Strict RED → GREEN → REFACTOR per acceptance criterion |
 | `test-engineer` | 5 | Pyramid balance, coverage gaps, quality, flaky detection, smoke path |
@@ -151,18 +184,18 @@ Project-level hooks (generated via `/update-skills`):
 ## Architecture
 
 ```
-~/Agents/                      source of truth (platform-agnostic)
+~/Agents/                      installed shared source of truth
   commands/                    /dev, /fix, /conclude, /update-skills, /harness-audit
   agents/                      11 agents: 7 core + 4 specialists
   hooks/                       session-memory.py, security-guard.py
   SKILLS_SYSTEM.md             full system documentation
-  setup.sh                     creates all platform symlinks + registers hooks
+  setup.sh                     helper script
 
 ~/.claude/commands/            symlinks → ~/Agents/commands/
-~/.claude/skills/              symlinks → ~/Agents/ subdirs
-~/.cursor/rules/               symlinks → ~/Agents/agents/ (Cursor)
-~/.codex/skills/               aicrew-* Codex skills (installed)
-~/Workspace/aicrew/skills/     symlinks → ~/Agents/ (this package)
+~/.claude/skills/              copied Claude-facing skill files
+~/.cursor/rules/               project-level rules when generated
+~/.codex/skills/               aicrew-* Codex skills + brainstorm (installed)
+~/Workspace/aicrew/skills/     package source files used during install
 
 [repo]/.ai/skills/             project layer (version controlled)
   commands/audit.md            domain compliance check
@@ -189,7 +222,7 @@ npx aicrew --help
 
 ## Design Principles
 
-- **Source of truth in `~/Agents/`** — not inside any tool-specific directory; symlinks everywhere
+- **Shared source of truth in `~/Agents/`** — stable references for commands, agents, hooks, and Codex skill lookups
 - **TDD-first** — strict RED → GREEN → REFACTOR is the default; relaxed mode requires opt-out
 - **Expert specialist routing** — right agent for the job, auto-selected from what files change
 - **Two-stage review** — spec compliance before code quality; never reversed

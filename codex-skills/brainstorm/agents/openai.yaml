@@ -1,0 +1,8 @@
+interface:
+  display_name: "Brainstorm"
+  short_description: "Compare 3 implementation options before coding"
+  brand_color: "#2563EB"
+  default_prompt: "Use $brainstorm to compare three implementation options and recommend one before coding."
+
+policy:
+  allow_implicit_invocation: true
