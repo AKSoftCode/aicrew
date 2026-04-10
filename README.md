@@ -24,6 +24,9 @@ Claude Code commands:
 /fix            — fast bug fix: 3 questions, root cause, TDD, done
 /conclude       — save session learnings to persistent memory
 /harness-audit  — audit the AI harness itself for health and completeness
+/lean           — low-token mode (terse + context-economy)
+/session        — set tool/session label for durable state files
+/handoff        — print compact cross-tool resume block
 ```
 
 Codex skills:
@@ -65,6 +68,9 @@ In Codex, use the `aicrew-*` skills and `brainstorm` instead of slash commands.
 |---|---|
 | `/dev` | Features, refactors, complex bugs — full SDLC |
 | `/fix` | Quick bug fixes — 5 phases, no ceremony |
+| `/lean` | Enable/disable low-token mode for the current chat |
+| `/session` | Set per-tool session label for state checkpoints |
+| `/handoff` | Produce compact cross-tool resume package |
 | `/conclude` | End of any session — save learnings, commit message |
 | `/update-skills` | Maintain, improve, or research new practices |
 | `/harness-audit` | Verify the AI harness is healthy and complete |
@@ -93,6 +99,12 @@ Phase 9:   Conclude        — memory saved, commit message ready
 **TDD is on by default.** Relaxed mode requires explicit opt-out at intake.
 
 **Context:** `/compact` runs after each phase to prevent context bloat.
+
+**Usage-limit resilience:** `/dev` now writes per-session checkpoints to:
+`.ai/state/AI_STATE.<tool>.<session>.md`
+Use `/session` at the start and `/handoff` before switching tools/models.
+Clean old state files with:
+`~/Agents/bin/cleanup-ai-state.sh 3 .`
 
 ### Project override model
 
@@ -185,7 +197,7 @@ Project-level hooks (generated via `/update-skills`):
 
 ```
 ~/Agents/                      installed shared source of truth
-  commands/                    /dev, /fix, /conclude, /update-skills, /harness-audit
+  commands/                    /dev, /fix, /lean, /session, /handoff, /conclude, /update-skills, /harness-audit
   agents/                      11 agents: 7 core + 4 specialists
   hooks/                       session-memory.py, security-guard.py
   SKILLS_SYSTEM.md             full system documentation
@@ -194,7 +206,7 @@ Project-level hooks (generated via `/update-skills`):
 ~/.claude/commands/            symlinks → ~/Agents/commands/
 ~/.claude/skills/              copied Claude-facing skill files
 ~/.cursor/rules/               project-level rules when generated
-~/.codex/skills/               aicrew-* Codex skills + brainstorm (installed)
+~/.codex/skills/               aicrew-* Codex skills + brainstorm + lean (installed)
 ~/Workspace/aicrew/skills/     package source files used during install
 
 [repo]/.ai/skills/             project layer (version controlled)
