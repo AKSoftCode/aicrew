@@ -18,6 +18,31 @@ argument-hint: "[bug|feature|refactor|review|audit] [optional description]"
 >
 > **NEVER skip a checkpoint. NEVER fabricate the user's response.**
 
+---
+
+## Usage-limit resilience (state checkpoints) — mandatory
+
+To survive unexpected usage timeouts, maintain a durable checkpoint file in the repo:
+
+- Create or update a per-session file under: `.ai/state/`
+- File pattern: `.ai/state/AI_STATE.<tool>.<session>.md`
+- Update it **after every checkpoint** and **at the end of every phase**.
+- If filesystem write tools are unavailable, output the full `AI_STATE.md` content so the user can paste it into a file.
+
+If `/session` was used, `<tool>` and `<session>` come from there. Otherwise use:
+`.ai/state/AI_STATE.unknown.unknown-<YYYY-MM-DD>-<HHMM>.md`
+
+### State file format (keep compact)
+
+- Goal:
+- Current status:
+- Key constraints (must not break):
+- Relevant files (paths only):
+- Latest errors/logs (verbatim, short):
+- Next step (single exact action):
+- Tests: ran / not run
+- Assumptions/risks:
+
 
 # /dev — Universal Development Pipeline
 
@@ -66,6 +91,8 @@ If not already in `$ARGUMENTS`, ask:
 
 **Wait for answer.**
 
+After receiving the answer: update the state file.
+
 ---
 
 ### Checkpoint B — Clarifying questions
@@ -97,6 +124,8 @@ Once the work type is known, ask all the questions for that type in one message.
 **Review / Audit:** skip directly to Checkpoint C.
 
 **Wait for answers.**
+
+After receiving the answers: update the state file.
 
 ---
 
@@ -139,6 +168,8 @@ Use TodoWrite to create tasks for each INCLUDED phase once confirmed.
 
 **Context compaction:** Run `/compact` at the end of each phase before starting the next. This prevents context bloat from carrying verbose phase output into subsequent phases.
 
+After the user confirms the pipeline: update the state file.
+
 ---
 
 ## PHASE 1 — RESEARCH
@@ -163,6 +194,8 @@ For complex areas, launch a parallel sub-agent (subagent_type: Explore):
 > "Trace [affected area] end-to-end. Return: key files, existing test coverage, invariants at risk."
 
 **Output:** Confirmed root cause (bug) or key files + risks (feature/refactor) + **change type classification**.
+
+End of Phase 1: update the state file, then run `/compact`.
 
 ---
 
