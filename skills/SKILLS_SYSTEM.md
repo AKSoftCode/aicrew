@@ -92,11 +92,11 @@ All commands and agents work across:
 
 | Tool | How it uses this system |
 |---|---|
-| **Claude Code** | `/dev`, `/fix`, `/conclude` via `~/.claude/commands/` symlinks |
+| **Claude Code** | `/dev`, `/fix`, `/conclude`, `/lean`, `/session` via `~/.claude/commands/` symlinks |
 | **Cursor** | Agent rules via `.cursor/rules/` → `~/Agents/agents/` |
 | **Codex CLI** | Use `aicrew-*` skills from `~/.codex/skills/` (no slash commands); `AGENTS.md` in repo can reference `~/Agents/` |
-| **Antigravity** | System prompt references `~/Agents/commands/dev.md` |
-| **Gemini CLI** | System prompt references `~/Agents/commands/dev.md` |
+| **Antigravity** | System prompt references `~/Agents/commands/dev.md` (+ `lean.md`, `session.md`) |
+| **Gemini CLI** | System prompt references `~/Agents/commands/dev.md` (+ `lean.md`, `session.md`) |
 
 Checkpoints work across all platforms — see the `⚠️ INTERACTIVE CHECKPOINTS` table in every skill file.
 

@@ -172,6 +172,8 @@ echo "Antigravity / Gemini CLI:"
 echo "  Add this to your system prompt:"
 echo "  'You have access to a dev pipeline. Load and follow: ~/Agents/commands/dev.md'"
 echo "  'For bug fixes use: ~/Agents/commands/fix.md'"
+echo "  'For low-token mode use: ~/Agents/commands/lean.md'"
+echo "  'For session-safe checkpoints use: ~/Agents/commands/session.md'"
 echo ""
 cmd_count=$(ls "$CLAUDE_DIR/commands/"*.md 2>/dev/null | wc -l | tr -d ' ')
 agent_count=$(ls "$AGENTS_DIR/agents/"*.md 2>/dev/null | wc -l | tr -d ' ')

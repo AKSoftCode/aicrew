@@ -1,0 +1,8 @@
+interface:
+  display_name: "Lean"
+  short_description: "Low-token mode with safe context economy"
+  brand_color: "#0EA5E9"
+  default_prompt: "Use $lean to enable low-token mode (terse + context-economy) without dropping safety constraints."
+
+policy:
+  allow_implicit_invocation: true
