@@ -8,7 +8,7 @@
 const fs   = require('fs');
 const path = require('path');
 const { expandHome, mkdirp, symlink, copyDir, run } = require('./utils');
-const { registerStopHook, registerPreToolUseHook }  = require('./settings');
+const { registerStopHook, registerPreToolUseHook, registerCodexMcpServers }  = require('./settings');
 
 const SKILLS_PACKAGE_DIR      = path.join(__dirname, '..', 'skills');
 const SKILLS_TARGET_DIR       = expandHome('~/.claude/skills');
@@ -17,6 +17,10 @@ const SETTINGS_FILE           = expandHome('~/.claude/settings.json');
 const AGENTS_DIR              = expandHome('~/Agents');
 const CODEX_SKILLS_PACKAGE_DIR = path.join(__dirname, '..', 'codex-skills');
 const CODEX_SKILLS_TARGET_DIR  = expandHome('~/.codex/skills');
+const MCP_CONFIG_DIR          = path.join(__dirname, '..', 'config', 'mcp');
+const CLAUDE_MCP_LINK         = expandHome('~/.claude/.mcp.json');
+const CURSOR_MCP_LINK         = expandHome('~/.cursor/mcp.json');
+const CODEX_CONFIG_FILE       = expandHome('~/.codex/config.toml');
 
 function install() {
   console.log('\n=== aicrew — Global Install ===\n');
@@ -70,6 +74,20 @@ function install() {
     console.log(`  ⚠  Missing:           ${CODEX_SKILLS_PACKAGE_DIR}`);
   }
 
+  // 6. MCP configs — symlink Claude + Cursor, patch Codex
+  console.log('\nMCP servers:');
+  symlinkMcp(path.join(MCP_CONFIG_DIR, 'claude.json'), CLAUDE_MCP_LINK, 'Claude Code');
+  // Cursor uses cursor.local.json (gitignored) so real API keys stay off git.
+  // If cursor.local.json doesn't exist yet, seed it from the template.
+  const cursorLocalSrc = path.join(MCP_CONFIG_DIR, 'cursor.local.json');
+  const cursorTemplateSrc = path.join(MCP_CONFIG_DIR, 'cursor.json');
+  if (!fs.existsSync(cursorLocalSrc)) {
+    fs.copyFileSync(cursorTemplateSrc, cursorLocalSrc);
+    console.log(`  ✓  Created local:     config/mcp/cursor.local.json (fill in real API keys)`);
+  }
+  symlinkMcp(cursorLocalSrc, CURSOR_MCP_LINK, 'Cursor');
+  registerCodexMcpServers(CODEX_CONFIG_FILE, path.join(MCP_CONFIG_DIR, 'codex.toml'));
+
   // Summary
   const cmdCount = fs.existsSync(COMMANDS_DIR)
     ? fs.readdirSync(COMMANDS_DIR).filter(f => f.endsWith('.md')).length
@@ -82,7 +100,7 @@ function install() {
   console.log('  /conclude        — wrap up a session and save learnings');
   console.log('  /update-skills   — maintain and evolve the skills system');
   console.log('\nAvailable skills in Codex:');
-  console.log('  $aicrew-dev, $brainstorm, $aicrew-fix, $aicrew-conclude');
+  console.log('  aicrew-dev, aicrew-fix, aicrew-conclude, aicrew-harness-audit, aicrew-update-skills, brainstorm, lean');
 }
 
 // Copy files from src that don't already exist in dest (preserve user edits)
@@ -100,6 +118,34 @@ function mergeSkills(src, dest, baseDir) {
       console.log(`  ↻  Exists, kept:     ${path.relative(baseDir, d)}`);
     }
   }
+}
+
+// Symlink an MCP config file, backing up any existing regular file first.
+function symlinkMcp(src, link, label) {
+  if (!fs.existsSync(src)) {
+    console.log(`  ⚠  Missing source:    ${src}`);
+    return;
+  }
+  if (fs.existsSync(link) || fs.existsSync(link.replace(/\/$/, ''))) {
+    try {
+      const stat = fs.lstatSync(link);
+      if (stat.isSymbolicLink()) {
+        const current = fs.readlinkSync(link);
+        if (current === src) {
+          console.log(`  ↻  Already linked:   ${label} (${link})`);
+          return;
+        }
+        fs.unlinkSync(link);
+      } else {
+        const backup = link + '.bak';
+        fs.renameSync(link, backup);
+        console.log(`  ✓  Backed up:        ${backup}`);
+      }
+    } catch (_) {}
+  }
+  mkdirp(path.dirname(link));
+  fs.symlinkSync(src, link);
+  console.log(`  ✓  Linked:           ${label} → ${path.basename(src)}`);
 }
 
 module.exports = { install };

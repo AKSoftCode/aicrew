@@ -1,0 +1,65 @@
+{
+  "name": "aicrew-cursor-multi-tool",
+  "displayName": "AICrew Multi-Tool Launcher",
+  "description": "Launch Claude Code, Gemini CLI, and Codex terminals inside Cursor with a shared task session.",
+  "version": "0.0.1",
+  "publisher": "aicrew",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:aicrewMultiTool.startTask",
+    "onCommand:aicrewMultiTool.openClaude",
+    "onCommand:aicrewMultiTool.openGemini",
+    "onCommand:aicrewMultiTool.openCodex"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "aicrewMultiTool.startTask",
+        "title": "AICrew: Start Multi-Tool Task"
+      },
+      {
+        "command": "aicrewMultiTool.openClaude",
+        "title": "AICrew: Open Claude Code Terminal"
+      },
+      {
+        "command": "aicrewMultiTool.openGemini",
+        "title": "AICrew: Open Gemini CLI Terminal"
+      },
+      {
+        "command": "aicrewMultiTool.openCodex",
+        "title": "AICrew: Open Codex Terminal"
+      }
+    ],
+    "configuration": {
+      "title": "AICrew Multi-Tool",
+      "properties": {
+        "aicrewMultiTool.claudeCommand": {
+          "type": "string",
+          "default": "claude",
+          "description": "Command used to launch Claude Code in terminal."
+        },
+        "aicrewMultiTool.geminiCommand": {
+          "type": "string",
+          "default": "gemini",
+          "description": "Command used to launch Gemini CLI in terminal."
+        },
+        "aicrewMultiTool.codexCommand": {
+          "type": "string",
+          "default": "codex",
+          "description": "Command used to launch Codex CLI in terminal."
+        },
+        "aicrewMultiTool.exportSessionVar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Export AICREW_SESSION in each terminal before launching a tool."
+        }
+      }
+    }
+  }
+}
