@@ -1,40 +1,191 @@
 'use strict';
 
-// installer.js — global `aicrew install`
+// installer.js — global `aicrew install [platform]`
 //
-// Installs the package skills into ~/Agents and ~/.claude/skills/,
-// creates command symlinks, and registers global hooks in ~/.claude/settings.json.
+// Supported platforms:
+//   aicrew install          → all platforms (default)
+//   aicrew install all      → same as default
+//   aicrew install claude   → ~/Agents/ + ~/.claude/ commands, skills, hooks, MCP
+//   aicrew install cursor   → ~/Agents/ + ~/.cursor/mcp.json wired
+//   aicrew install codex    → ~/Agents/ + ~/.codex/skills/ + config.toml MCP
+//   aicrew install gemini   → ~/Agents/ populated + Gemini config instructions
+//
+// ~/Agents/ is always populated first — it is the shared source of truth that
+// every platform-specific step references.
 
 const fs   = require('fs');
 const path = require('path');
 const { expandHome, mkdirp, symlink, copyDir, run } = require('./utils');
 const { registerStopHook, registerPreToolUseHook, registerCodexMcpServers }  = require('./settings');
 
-const SKILLS_PACKAGE_DIR      = path.join(__dirname, '..', 'skills');
-const SKILLS_TARGET_DIR       = expandHome('~/.claude/skills');
-const COMMANDS_DIR            = expandHome('~/.claude/commands');
-const SETTINGS_FILE           = expandHome('~/.claude/settings.json');
-const AGENTS_DIR              = expandHome('~/Agents');
+const SKILLS_PACKAGE_DIR       = path.join(__dirname, '..', 'skills');
+const SKILLS_TARGET_DIR        = expandHome('~/.claude/skills');
+const COMMANDS_DIR             = expandHome('~/.claude/commands');
+const SETTINGS_FILE            = expandHome('~/.claude/settings.json');
+const AGENTS_DIR               = expandHome('~/Agents');
 const CODEX_SKILLS_PACKAGE_DIR = path.join(__dirname, '..', 'codex-skills');
 const CODEX_SKILLS_TARGET_DIR  = expandHome('~/.codex/skills');
-const MCP_CONFIG_DIR          = path.join(__dirname, '..', 'config', 'mcp');
-const CLAUDE_MCP_LINK         = expandHome('~/.claude/.mcp.json');
-const CURSOR_MCP_LINK         = expandHome('~/.cursor/mcp.json');
-const CODEX_CONFIG_FILE       = expandHome('~/.codex/config.toml');
+const MCP_CONFIG_DIR           = path.join(__dirname, '..', 'config', 'mcp');
+const CLAUDE_MCP_LINK          = expandHome('~/.claude/.mcp.json');
+const CURSOR_MCP_LINK          = expandHome('~/.cursor/mcp.json');
+const CODEX_CONFIG_FILE        = expandHome('~/.codex/config.toml');
 
-function install() {
-  console.log('\n=== aicrew — Global Install ===\n');
+// ─── Shared: ~/Agents/ ───────────────────────────────────────────────────────
 
-  // 1. Install package source-of-truth assets to ~/Agents
-  console.log('Shared assets:');
+function ensureAgents() {
+  console.log('Shared assets (~/Agents/):');
   if (!fs.existsSync(AGENTS_DIR)) {
     copyDir(SKILLS_PACKAGE_DIR, AGENTS_DIR);
     console.log(`  ✓  Copied skills to   ${AGENTS_DIR}`);
   } else {
     mergeSkills(SKILLS_PACKAGE_DIR, AGENTS_DIR, AGENTS_DIR);
   }
+}
 
-  // 2. Copy skills to ~/.claude/skills/
+// ─── Platform: Claude Code ───────────────────────────────────────────────────
+
+function installClaude() {
+  console.log('\n=== aicrew — Install: Claude Code ===\n');
+
+  ensureAgents();
+
+  // Skills copy to ~/.claude/skills/
+  console.log('\nClaude skills (~/.claude/skills/):');
+  if (!fs.existsSync(SKILLS_TARGET_DIR)) {
+    copyDir(SKILLS_PACKAGE_DIR, SKILLS_TARGET_DIR);
+    console.log(`  ✓  Copied skills to   ${SKILLS_TARGET_DIR}`);
+  } else {
+    mergeSkills(SKILLS_PACKAGE_DIR, SKILLS_TARGET_DIR, SKILLS_TARGET_DIR);
+  }
+
+  // Command symlinks: ~/.claude/commands/*.md → ~/Agents/commands/*.md
+  console.log('\nCommands (~/.claude/commands/):');
+  mkdirp(COMMANDS_DIR);
+  const cmdsDir = path.join(AGENTS_DIR, 'commands');
+  if (fs.existsSync(cmdsDir)) {
+    for (const f of fs.readdirSync(cmdsDir)) {
+      if (!f.endsWith('.md')) continue;
+      symlink(path.join(cmdsDir, f), path.join(COMMANDS_DIR, f));
+    }
+  }
+
+  // Hooks
+  console.log('\nHooks (~/.claude/settings.json):');
+  const memScript = path.join(AGENTS_DIR, 'hooks', 'session-memory.py');
+  const secScript = path.join(AGENTS_DIR, 'hooks', 'security-guard.py');
+  registerStopHook(SETTINGS_FILE, memScript, 'session-memory.py');
+  registerPreToolUseHook(SETTINGS_FILE, secScript, 'security-guard.py');
+
+  // MCP
+  console.log('\nMCP servers:');
+  symlinkMcp(path.join(MCP_CONFIG_DIR, 'claude.json'), CLAUDE_MCP_LINK, 'Claude Code');
+
+  const cmdCount = fs.existsSync(COMMANDS_DIR)
+    ? fs.readdirSync(COMMANDS_DIR).filter(f => f.endsWith('.md')).length
+    : 0;
+
+  console.log('\n=== Claude Code install complete ===');
+  console.log(`Slash commands available (${cmdCount}): /dev /fix /quick /conclude /update-skills`);
+  console.log('  /install /update /status /benchmark /brainstorm /session /handoff /lean /terse /normal');
+  console.log('\nOpen Claude Code in any project and type /dev to start.');
+}
+
+// ─── Platform: Cursor ────────────────────────────────────────────────────────
+
+function installCursor() {
+  console.log('\n=== aicrew — Install: Cursor ===\n');
+
+  ensureAgents();
+
+  // Cursor MCP config
+  console.log('\nMCP servers (~/.cursor/mcp.json):');
+  const cursorLocalSrc    = path.join(MCP_CONFIG_DIR, 'cursor.local.json');
+  const cursorTemplateSrc = path.join(MCP_CONFIG_DIR, 'cursor.json');
+  if (!fs.existsSync(cursorLocalSrc) && fs.existsSync(cursorTemplateSrc)) {
+    fs.copyFileSync(cursorTemplateSrc, cursorLocalSrc);
+    console.log(`  ✓  Created local:     config/mcp/cursor.local.json (fill in real API keys)`);
+  }
+  symlinkMcp(cursorLocalSrc, CURSOR_MCP_LINK, 'Cursor');
+
+  console.log('\n=== Cursor install complete ===');
+  console.log('MCP servers wired via ~/.cursor/mcp.json');
+  console.log('\nNext steps:');
+  console.log('  1. Fill in real API keys in: config/mcp/cursor.local.json');
+  console.log('  2. Run `aicrew agent-kit init ./agent-kit` to set up shared Cursor rules');
+  console.log('  3. Run `aicrew cursor-plugin init` to scaffold multi-tool terminal panel');
+  console.log('\nSlash commands (/dev, /fix, /quick, etc.) available via Cursor\'s Claude integration.');
+  console.log('Agents reference ~/Agents/ rules automatically.');
+}
+
+// ─── Platform: Codex ─────────────────────────────────────────────────────────
+
+function installCodex() {
+  console.log('\n=== aicrew — Install: Codex ===\n');
+
+  ensureAgents();
+
+  // Codex skills
+  console.log('\nCodex skills (~/.codex/skills/):');
+  if (fs.existsSync(CODEX_SKILLS_PACKAGE_DIR)) {
+    if (!fs.existsSync(CODEX_SKILLS_TARGET_DIR)) {
+      copyDir(CODEX_SKILLS_PACKAGE_DIR, CODEX_SKILLS_TARGET_DIR);
+      console.log(`  ✓  Copied skills to   ${CODEX_SKILLS_TARGET_DIR}`);
+    } else {
+      mergeSkills(CODEX_SKILLS_PACKAGE_DIR, CODEX_SKILLS_TARGET_DIR, CODEX_SKILLS_TARGET_DIR);
+    }
+  } else {
+    console.log(`  ⚠  Missing source:    ${CODEX_SKILLS_PACKAGE_DIR}`);
+  }
+
+  // Codex MCP via config.toml
+  console.log('\nMCP servers (~/.codex/config.toml):');
+  registerCodexMcpServers(CODEX_CONFIG_FILE, path.join(MCP_CONFIG_DIR, 'codex.toml'));
+
+  const skillCount = fs.existsSync(CODEX_SKILLS_TARGET_DIR)
+    ? fs.readdirSync(CODEX_SKILLS_TARGET_DIR).filter(d => d.startsWith('aicrew-') || d === 'brainstorm' || d === 'lean').length
+    : 0;
+
+  console.log('\n=== Codex install complete ===');
+  console.log(`Skills available (${skillCount}): aicrew-dev, aicrew-fix, aicrew-quick, aicrew-conclude`);
+  console.log('  aicrew-update-skills, aicrew-harness-audit, aicrew-benchmark, brainstorm, lean');
+  console.log('  aicrew-install, aicrew-update, aicrew-status, aicrew-session, aicrew-handoff');
+  console.log('\nInvoke via your Codex UI\'s skill picker.');
+}
+
+// ─── Platform: Gemini CLI ────────────────────────────────────────────────────
+
+function installGemini() {
+  console.log('\n=== aicrew — Install: Gemini CLI ===\n');
+
+  ensureAgents();
+
+  console.log('\n=== Gemini CLI setup ===');
+  console.log('~/Agents/ is populated with all commands and agents.');
+  console.log('');
+  console.log('Gemini CLI wiring (manual steps — varies by Gemini CLI version):');
+  console.log('');
+  console.log('  Option A — if your Gemini CLI supports a commands path config:');
+  console.log('    Point it to ~/Agents/commands/');
+  console.log('    Slash commands (/dev, /fix, /quick, etc.) will be available.');
+  console.log('');
+  console.log('  Option B — reference commands directly:');
+  console.log('    Paste contents of ~/Agents/commands/dev.md as a system prompt.');
+  console.log('    Or reference ~/Agents/ in your Gemini config as a rules path.');
+  console.log('');
+  console.log('  Interactive checkpoints: Gemini CLI uses `ask_human` tool.');
+  console.log('');
+  console.log('  See: skills/docs/platform-entry-points.md for full Gemini notes.');
+  console.log('  Gemini CLI docs: https://ai.google.dev/gemini-api/docs/gemini-cli');
+}
+
+// ─── All platforms ───────────────────────────────────────────────────────────
+
+function install() {
+  console.log('\n=== aicrew — Global Install (all platforms) ===\n');
+
+  ensureAgents();
+
+  // Claude Code
   console.log('\nClaude skills:');
   if (!fs.existsSync(SKILLS_TARGET_DIR)) {
     copyDir(SKILLS_PACKAGE_DIR, SKILLS_TARGET_DIR);
@@ -43,7 +194,6 @@ function install() {
     mergeSkills(SKILLS_PACKAGE_DIR, SKILLS_TARGET_DIR, SKILLS_TARGET_DIR);
   }
 
-  // 3. Command symlinks: ~/.claude/commands/*.md → ~/Agents/commands/*.md
   console.log('\nCommands:');
   mkdirp(COMMANDS_DIR);
   const cmdsDir = path.join(AGENTS_DIR, 'commands');
@@ -54,14 +204,13 @@ function install() {
     }
   }
 
-  // 4. Register global hooks
   console.log('\nHooks:');
   const memScript = path.join(AGENTS_DIR, 'hooks', 'session-memory.py');
   const secScript = path.join(AGENTS_DIR, 'hooks', 'security-guard.py');
   registerStopHook(SETTINGS_FILE, memScript, 'session-memory.py');
   registerPreToolUseHook(SETTINGS_FILE, secScript, 'security-guard.py');
 
-  // 5. Codex skills (tool-agnostic entry points)
+  // Codex
   console.log('\nCodex skills:');
   if (fs.existsSync(CODEX_SKILLS_PACKAGE_DIR)) {
     if (!fs.existsSync(CODEX_SKILLS_TARGET_DIR)) {
@@ -74,14 +223,12 @@ function install() {
     console.log(`  ⚠  Missing:           ${CODEX_SKILLS_PACKAGE_DIR}`);
   }
 
-  // 6. MCP configs — symlink Claude + Cursor, patch Codex
+  // MCP configs
   console.log('\nMCP servers:');
   symlinkMcp(path.join(MCP_CONFIG_DIR, 'claude.json'), CLAUDE_MCP_LINK, 'Claude Code');
-  // Cursor uses cursor.local.json (gitignored) so real API keys stay off git.
-  // If cursor.local.json doesn't exist yet, seed it from the template.
-  const cursorLocalSrc = path.join(MCP_CONFIG_DIR, 'cursor.local.json');
+  const cursorLocalSrc    = path.join(MCP_CONFIG_DIR, 'cursor.local.json');
   const cursorTemplateSrc = path.join(MCP_CONFIG_DIR, 'cursor.json');
-  if (!fs.existsSync(cursorLocalSrc)) {
+  if (!fs.existsSync(cursorLocalSrc) && fs.existsSync(cursorTemplateSrc)) {
     fs.copyFileSync(cursorTemplateSrc, cursorLocalSrc);
     console.log(`  ✓  Created local:     config/mcp/cursor.local.json (fill in real API keys)`);
   }
@@ -95,21 +242,20 @@ function install() {
 
   console.log('\n=== Install complete ===');
   console.log(`Commands available: ${cmdCount}`);
-  console.log('\nAvailable commands in Claude Code:');
-  console.log('  /dev             — start the development pipeline');
-  console.log('  /quick           — Scout → Act (graph-first, Karpathy guardrails)');
-  console.log('  /conclude        — wrap up a session and save learnings');
-  console.log('  /update-skills   — maintain and evolve the skills system');
-  console.log('  /install  /update  /status  /agent-kit  /cursor-plugin');
-  console.log('  /benchmark  /brainstorm  /session  /handoff  /lean  /terse  /normal');
-  console.log('\nAvailable skills in Codex:');
-  console.log('  aicrew-dev, aicrew-fix, aicrew-quick, aicrew-conclude, aicrew-harness-audit, aicrew-update-skills');
-  console.log('  aicrew-install, aicrew-update, aicrew-status, aicrew-agent-kit, aicrew-cursor-plugin');
-  console.log('  aicrew-session, aicrew-handoff, aicrew-benchmark, aicrew-terse, aicrew-normal');
-  console.log('  brainstorm, lean');
+  console.log('\nClaude Code:   /dev  /fix  /quick  /conclude  /update-skills  /harness-audit');
+  console.log('               /install  /update  /status  /benchmark  /brainstorm');
+  console.log('               /session  /handoff  /lean  /terse  /normal');
+  console.log('\nCodex:         aicrew-dev  aicrew-fix  aicrew-quick  aicrew-conclude');
+  console.log('               aicrew-harness-audit  aicrew-update-skills  brainstorm  lean');
+  console.log('               aicrew-install  aicrew-update  aicrew-status');
+  console.log('               aicrew-session  aicrew-handoff  aicrew-terse  aicrew-normal');
+  console.log('\nCursor:        Slash commands via Claude integration; MCP wired; see agent-kit');
+  console.log('Gemini CLI:    ~/Agents/ populated; wire manually per Gemini CLI config');
+  console.log('\nRun `aicrew status` to verify per-platform install state.');
 }
 
-// Copy files from src that don't already exist in dest (preserve user edits)
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
 function mergeSkills(src, dest, baseDir) {
   for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
     const s = path.join(src, entry.name);
@@ -126,7 +272,6 @@ function mergeSkills(src, dest, baseDir) {
   }
 }
 
-// Symlink an MCP config file, backing up any existing regular file first.
 function symlinkMcp(src, link, label) {
   if (!fs.existsSync(src)) {
     console.log(`  ⚠  Missing source:    ${src}`);
@@ -154,4 +299,4 @@ function symlinkMcp(src, link, label) {
   console.log(`  ✓  Linked:           ${label} → ${path.basename(src)}`);
 }
 
-module.exports = { install };
+module.exports = { install, installClaude, installCursor, installCodex, installGemini };

@@ -1,10 +1,12 @@
 # AI Skills & Agents System
 
-Universal development pipeline for Claude Code, Cursor, Codex, Antigravity, and Gemini.
+Universal development pipeline for Claude Code, Cursor, Codex, Gemini CLI, and Antigravity.
 One `/dev` command — works in any project on tools that support slash commands. In Codex, use the `aicrew-*` skills.
 
 Source of truth: `~/Agents/` (platform-agnostic)
-Published as: `npx aicrew install` (from `~/Workspace/aicrew/`)
+Published as: `npx aicrew install` (all platforms) or `npx aicrew install <platform>` (targeted)
+
+Platform-specific install: `aicrew install claude` | `aicrew install cursor` | `aicrew install codex` | `aicrew install gemini`
 
 Last updated: 2026-06-21
 
@@ -128,30 +130,33 @@ All entry-point commands (`/dev`, `/fix`, `/quick`) share a common token-saving 
 
 ---
 
-## CLI / Skill / Slash — Parity Table
+## Same action, every platform — Parity Table
 
-Every action is reachable three ways. No CLI required.
+Every action is reachable from every supported platform. No CLI required on any of them.
 
-| Action | CLI | Codex Skill | Claude Code Slash |
-|--------|-----|-------------|-------------------|
-| First-time setup | `aicrew install` | `aicrew-install` | `/install` |
-| Pull new skills | `aicrew update` | `aicrew-update` | `/update` |
-| Check install | `aicrew status` | `aicrew-status` | `/status` |
-| Scaffold agent-kit | `aicrew agent-kit init` | `aicrew-agent-kit` | `/agent-kit` |
-| Scaffold cursor plugin | `aicrew cursor-plugin init` | `aicrew-cursor-plugin` | `/cursor-plugin` |
-| Full dev pipeline | — | `aicrew-dev` | `/dev` |
-| Fast bug fix | — | `aicrew-fix` | `/fix` |
-| Scout → Act | — | `aicrew-quick` | `/quick` |
-| Wrap up session | — | `aicrew-conclude` | `/conclude` |
-| Evolve project skills | — | `aicrew-update-skills` | `/update-skills` |
-| Audit harness | — | `aicrew-harness-audit` | `/harness-audit` |
-| Session checkpoint label | — | `aicrew-session` | `/session` |
-| Cross-tool handoff | — | `aicrew-handoff` | `/handoff` |
-| Benchmark skills | `aicrew benchmark` _(planned)_ | `aicrew-benchmark` | `/benchmark` |
-| Design brainstorm | — | `brainstorm` | `/brainstorm` |
-| Lean/terse output on | — | `lean` | `/lean on` |
-| Lean/terse output off | — | `aicrew-normal` | `/lean off` or `/normal` |
-| Re-enable terse | — | `aicrew-terse` | `/terse` |
+> Full matrix with per-platform install paths and notes: [`skills/docs/platform-entry-points.md`](./docs/platform-entry-points.md)
+
+| Action | CLI | Claude Code | Cursor | Codex | Gemini / Antigravity |
+|--------|-----|-------------|--------|-------|----------------------|
+| First-time setup | `aicrew install` | `/install` | `aicrew install cursor` | `aicrew-install` | `aicrew install gemini` |
+| Platform-only setup | `aicrew install <platform>` | — | — | — | — |
+| Pull new skills | `aicrew update` | `/update` | re-run install | `aicrew-update` | re-run install |
+| Check install | `aicrew status` | `/status` | `aicrew status` | `aicrew-status` | `aicrew status` |
+| Scaffold agent-kit | `aicrew agent-kit init` | `/agent-kit` | same CLI | `aicrew-agent-kit` | — |
+| Scaffold cursor plugin | `aicrew cursor-plugin init` | `/cursor-plugin` | same CLI | `aicrew-cursor-plugin` | — |
+| Full dev pipeline | — | `/dev` | `/dev` | `aicrew-dev` | `/dev` |
+| Fast bug fix | — | `/fix` | `/fix` | `aicrew-fix` | `/fix` |
+| Scout → Act | — | `/quick` | `/quick` | `aicrew-quick` | `/quick` |
+| Wrap up session | — | `/conclude` | `/conclude` | `aicrew-conclude` | `/conclude` |
+| Evolve project skills | — | `/update-skills` | `/update-skills` | `aicrew-update-skills` | `/update-skills` |
+| Audit harness | — | `/harness-audit` | `/harness-audit` | `aicrew-harness-audit` | `/harness-audit` |
+| Session checkpoint label | — | `/session` | `/session` | `aicrew-session` | `/session` |
+| Cross-tool handoff | — | `/handoff` | `/handoff` | `aicrew-handoff` | `/handoff` |
+| Benchmark skills | `aicrew benchmark` | `/benchmark` | `aicrew benchmark` | `aicrew-benchmark` | `aicrew benchmark` |
+| Design brainstorm | — | `/brainstorm` | `/brainstorm` | `brainstorm` | `/brainstorm` |
+| Lean/terse on | — | `/lean on` | `/lean on` | `lean` | `/lean on` |
+| Lean/terse off | — | `/lean off` or `/normal` | `/lean off` | `aicrew-normal` | `/lean off` |
+| Re-enable terse | — | `/terse` | `/terse` | `aicrew-terse` | `/terse` |
 
 ---
 
