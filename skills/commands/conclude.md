@@ -129,3 +129,5 @@ Run `git status` to show unstaged/uncommitted changes.
 If there are uncommitted changes, remind the user to commit before ending the session.
 
 Suggest a commit message if one seems obvious from the work done.
+
+**Commit attribution:** Proposed messages must not include `Co-authored-by:` for Cursor, Claude, Codex, Gemini, or any AI agent. Human author only.

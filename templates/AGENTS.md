@@ -28,6 +28,7 @@ Disable with `/normal` or `/lean off`. Re-enable with `/lean on`.
 - Never commit secrets or credentials to source
 - All new endpoints/routes must have authentication/authorization checks
 - Run the test suite and confirm it passes before marking work done
+- Never add `Co-authored-by:` trailers for AI tools; git commits attribute only the human developer (see `templates/cursor-rules/no-ai-coauthors.mdc`)
 - Follow the existing naming and file structure conventions
 - Prefer TDD-first for behavior changes: write the smallest failing automated test first
 - Keep diffs minimal and avoid unrelated refactors

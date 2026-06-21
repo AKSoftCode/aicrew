@@ -1,0 +1,15 @@
+---
+description: Never attribute commits to AI tools — human author only
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# Commit attribution (human only)
+
+When creating git commits (including suggested commit messages):
+
+- **Never** add `Co-authored-by:` trailers naming Cursor, Cursor Agent, Claude, Codex, Gemini, OpenAI, Anthropic, or any AI agent or bot.
+- **Never** set commit author or committer to AI tool identities (e.g. `cursoragent@cursor.com`).
+- Attribute work only to the human developer using this repository.
+
+Applies in Cursor, Codex, Claude Code, Gemini CLI, and any other agent harness.

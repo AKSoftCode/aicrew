@@ -19,4 +19,4 @@ Checklist:
 - Summary of changes and why
 - Tests run (or why not)
 - Risks or follow-ups
-- Proposed commit message (no co-author lines unless explicitly requested)
+- Proposed commit message (human author only — never `Co-authored-by:` for AI tools)
