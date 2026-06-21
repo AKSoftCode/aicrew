@@ -16,6 +16,8 @@ If you've ever lost a long session to a context-window overflow, or found your A
 
 ## Quick start (5 minutes)
 
+**Detailed per-platform guide:** [`skills/docs/install-by-platform.md`](./skills/docs/install-by-platform.md)
+
 ### 1. Install
 
 ```bash
@@ -23,10 +25,10 @@ If you've ever lost a long session to a context-window overflow, or found your A
 npx aicrew install
 
 # Install for one platform only:
-npx aicrew install claude    # Claude Code only
-npx aicrew install codex     # Codex only
-npx aicrew install cursor    # Cursor only
-npx aicrew install gemini    # Gemini CLI only
+npx aicrew install claude    # Claude Code — slash commands, hooks, MCP
+npx aicrew install codex     # Codex — native skill folders, MCP config.toml
+npx aicrew install cursor    # Cursor — MCP wiring, agent-kit rules
+npx aicrew install gemini    # Gemini CLI — ~/Agents/ + config instructions
 
 # Or, after cloning this repo, install globally:
 npm install -g .
@@ -55,14 +57,18 @@ aicrew-dev
 
 In **Cursor**, ask the agent and it uses the shared `~/Agents/` rules automatically.
 
+In **Gemini CLI** or **Antigravity**, reference `~/Agents/commands/dev.md` directly.
+
 ### Where skills land
 
 | Location | Contents |
 |---|---|
 | `~/Agents/` | Single source of truth — commands, agents, hooks, docs |
-| `~/.claude/commands/` | Symlinks to `~/Agents/commands/*.md` |
+| `~/.claude/commands/` | Symlinks to `~/Agents/commands/*.md` (slash commands) |
 | `~/.codex/skills/` | Codex-native skill folders (`aicrew-dev`, `aicrew-fix`, …) |
 | `~/.claude/settings.json` | Merged hook entries (`session-memory.py`, `security-guard.py`) |
+| `~/.cursor/mcp.json` | Symlink → `config/mcp/cursor.local.json` |
+| `~/.codex/config.toml` | Patched with MCP server entries |
 
 ---
 
@@ -71,6 +77,7 @@ In **Cursor**, ask the agent and it uses the shared `~/Agents/` rules automatica
 Every aicrew action is reachable from every supported platform. No CLI required anywhere.
 
 > Full per-platform matrix with invocation details: [`skills/docs/platform-entry-points.md`](./skills/docs/platform-entry-points.md)
+> Step-by-step install guide per provider: [`skills/docs/install-by-platform.md`](./skills/docs/install-by-platform.md)
 
 | Action | CLI | Claude Code | Cursor | Codex | Gemini / Antigravity |
 |--------|-----|-------------|--------|-------|----------------------|
@@ -500,3 +507,9 @@ Full attribution with license details: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTI
 aicrew is MIT — see [LICENSE](LICENSE).
 
 Third-party components and inspirations: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+---
+
+## Discoverability
+
+**GitHub topics:** `ai-agents` · `claude-code` · `codex` · `cursor` · `mcp` · `developer-tools` · `agent-skills` · `hooks` · `workflow` · `tdd` · `sdlc` · `context-engineering` · `token-optimization` · `token-saving` · `guardrails` · `speculative-decoding` · `ai-workflow` · `prompt-engineering` · `context-compression` · `devtools`

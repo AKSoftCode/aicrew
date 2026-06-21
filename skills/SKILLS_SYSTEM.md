@@ -12,6 +12,22 @@ Last updated: 2026-06-21
 
 ---
 
+## Platform Install
+
+| Platform | Command | First action | Skills land at |
+|----------|---------|-------------|----------------|
+| **Claude Code** | `aicrew install claude` | `/dev` | `~/.claude/commands/` (symlinks), `~/.claude/skills/`, hooks in `~/.claude/settings.json` |
+| **Cursor** | `aicrew install cursor` | `/dev` via agent | `~/.cursor/mcp.json` → `config/mcp/cursor.local.json` |
+| **Codex** | `aicrew install codex` | `aicrew-dev` | `~/.codex/skills/aicrew-*/` + `~/.codex/config.toml` |
+| **Gemini CLI** | `aicrew install gemini` | `/dev` (manual wire) | `~/Agents/` populated; follow printed config instructions |
+| **Antigravity** | `aicrew install` | `/dev` | `~/Agents/commands/` (reference in Antigravity config) |
+| **All platforms** | `aicrew install` | Any | All of the above |
+
+> **Step-by-step guide per provider:** [`docs/install-by-platform.md`](./docs/install-by-platform.md)
+> **Complete action × platform matrix:** [`docs/platform-entry-points.md`](./docs/platform-entry-points.md)
+
+---
+
 ## Default Communication Style
 
 All aicrew skills and commands use **caveman/lean output by default** — no opt-in required.
@@ -354,6 +370,8 @@ RED → GREEN → REFACTOR per acceptance criterion. Relaxed mode requires opt-o
 | `~/Agents/docs/how-token-savings-work.md` | Plain-English guide: speculative decoding, graph memory, lean, handoff, guardrails, benchmark |
 | `~/Agents/docs/guardrails-taxonomy.md` | NeMo ↔ aicrew guardrails map |
 | `~/Agents/docs/speculative-context.md` | Speculative context pattern (two-model routing) |
+| `~/Agents/docs/install-by-platform.md` | Step-by-step install guide per provider (Claude, Cursor, Codex, Gemini, Antigravity) |
+| `~/Agents/docs/platform-entry-points.md` | Complete action × platform matrix |
 | `~/Agents/agents/frontend-specialist.md` | Frontend TDD patterns |
 | `~/Agents/agents/backend-specialist.md` | Backend API patterns |
 | `~/Agents/agents/db-migration.md` | Migration safety rules |
