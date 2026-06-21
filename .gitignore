@@ -1,5 +1,6 @@
 node_modules/
 *.log
+*.tgz
 .DS_Store
 .env
 config/mcp/cursor.local.json

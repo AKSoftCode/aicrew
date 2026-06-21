@@ -17,6 +17,7 @@ Recent additions (see git history for details):
 | **Graph memory MCP** | **`codebase-memory-mcp`** indexes the repo into a knowledge graph — structural queries cost ~**500 tokens** vs ~**80K** for broad grep/file reads. |
 | **Context compression** | **`context-mode`** and **`token-optimizer-mcp`** MCP servers for session-level context shaping and cache-aware summarisation. |
 | **`/quick` + Karpathy guardrails** | Scout → Act shortcut with graph-first exploration and layered safety rails (`karpathy-guardrails` agent). |
+| **Headroom-inspired context budget rail** | CCR/ContentRouter/CacheAligner patterns mapped to aicrew primitives — see `skills/docs/guardrails-taxonomy.md`. |
 
 ---
 
@@ -131,6 +132,8 @@ aicrew is designed for long **`/dev`** runs without blowing the context window:
 | **`/handoff`** | Claude Code | Compact cross-tool block from **`.ai/state/`** when switching tools or models. |
 
 Use **`/normal`** or **`/lean off`** to restore default verbosity. **`/terse`** toggles output style without the full lean read policy.
+
+The layered context strategy is inspired in part by [Headroom](https://github.com/chopratejas/headroom)'s CCR (Compress-Cache-Retrieve) and ContentRouter patterns — route content to the cheapest read strategy first, retrieve full detail only on demand. See [`skills/docs/guardrails-taxonomy.md`](./skills/docs/guardrails-taxonomy.md) for the "context budget rail" mapping.
 
 ---
 
@@ -338,7 +341,7 @@ aicrew uses a layered approach inspired by Andrej Karpathy's agent-safety writin
 
 Set `ECC_HOOK_PROFILE` to `minimal`, `standard` (default), or `strict` to tune hook verbosity.
 
-*Architecture inspiration only (not bundled):* [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) (MIT) and [NVIDIA NeMo Guardrails](https://github.com/NVIDIA/NeMo-Guardrails) (NVIDIA license — see THIRD_PARTY_NOTICES.md).
+*Architecture inspiration only (not bundled):* [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) (MIT), [NVIDIA NeMo Guardrails](https://github.com/NVIDIA/NeMo-Guardrails) (NVIDIA license), and [chopratejas/headroom](https://github.com/chopratejas/headroom) (Apache 2.0) — see [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md).
 
 ---
 

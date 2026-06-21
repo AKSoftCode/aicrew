@@ -129,4 +129,13 @@ The following projects are **not included in aicrew** in any form. They influenc
 
 ---
 
+### chopratejas/headroom
+
+- **Repository:** https://github.com/chopratejas/headroom
+- **License:** Apache 2.0
+- **Inspiration:** Headroom's context compression architecture — CCR (Compress-Cache-Retrieve), ContentRouter, CacheAligner, RollingWindow, and the `headroom learn` → AGENTS.md pattern — informed aicrew's "context budget rail" concept and the Headroom-inspired section in `skills/docs/guardrails-taxonomy.md`.
+- **No code copied. Architecture reference only.**
+
+---
+
 *This file is maintained manually. If you add a new MCP server to `config/mcp/`, please add a corresponding entry here.*
