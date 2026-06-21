@@ -1,90 +1,132 @@
 # Third-Party Notices
 
-This file lists licenses and attribution for MCP servers referenced in **`config/mcp/`**, optional Cursor template servers, and external projects that inspired aicrew design. aicrew itself is [MIT licensed](./LICENSE).
+This file lists the MCP servers, npm packages, and external projects that aicrew references, installs, or draws architectural inspiration from.
 
 ---
 
-## MCP servers (configured via `aicrew install`)
+## Bundled / installed via `aicrew install`
 
-These packages are **not vendored** in this repository. Install them separately (typically via `npx -y <package>` or the server’s own installer). License information below was verified against the npm registry where applicable.
-
-### @modelcontextprotocol/server-* (MIT)
-
-Official [Model Context Protocol](https://modelcontextprotocol.io/) reference servers, referenced in **`config/mcp/cursor.json`** (template):
-
-| Package | Typical use in template |
-|---------|-------------------------|
-| `@modelcontextprotocol/server-github` | GitHub API |
-| `@modelcontextprotocol/server-filesystem` | Scoped filesystem access |
-| `@modelcontextprotocol/server-memory` | Persistent memory |
-| `@modelcontextprotocol/server-brave-search` | Web search (Brave API key) |
-| `@modelcontextprotocol/server-playwright` | Browser automation |
-| `@modelcontextprotocol/server-postgres` | PostgreSQL |
-| `@modelcontextprotocol/server-sqlite` | SQLite |
-
-**License:** MIT  
-**Source:** https://github.com/modelcontextprotocol/servers
-
-### @perplexity-ai/mcp-server (MIT)
-
-Perplexity search MCP server (optional in Cursor template; requires **`PERPLEXITY_API_KEY`** in **`cursor.local.json`**).
-
-**License:** MIT  
-**npm:** `@perplexity-ai/mcp-server`
-
-### context-mode (Elastic License 2.0)
-
-Context shaping MCP server; pinned in **`config/mcp/`** for Claude, Cursor, and Codex.
-
-**License:** Elastic-2.0  
-**Repository:** https://github.com/mksglu/context-mode  
-**npm:** `context-mode`
-
-### token-optimizer-mcp (MIT)
-
-Token budgeting and cache-friendly MCP responses; user-installed path in Cursor template.
-
-**License:** MIT  
-**Repository:** https://github.com/ooples/token-optimizer-mcp  
-**npm:** `token-optimizer-mcp`
-
-### codebase-memory-mcp (MIT) — separate install
-
-High-performance code intelligence MCP server (knowledge graph over the repo). **Not an npm dependency of aicrew** — install the binary separately and point **`config/mcp/*.json`** / **`codex.toml`** at your local path (e.g. **`~/.local/bin/codebase-memory-mcp`**).
-
-**License:** MIT  
-**Repository:** https://github.com/DeusData/codebase-memory-mcp  
-**npm:** `codebase-memory-mcp` (installer wrapper)
+The following packages are **not bundled inside the aicrew npm package**. They are pulled at runtime by the MCP host (Claude Code, Codex, Cursor) using the server definitions in `config/mcp/`.
 
 ---
 
-## Other optional integrations (Cursor template only)
+### `@modelcontextprotocol/server-github`
 
-| Integration | Notes |
-|-------------|--------|
-| **GitKraken / GitLens MCP** | Editor extension MCP host; not redistributed by aicrew. |
+- **Version:** 2025.4.8 (latest at time of writing)
+- **License:** MIT
+- **Source:** https://www.npmjs.com/package/@modelcontextprotocol/server-github
+- **Copyright:** Anthropic, PBC and contributors
 
----
-
-## Inspiration credits (not bundled)
-
-These projects are **not** included in the aicrew package. They informed guidelines and architecture only.
-
-### forrestchang/andrej-karpathy-skills (MIT)
-
-Karpathy-inspired engineering guidelines referenced in skill/command tone and TDD discipline.
-
-**License:** MIT  
-**Repository:** https://github.com/forrestchang/andrej-karpathy-skills
-
-### NVIDIA-NeMo/Guardrails
-
-Architectural inspiration for guardrails, checkpoints, and structured phase gates — **no Guardrails code is bundled**.
-
-**Repository:** https://github.com/NVIDIA-NeMo/Guardrails
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
 
 ---
 
-## Updating this file
+### `@modelcontextprotocol/server-memory`
 
-When adding MCP servers to **`config/mcp/`**, append a row here with package name, license, and source URL. Do not commit API keys or **`cursor.local.json`**.
+- **Version:** 2026.1.26 (latest at time of writing)
+- **License:** MIT
+- **Source:** https://www.npmjs.com/package/@modelcontextprotocol/server-memory
+- **Copyright:** Anthropic, PBC and contributors
+
+See MIT license text above; same terms apply.
+
+---
+
+### `@modelcontextprotocol/server-brave-search`
+
+- **Version:** 0.6.2 (latest at time of writing)
+- **License:** MIT
+- **Source:** https://www.npmjs.com/package/@modelcontextprotocol/server-brave-search
+- **Copyright:** Anthropic, PBC and contributors
+
+See MIT license text above; same terms apply.
+
+---
+
+### `@modelcontextprotocol/server-playwright`
+
+- **Version:** 0.6.2 (latest at time of writing)
+- **License:** MIT
+- **Source:** https://www.npmjs.com/package/@modelcontextprotocol/server-playwright
+- **Copyright:** Anthropic, PBC and contributors
+
+See MIT license text above; same terms apply.
+
+---
+
+### `@modelcontextprotocol/server-postgres`
+
+- **License:** MIT (see package for exact terms)
+- **Source:** https://www.npmjs.com/package/@modelcontextprotocol/server-postgres
+- **Copyright:** Anthropic, PBC and contributors
+
+See MIT license text above; same terms apply.
+
+---
+
+### `@perplexity-ai/mcp-server`
+
+- **Version:** 0.9.0 (latest at time of writing)
+- **License:** MIT
+- **Source:** https://www.npmjs.com/package/@perplexity-ai/mcp-server
+- **Copyright:** Perplexity AI, Inc. and contributors
+
+See MIT license text above; same terms apply.
+
+---
+
+### `context-mode`
+
+- **Version:** 1.0.162 (latest at time of writing)
+- **License:** Elastic License 2.0 (ELv2)
+- **Source:** https://www.npmjs.com/package/context-mode
+- **Notes:** Free to use for internal and non-commercial purposes. Production SaaS use requires a separate commercial agreement. See [elastic.co/licensing/elastic-license](https://www.elastic.co/licensing/elastic-license) for full terms.
+
+---
+
+### `token-optimizer-mcp`
+
+- **Version:** 2.17.0 (latest at time of writing)
+- **License:** MIT
+- **Source:** https://www.npmjs.com/package/token-optimizer-mcp
+
+See MIT license text above; same terms apply.
+
+---
+
+### `codebase-memory-mcp`
+
+- **Version:** 0.8.1 (latest at time of writing)
+- **License:** MIT
+- **Source:** https://www.npmjs.com/package/codebase-memory-mcp
+- **Install location:** `~/.local/bin/codebase-memory-mcp` (standalone binary; **not** bundled in the aicrew npm package)
+
+See MIT license text above; same terms apply.
+
+---
+
+## Architecture inspiration (not bundled, not distributed)
+
+The following projects are **not included in aicrew** in any form. They influenced design decisions and are credited here for transparency.
+
+---
+
+### forrestchang/andrej-karpathy-skills
+
+- **Repository:** https://github.com/forrestchang/andrej-karpathy-skills
+- **License:** MIT
+- **Inspiration:** Karpathy-style agent safety heuristics (slow down before irreversible actions, prefer reversible steps, checkpoint state) informed the design of aicrew's guardrail layer and phase-gate checkpoints.
+- **No code copied.**
+
+---
+
+### NVIDIA NeMo Guardrails
+
+- **Repository:** https://github.com/NVIDIA/NeMo-Guardrails
+- **License:** [NVIDIA NeMo Guardrails License](https://github.com/NVIDIA/NeMo-Guardrails/blob/main/LICENSE) — not MIT; review before any redistribution.
+- **Inspiration:** The input-rail / output-rail / dialogue-rail layered architecture (input guard → phase logic → output reviewer) influenced aicrew's `security-guard.py` (PreToolUse), phase-gate checkpoints, and `security-reviewer` agent pattern.
+- **No code copied. Architecture reference only.**
+
+---
+
+*This file is maintained manually. If you add a new MCP server to `config/mcp/`, please add a corresponding entry here.*

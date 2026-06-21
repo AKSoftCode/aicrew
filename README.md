@@ -15,6 +15,8 @@ Recent additions (see git history for details):
 | **State checkpoints** | Per-session files under **`.ai/state/AI_STATE.<tool>.<session>.md`**, set with **`/session`**, hand off with **`/handoff`**, prune with **`~/Agents/bin/cleanup-ai-state.sh`**. |
 | **Cursor multi-tool** | **`aicrew cursor-plugin init`** scaffolds a local extension; **`aicrew agent-kit init`** shares **`.mdc`** rules across repos. |
 | **Graph memory MCP** | **`codebase-memory-mcp`** indexes the repo into a knowledge graph — structural queries cost ~**500 tokens** vs ~**80K** for broad grep/file reads. |
+| **Context compression** | **`context-mode`** and **`token-optimizer-mcp`** MCP servers for session-level context shaping and cache-aware summarisation. |
+| **`/quick` + Karpathy guardrails** | Scout → Act shortcut with graph-first exploration and layered safety rails (`karpathy-guardrails` agent). |
 
 ---
 
@@ -140,6 +142,7 @@ Commands are markdown files under **`~/Agents/commands/`** (after install). Use 
 |--------|------|
 | `/dev` | Full pipeline — bug, feature, refactor, review, or audit intake |
 | `/fix` | Fast bug fix — **three** intake questions, then TDD to done |
+| `/quick` | Scout → Act — graph-first exploration, Karpathy guardrails, no full pipeline |
 | `/conclude` | End session — learnings, commit message prep |
 | `/update-skills` | Evolve skills; project generation where applicable |
 | `/harness-audit` | Audit the harness / skill set health |
@@ -151,6 +154,8 @@ Commands are markdown files under **`~/Agents/commands/`** (after install). Use 
 
 **`/compact`** is referenced inside **`/dev`** as the **Claude Code** context compaction step between phases; it is **not** shipped as a file in this repo.
 
+**Guardrails taxonomy:** `skills/docs/guardrails-taxonomy.md` (installed to `~/Agents/docs/`) maps NeMo Guardrails rail types to aicrew hooks, phases, and agents — documentation only, no NeMo runtime.
+
 ---
 
 ## Codex skills
@@ -161,6 +166,7 @@ After install, skill folders live under **`~/.codex/skills/`**. Invoke them the 
 |--------------|---------|
 | `aicrew-dev` | Full pipeline (same story as `/dev`) |
 | `aicrew-fix` | Fast fix path (same story as `/fix`) |
+| `aicrew-quick` | Scout → Act path (same story as `/quick`) |
 | `aicrew-conclude` | Session wrap-up |
 | `aicrew-harness-audit` | Harness audit |
 | `aicrew-update-skills` | Skill maintenance / project generation |
@@ -308,6 +314,34 @@ The npm package source lives under **`skills/`**, **`codex-skills/`**, and **`te
 
 ---
 
+## Guardrails
+
+aicrew uses a layered approach inspired by Andrej Karpathy's agent-safety writing and NVIDIA NeMo Guardrails' input/output rail architecture.
+
+**Input rail — `security-guard.py` (PreToolUse hook)**
+- Fires before every `Edit`, `Write`, or `MultiEdit` call.
+- Blocks patterns that are unambiguously dangerous (PEM private keys, AWS secret keys).
+- Warns on advisory patterns (hardcoded tokens, high-entropy strings) without blocking.
+- Skips test fixtures and lock files to keep false-positive rate low.
+
+**Phase gates — built into `/dev`**
+- Each phase requires an explicit acceptance before the next begins.
+- The model **stops and waits**; it never invents a user response.
+- Security phase (Phase 6) runs on changed files only, not the whole repo.
+
+**Output rail — `security-reviewer` agent (Phase 6)**
+- Reviews proposed changes for injection risks, secret leaks, and unsafe patterns before conclude.
+
+**Session memory — `session-memory.py` (Stop hook)**
+- Strips `<private>…</private>` blocks before persisting session journals.
+- Optional instinct capture at session end.
+
+Set `ECC_HOOK_PROFILE` to `minimal`, `standard` (default), or `strict` to tune hook verbosity.
+
+*Architecture inspiration only (not bundled):* [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) (MIT) and [NVIDIA NeMo Guardrails](https://github.com/NVIDIA/NeMo-Guardrails) (NVIDIA license — see THIRD_PARTY_NOTICES.md).
+
+---
+
 ## Design principles
 
 - **Single shared tree in `~/Agents/`** for commands and agents the slash commands resolve to  
@@ -327,4 +361,6 @@ Commands repeat a **mandatory checkpoint** table: the model must **stop and wait
 
 ## License
 
-MIT — see [LICENSE](./LICENSE). Third-party MCP packages and inspiration credits: [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md).
+MIT — see [LICENSE](LICENSE).
+
+Third-party MCP servers and inspiration credits are documented in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
