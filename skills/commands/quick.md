@@ -3,7 +3,7 @@ description: "Scout → Act flow with graph-first discovery, speculative context
 argument-hint: "[goal or task description]"
 ---
 
-**Lowest-overhead entry point — graph-first Scout pass (~500 tokens) then a surgical Act. Use for small, well-scoped tasks where you don't need the full `/dev` pipeline.**
+**Lowest-overhead entry point — Scout → Act. Graph-first discovery (graph query ~500 tok; Scout pass may also use targeted diff/tree reads) emits a fixed `SCOUT:` schema (~1–2 K); the main model acts from that block only. Use for small, well-scoped tasks where you don't need the full `/dev` pipeline.**
 
 > **⚠️ INTERACTIVE CHECKPOINTS — MANDATORY RULE**
 >

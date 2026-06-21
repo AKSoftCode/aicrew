@@ -31,7 +31,7 @@ aicrew applies the same logic at the **agent level**, not the token level:
 | Accept → continue | Act phase proceeds; main agent never sees the raw repo |
 | Reject → re-draft | Scout re-runs with a wider read policy (max 2 retries) |
 
-**Why it saves so many tokens:** a repo-wide `grep` costs ~80,000 tokens. A Scout graph query costs ~500 tokens. The main model receives only the 1–2 K `SCOUT:` block, not the raw repository — so it pays Scout's cost, not grep's cost.
+**Why it saves so many tokens:** a repo-wide `grep` costs ~80,000 tokens. A graph query costs ~500 tokens (documented ratio). Scout may also use optional targeted diff or tree reads; the emitted `SCOUT:` block is ~1–2 K. The main model receives only that block, not the raw repository — so it avoids grep-scale exploration cost.
 
 ### ASCII diagram
 
@@ -43,9 +43,8 @@ User / Orchestrator
 │   SCOUT AGENT       │   (haiku / mini / fast)
 │                     │
 │  1. graph query     │   ~500 tok
-│  2. diff / tree     │   ~1–2 K tok
-│  3. emit SCOUT:     │   fixed schema ↓
-│     block (1–2 K)   │
+│  2. diff / tree     │   optional reads
+│  3. emit SCOUT:     │   ~1–2 K fixed schema ↓
 └────────┬────────────┘
          │  SCOUT: block
          ▼

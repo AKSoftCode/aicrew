@@ -119,6 +119,40 @@ Run `aicrew benchmark --report` for repo-specific estimates (writes `.ai/reports
 
 ---
 
+## Scout in plain English
+
+Think of Scout as **drawing a map before the hike**. You do not start walking (Act) until someone checks the map (Verify).
+
+1. **Scout** — a fast, graph-first pass finds the few files and constraints that matter.
+2. **Verify** — you (or the main agent) confirm the map: constraints copied verbatim, paths real, nothing invented.
+3. **Act** — the capable model implements only what Scout's `Next action` says.
+
+The **Scout block** is a fixed `SCOUT:` schema (from the [`context-scout`](../skills/agents/context-scout.md) agent): goal, verbatim constraints, relevant files, call chain, next action, risks. The Act phase receives that block plus your original goal — not the whole repo.
+
+| Command | When Scout runs |
+|---------|-----------------|
+| `/quick` | Phase 1 — always, before any Act edit |
+| `/dev` | Phase 1 Research only — before broad Glob/Grep/Read |
+| `/fix` | Phase 1 Bug Analysis only — before the bug-analyst deep dive |
+
+**Honest cost split (illustrative, project-dependent):** a graph query is ~500 tokens (documented ratio vs repo-wide grep ~80 K). Scout may also use optional targeted diff or tree reads. The emitted `SCOUT:` block is ~1–2 K. Do not treat ~500 as the whole Scout pass — it is the graph-query line item only.
+
+---
+
+## Who picks the model?
+
+aicrew defines **roles** (Scout vs Act); your **host tool** assigns which model runs each role.
+
+Cursor, Claude Code, Codex, Gemini CLI, and Antigravity each pick the model for the active session unless the orchestrator explicitly spawns a subagent with a different model (best-effort — platform APIs vary).
+
+**Token savings from a "cheap Scout" apply only when the platform actually runs Scout on a cheaper model** (e.g. Haiku, gpt-4o-mini). If Scout and Act share the same expensive model, you still get graph-first and schema compression savings — not the two-tier model discount.
+
+**Best-effort routing:** when subagents are supported, spawn Scout on the cheapest model that can reliably graph-query. In Cursor, a Task/subagent with an explicit `model` parameter is the typical pattern; other platforms may require a separate session or tool-specific hook. aicrew does not guarantee per-platform model APIs — it specifies intent; the host enforces capability.
+
+Orchestrators **SHOULD** use the cheapest available model for Scout when the platform supports subagents. See [`context-scout`](../skills/agents/context-scout.md) model selection for platform hints.
+
+---
+
 ## Scout → verify pattern
 
 Mirrors speculative decoding: a cheap draft model (Scout) does graph-first discovery; the capable model (Act / main agent) verifies the fixed `SCOUT:` schema before burning full context on implementation.

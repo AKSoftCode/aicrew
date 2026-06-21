@@ -17,6 +17,8 @@ Run on the cheapest model that can reliably graph-query:
 - Codex: `gpt-4o-mini`
 - Claude Code: `claude-haiku-3-5`
 
+The orchestrator **SHOULD** spawn Scout as a cheap subagent when the platform supports it (e.g. Cursor Task with explicit `model`). aicrew defines the Scout role; the host tool assigns the actual model — two-tier savings apply only when Scout truly runs on a cheaper tier.
+
 If graph queries fail or return insufficient results, escalate to sonnet before widening reads.
 
 ---

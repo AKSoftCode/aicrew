@@ -102,6 +102,8 @@ Codex: `aicrew-quick`
 
 All three commands share the same 11-capability token foundation — only pipeline depth differs.
 
+Scout flow and model routing → [pipeline-overview.md](docs/pipeline-overview.md#scout-in-plain-english)
+
 [Full pipeline reference →](docs/pipeline-overview.md)
 
 </details>
