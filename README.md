@@ -24,6 +24,14 @@ npx aicrew doctor                # verify MCP server binaries are reachable
 
 ---
 
+## Demo
+
+![30-second walkthrough: status, doctor, /dev /fix /quick](assets/demo.gif)
+
+Terminal recording: [`docs/demo.cast`](docs/demo.cast)
+
+---
+
 ## The three commands you actually use
 
 ### `/dev` — full pipeline
@@ -71,13 +79,6 @@ Codex: `aicrew-quick`
 ---
 
 ## Advanced
-
-<details>
-<summary>Demo</summary>
-
-**Demo:** ![30-second walkthrough — status, doctor, /dev /fix /quick](assets/demo.gif) · source: [`docs/demo.cast`](docs/demo.cast)
-
-</details>
 
 <details>
 <summary>Full command list (daily + maintenance)</summary>
