@@ -7,9 +7,11 @@
 ## Install
 
 ```bash
+npx aicrew status                # 30-second look — no install, shows what you'd get
 npx aicrew install               # all platforms
 npx aicrew install claude|cursor|codex|gemini   # one platform
 npx aicrew install mcp           # optional MCP servers (graph index, token optimizer)
+npx aicrew doctor                # verify MCP server binaries are reachable
 ```
 
 **Requirements:** Node 18+. No extra Python packages.
@@ -330,6 +332,7 @@ Or run `aicrew install mcp` for the full checklist with paths.
 | `aicrew install` | `aicrew-install` | `/install` | First-time or fresh machine |
 | `aicrew update` | `aicrew-update` | `/update` | Pull new files from the package |
 | `aicrew status` | `aicrew-status` | `/status` | Show install state across all platforms |
+| `aicrew doctor` | — | — | Verify MCP server binaries are installed and reachable |
 | `aicrew agent-kit init [path]` | `aicrew-agent-kit` | `/agent-kit` | Scaffold shared Cursor `.mdc` rules |
 | `aicrew cursor-plugin init [path]` | `aicrew-cursor-plugin` | `/cursor-plugin` | Scaffold Cursor multi-tool terminal extension |
 | `aicrew benchmark` | `aicrew-benchmark` | `/benchmark` | Token savings estimate + report |

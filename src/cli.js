@@ -21,7 +21,7 @@ const installer = require('./installer');
 const agentKit  = require('./agent-kit');
 const cursorPlugin = require('./cursor-plugin');
 const benchmark = require('./benchmark');
-const { menu, ask } = require('./utils');
+const { menu, ask, run, expandHome } = require('./utils');
 
 const args = process.argv.slice(2);
 
@@ -71,6 +71,11 @@ async function main() {
     return;
   }
 
+  if (cmd === 'doctor') {
+    runDoctor();
+    return;
+  }
+
   if (cmd === 'agent-kit') {
     const sub = args[1];
     const dest = args[2] || path.join(process.cwd(), 'agent-kit');
@@ -98,44 +103,51 @@ async function main() {
     return;
   }
 
-  // No command — interactive menu
+  // No command — interactive menu (loops until exit)
   printBanner();
-  const choice = await menu('What would you like to do?', [
-    'install all      — first-time setup (all platforms: Claude, Cursor, Codex, Gemini)',
-    'install claude   — Claude Code only (commands, skills, hooks, MCP)',
-    'install cursor   — Cursor only (MCP config)',
-    'install codex    — Codex only (skills, config.toml)',
-    'install gemini   — Gemini CLI (~/Agents/ + setup instructions)',
-    'status           — show per-platform install state',
-    'benchmark        — estimate token savings for this project',
-    'agent-kit init   — scaffold Cursor-rules single source of truth (./agent-kit)',
-    'cursor-plugin init — scaffold Cursor extension for multi-tool terminals',
-    'exit',
-  ]);
+  while (true) {
+    const choice = await menu('What would you like to do?', [
+      'install all      — first-time setup (all platforms: Claude, Cursor, Codex, Gemini)',
+      'install claude   — Claude Code only (commands, skills, hooks, MCP)',
+      'install cursor   — Cursor only (MCP config)',
+      'install codex    — Codex only (skills, config.toml)',
+      'install gemini   — Gemini CLI (~/Agents/ + setup instructions)',
+      'status           — show per-platform install state',
+      'doctor           — verify MCP server binaries are installed',
+      'benchmark        — estimate token savings for this project',
+      'agent-kit init   — scaffold Cursor-rules single source of truth (./agent-kit)',
+      'cursor-plugin init — scaffold Cursor extension for multi-tool terminals',
+      'exit',
+    ]);
 
-  switch (choice) {
-    case 1: installer.install(); break;
-    case 2: installer.installClaude(); break;
-    case 3: installer.installCursor(); break;
-    case 4: installer.installCodex(); break;
-    case 5: installer.installGemini(); break;
-    case 6: showStatus(); break;
-    case 7: benchmark.runBenchmark(['--report']); break;
-    case 8: {
-      const def = path.join(process.cwd(), 'agent-kit');
-      const answer = await ask(`Directory for agent-kit [${def}]: `);
-      const dest = answer.trim() || def;
-      agentKit.initAgentKit(dest);
-      break;
+    switch (choice) {
+      case 1: installer.install(); break;
+      case 2: installer.installClaude(); break;
+      case 3: installer.installCursor(); break;
+      case 4: installer.installCodex(); break;
+      case 5: installer.installGemini(); break;
+      case 6: showStatus(); break;
+      case 7: runDoctor(); break;
+      case 8: benchmark.runBenchmark(['--report']); break;
+      case 9: {
+        const def = path.join(process.cwd(), 'agent-kit');
+        const answer = await ask(`Directory for agent-kit [${def}]: `);
+        const dest = answer.trim() || def;
+        agentKit.initAgentKit(dest);
+        break;
+      }
+      case 10: {
+        const def = path.join(process.cwd(), 'cursor-multi-tool-plugin');
+        const answer = await ask(`Directory for cursor plugin [${def}]: `);
+        const dest = answer.trim() || def;
+        cursorPlugin.initCursorPlugin(dest);
+        break;
+      }
+      case 11: return;
     }
-    case 9: {
-      const def = path.join(process.cwd(), 'cursor-multi-tool-plugin');
-      const answer = await ask(`Directory for cursor plugin [${def}]: `);
-      const dest = answer.trim() || def;
-      cursorPlugin.initCursorPlugin(dest);
-      break;
-    }
-    case 10: break;
+
+    const again = await ask('\nRun another action? [Y/n]: ');
+    if (again.trim().toLowerCase().startsWith('n')) return;
   }
 }
 
@@ -159,6 +171,7 @@ COMMANDS
   install [platform]     Install for all platforms or one platform
   update  [platform]     Re-run install to pick up new skills (preserves your edits)
   status                 Show per-platform install state
+  doctor                 Verify MCP server binaries are installed and reachable
   benchmark [options]    Estimate token savings for a project (--report writes .ai/reports/)
   agent-kit init [path]  Scaffold Cursor-rules single source of truth (default: ./agent-kit)
   cursor-plugin init [path]  Scaffold Cursor extension (default: ./cursor-multi-tool-plugin)
@@ -230,10 +243,19 @@ function showStatus() {
   const cmdCount = fs.existsSync(commandsDir)
     ? fs.readdirSync(commandsDir).filter(f => f.endsWith('.md')).length
     : 0;
+  // Shipped command count (from this package) for an update nudge
+  const shippedCmdDir = path.join(__dirname, '..', 'skills', 'commands');
+  const shippedCmdCount = fs.existsSync(shippedCmdDir)
+    ? fs.readdirSync(shippedCmdDir).filter(f => f.endsWith('.md')).length
+    : 0;
+
   if (cmdCount > 0) {
     const cmds = fs.readdirSync(commandsDir).filter(f => f.endsWith('.md'))
       .map(f => '/' + f.replace('.md', '')).join(', ');
     console.log(ok(`~/.claude/commands/ — ${cmdCount} commands: ${cmds}`));
+    if (shippedCmdCount > cmdCount) {
+      console.log(warn(`${shippedCmdCount - cmdCount} new command(s) available — run \`aicrew update\` to sync`));
+    }
   } else {
     console.log(warn('~/.claude/commands/ — not installed (run `aicrew install claude`)'));
   }
@@ -317,6 +339,66 @@ function showStatus() {
     }
   } else {
     console.log('Project skills: none (use /update-skills in Claude Code to generate)');
+  }
+}
+
+// Resolve a binary on PATH (cross-platform). Returns the path or '' if missing.
+function whichBin(name) {
+  const probe = process.platform === 'win32' ? `where ${name}` : `command -v ${name}`;
+  const res = run(probe);
+  return res.ok ? res.stdout.trim().split(/\r?\n/)[0] : '';
+}
+
+function runDoctor() {
+  const fs = require('fs');
+
+  const ok   = (s) => `  ✓  ${s}`;
+  const warn = (s) => `  ⚠  ${s}`;
+  const bad  = (s) => `  ✗  ${s}`;
+
+  console.log('\n=== aicrew doctor — MCP server health ===\n');
+
+  const issues = [];
+
+  // 1. codebase-memory-mcp (required)
+  const cmBin = whichBin('codebase-memory-mcp') || (() => {
+    const local = expandHome('~/.local/bin/codebase-memory-mcp');
+    return fs.existsSync(local) ? local : '';
+  })();
+  if (cmBin) {
+    console.log(ok(`codebase-memory-mcp — found: ${cmBin}`));
+  } else {
+    console.log(bad('codebase-memory-mcp — NOT found (required for graph queries)'));
+    issues.push('npm install -g codebase-memory-mcp');
+  }
+
+  // 2. context-mode (npx, no install needed)
+  const npxBin = whichBin('npx');
+  console.log(npxBin
+    ? ok('context-mode — auto via npx (no install needed)')
+    : warn('context-mode — npx not found; install Node.js to enable auto-download'));
+  if (!npxBin) issues.push('Install Node.js (provides npx) so context-mode can auto-run');
+
+  // 3. token-optimizer-mcp (optional)
+  const toBin = whichBin('token-optimizer-mcp');
+  console.log(toBin
+    ? ok(`token-optimizer-mcp — found: ${toBin}`)
+    : warn('token-optimizer-mcp — not found (optional, Cursor only)'));
+
+  // 4. MCP config wiring
+  console.log('');
+  const cursorMcp = expandHome('~/.cursor/mcp.json');
+  const claudeMcp = expandHome('~/.claude/.mcp.json');
+  console.log(fs.existsSync(cursorMcp) ? ok('~/.cursor/mcp.json — wired') : warn('~/.cursor/mcp.json — not wired (run `aicrew install cursor`)'));
+  console.log(fs.existsSync(claudeMcp) ? ok('~/.claude/.mcp.json — wired') : warn('~/.claude/.mcp.json — not wired (run `aicrew install claude`)'));
+
+  console.log('');
+  if (issues.length === 0) {
+    console.log('All required MCP servers are reachable. You are good to go.');
+  } else {
+    console.log('Action items:');
+    issues.forEach(i => console.log(`  • ${i}`));
+    console.log('\nFull setup help: aicrew install mcp');
   }
 }
 
