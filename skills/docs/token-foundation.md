@@ -1,11 +1,14 @@
 # Token Foundation — mandatory for /dev, /fix, /quick
 
-Shared token-saving stack applied by all aicrew entry-point commands.
+Shared token-saving stack applied by **all three** aicrew entry-point commands.
+`/dev`, `/fix`, and `/quick` carry **identical** token capabilities — only pipeline depth differs.
 Commands reference this doc; do not duplicate these rules locally.
 
 ---
 
-## 1. Graph-first research (codebase-memory-mcp)
+## The 11 capabilities (all commands, always)
+
+### 1. Graph-first research (`codebase-memory-mcp`)
 
 Before any `Grep`, `Glob`, or full-file `Read`:
 
@@ -22,12 +25,12 @@ Cost comparison: graph query ≈ 500 tokens vs repo-wide grep ≈ 80 K tokens.
 
 ---
 
-## 2. Speculative context (Scout → verify → Act)
+### 2. Speculative Scout → verify (`context-scout`, SCOUT schema)
 
-Scout is the cheap draft step; main agent verifies the SCOUT schema before acting.
+Scout is the cheap draft step; the main agent verifies the SCOUT schema before acting.
 Mirrors speculative decoding: draft model does cheap speculation; target model verifies cheaply.
 
-### SCOUT: schema (fixed output contract)
+#### SCOUT: schema (fixed output contract)
 
 ```md
 SCOUT:
@@ -50,21 +53,13 @@ Paraphrasing is a schema violation and triggers re-scout.
 - `Relevant files` lists real paths (no invented paths)
 - On rejection: re-scout, widen one read step; max 2 retries, then ask user
 
-### Per-command integration
+#### Per-command Scout timing
 
-| Command | Scout step | Timing |
+| Command | When Scout runs | Two-model routing |
 |---|---|---|
-| `/quick` | Phase 1 (built-in) | Always; before any Act edit |
-| `/dev` | Start of Phase 1 Research | Before Glob/Grep/Read; re-scout if context grew significantly between phases |
-| `/fix` | Start of Phase 1 Bug Analysis | Before bug-analyst deep dive |
-
-### Two-model routing (optional)
-
-| Step | Recommended model |
-|---|---|
-| Scout (cheap draft) | `claude-3-5-haiku` / `gpt-4o-mini` |
-| Research / Implement (capable) | `claude-sonnet-4` / `gpt-4o` |
-| Deep fallback | `claude-opus-4` / `o3` |
+| `/quick` | Phase 1 (built-in, always first) — before any Act edit | Scout: `haiku/mini` → Act: `sonnet/opus` |
+| `/dev` | Start of Phase 1 Research — before Glob/Grep/Read; re-scout if context grew significantly between phases | Scout: `haiku/mini` → Research/Implement: `sonnet/opus` |
+| `/fix` | Start of Phase 1 Bug Analysis — before bug-analyst deep dive | Scout: `haiku/mini` → Fix: `sonnet/opus` |
 
 After Scout accepted: switch model, pass only `SCOUT:` block + original goal — not full conversation.
 
@@ -73,65 +68,137 @@ Scout agent + re-scout rules: `~/Agents/agents/context-scout.md`
 
 ---
 
-## 3. Layered guardrails
+### 3. Karpathy guardrails
+
+Load `~/Agents/agents/karpathy-guardrails.md` before every implementation step.
+
+Lookup order:
+1. `.ai/skills/agents/karpathy-guardrails.md`
+2. `~/Agents/agents/karpathy-guardrails.md`
+
+Four principles: **think first** → **simplest change** → **surgical edits** → **goal-driven execution**.
+
+- Think before coding: state assumptions; ask when ambiguous; surface tradeoffs
+- Simplicity first: minimum code; no speculative abstractions
+- Surgical changes: touch only what the goal requires; match existing style
+- Goal-driven execution: define verify steps; run tests when relevant
+
+---
+
+### 4. Layered guardrails (`guardrails-taxonomy.md`)
 
 | Layer | Rail type | aicrew mechanism |
 |---|---|---|
 | Input | Secret / injection block | `hooks/security-guard.py` (PreToolUse — always active) |
-| Scope | Topic control | Intake acceptance criteria (`/dev` Phase 0 Checkpoint C; `/quick` `SCOUT Goal:`) |
+| Scope | Topic control | Intake acceptance criteria (`/dev` Phase 0 Checkpoint C; `/fix` intake; `/quick` `SCOUT Goal:`) |
 | Phase gate | Dialog flow | Phase gates — user confirmation required before advancing |
-| Implementation | Think-before-coding | `karpathy-guardrails` in Phase 4 Implement (and `/quick` Act) |
-| Output | Security scan | `security-reviewer` (Phase 6 `/dev`; Phase 4 `/fix`) + `conclude` |
-| Context budget | Headroom rail | `/lean` read policy + phase `/compact` |
-
-**Load karpathy-guardrails for every implementation step:**
-1. `.ai/skills/agents/karpathy-guardrails.md`
-2. `~/Agents/agents/karpathy-guardrails.md`
-
-Summary: think first → simplest change → surgical edits → goal-driven execution.
+| Implementation | Think-before-coding | `karpathy-guardrails` (capability 3 above) |
+| Output | Security scan | `security-reviewer` (Phase 6 `/dev`; Phase 4 `/fix`; end of `/quick` Act) + `conclude` |
+| Context budget | Headroom rail | `/lean` read policy + phase `/compact` (capability 8 below) |
 
 Full taxonomy: `~/Agents/docs/guardrails-taxonomy.md`
 
 ---
 
-## 4. Context economy (always on, not opt-in)
+### 5. Context-economy read policy
 
-- `context-economy` read policy active every session
+- `context-economy` read policy active every session (not opt-in)
 - diff/tree/search before file reads; slice over whole-file
 - reuse prior summaries unless file changed
-- `/lean on` amplifies enforcement
-- Run `/compact` between major phases (prevents stale context accumulation)
+- `/lean on` amplifies enforcement — tightens to diff/tree/graph-only until explicitly overridden
 
 See: `~/Agents/agents/context-economy.md`
 
 ---
 
-## 5. State / handoff
+### 6. `security-guard.py` hooks
 
-- Write/update `.ai/state/AI_STATE.<tool>.<session>.md` at every checkpoint
-- `/handoff` prunes conversation before tool/model switch — pass only SCOUT block + state file
-- Format spec: `~/Agents/agents/state-checkpoint.md`
+PreToolUse hook that fires before every file write:
+- Blocks PEM private keys and AWS secrets outright
+- Warns on high-entropy strings or hardcoded tokens
+- Always active — cannot be disabled per-command
+
+Set `ECC_HOOK_PROFILE=strict` for maximum verbosity, `minimal` to quiet non-blocking warnings.
+Hook source: `~/Agents/hooks/security-guard.py`
 
 ---
 
-## 6. Optional MCP accelerators
+### 7. `.ai/state` checkpoints
+
+Write/update `.ai/state/AI_STATE.<tool>.<session>.md` after every checkpoint and phase boundary.
+
+- File pattern: `.ai/state/AI_STATE.<tool>.<session>.md`
+- If `/session` was used, `<tool>` and `<session>` come from there; otherwise use `unknown-<YYYY-MM-DD>-<HHMM>`
+- If filesystem write tools are unavailable, output the full state file so the user can paste it
+
+Format spec: `~/Agents/agents/state-checkpoint.md`
+
+---
+
+### 8. `/compact` between phases
+
+Run `/compact` (or equivalent context-pruning) at every phase boundary before the next phase starts.
+
+- Prunes stale context accumulated during the previous phase
+- Prevents earlier phases from crowding the context window during implementation
+- Applies to all commands: `/dev` at each of 9 gates, `/fix` at each of 5 gates, `/quick` after Scout
+
+---
+
+### 9. `/handoff` on tool switch
+
+When switching tool or model mid-task, run `/handoff` to prune the conversation:
+- Writes a compact `.ai/state/AI_STATE.<tool>.<session>.md` (~300 tokens)
+- The new tool receives only the SCOUT block + state file — not the full conversation
+- Saves ~14 K tokens per tool switch vs re-pasting the whole chat
+
+Full spec: `~/Agents/commands/handoff.md`
+
+---
+
+### 10. Optional: `context-mode` + `token-optimizer-mcp`
 
 | MCP server | When to use |
 |---|---|
-| `codebase-memory-mcp` | Primary graph oracle (step 1 above) |
+| `codebase-memory-mcp` | Primary graph oracle (capability 1 above) — always preferred |
 | `context-mode` | Session-level output shaping when Scout output needs further compression |
-| `token-optimizer-mcp` | Cache-aware response shaping for repeated Scout calls |
+| `token-optimizer-mcp` | Cache-aware response shaping for repeated Scout calls; biggest impact on sessions > 30 min |
+
+These are optional accelerators — enable when graph queries alone don't relieve window pressure.
+
+---
+
+### 11. Caveman default output
+
+All commands default to terse/caveman output style:
+- Lead with the answer; drop filler phrases and preamble
+- `/normal` or `/lean off` restores full verbosity when prose is needed
+- `/terse` or `/lean` re-enables lean mode if it was restored
+
+See: `~/Agents/agents/caveman.md`
 
 ---
 
 ## Quick reference card
 
 ```
-Research:   graph MCP → diff → targeted grep → slice read (in that order)
-Scout:      cheap model → SCOUT: schema → verify → capable model acts
-Guardrails: security-guard (input) → scope lock → phase gate → karpathy → security-reviewer (output) → budget
-Economy:    context-economy always on; /lean amplifies; /compact between phases
-State:      .ai/state/AI_STATE.*.md at every checkpoint
+Stack (all 3 commands — identical):
+  1  graph MCP       → list_projects → search_graph → trace_path → get_code_snippet
+  2  Scout→verify    → cheap model → SCOUT: schema → verify → capable model acts
+  3  Karpathy        → think → simplest → surgical → goal-driven
+  4  guardrails      → security-guard (input) → scope → phase gate → karpathy → security-reviewer (output) → budget
+  5  context-economy → always on; /lean amplifies; diff/tree/search before file reads
+  6  security-guard  → PreToolUse hook; always active; blocks secrets
+  7  .ai/state       → AI_STATE.<tool>.<session>.md at every checkpoint
+  8  /compact        → between every phase boundary
+  9  /handoff        → on tool switch; SCOUT block + state file only
+  10 context-mode    → optional; cache-aware shaping for long sessions
+  11 caveman         → terse by default; /normal for verbose
+
+Depth only (no token difference):
+  /dev   → 9 phases (intake → research → brainstorm → design → implement → tests → security → audit → conclude)
+  /fix   → 5 phases (intake → bug analysis → implement → tests → security → conclude)
+  /quick → 2 phases (Scout → Act)
 ```
 
 ---
@@ -144,3 +211,5 @@ State:      .ai/state/AI_STATE.*.md at every checkpoint
 - `~/Agents/agents/context-economy.md` — default read policy
 - `~/Agents/docs/guardrails-taxonomy.md` — NeMo rail types ↔ aicrew mechanisms
 - `~/Agents/hooks/security-guard.py` — input rail implementation
+- `~/Agents/agents/state-checkpoint.md` — state file format spec
+- `~/Agents/agents/caveman.md` — terse output style guide

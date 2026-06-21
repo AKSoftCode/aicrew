@@ -76,6 +76,7 @@ All entry-point commands (`/dev`, `/fix`, `/quick`) share a common token-saving 
   commands/
     benchmark.md                     ← /benchmark — token savings estimate + per-session TOKEN_REPORT
   docs/
+    token-foundation.md              ← shared token stack for /dev, /fix, /quick (graph-first + speculative + guardrails + economy)
     guardrails-taxonomy.md           ← NeMo rails ↔ aicrew hooks/phases (docs only)
     speculative-context.md           ← speculative context pattern: Scout-as-draft-model, two-model routing, failure modes
   hooks/
