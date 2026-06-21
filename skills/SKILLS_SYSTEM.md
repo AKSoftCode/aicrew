@@ -64,6 +64,8 @@ See `~/Agents/agents/caveman.md` (style) and `~/Agents/agents/context-economy.md
     karpathy-guardrails.md           ← /quick Act: think, simplicity, surgical, goal-driven
     context-scout.md                 ← speculative context: cheap Scout agent with fixed SCOUT: schema and re-scout rules
     state-checkpoint.md              ← .ai/state checkpoint format
+  commands/
+    benchmark.md                     ← /benchmark — token savings estimate + per-session TOKEN_REPORT
   docs/
     guardrails-taxonomy.md           ← NeMo rails ↔ aicrew hooks/phases (docs only)
     speculative-context.md           ← speculative context pattern: Scout-as-draft-model, two-model routing, failure modes
@@ -94,6 +96,7 @@ See `~/Agents/agents/caveman.md` (style) and `~/Agents/agents/context-economy.md
   setup.sh         → ~/Agents/setup.sh
 
 ~/.codex/skills/                     ← aicrew-* Codex skills (installed)
+  aicrew-benchmark/SKILL.md         ← token savings benchmark + session report
 
 [Cursor]  ~/.cursor/rules/           ← SYMLINKS → ~/Agents/agents/ (per rule file)
 [Codex]   [repo]/AGENTS.md           → references ~/Agents/
@@ -111,15 +114,42 @@ See `~/Agents/agents/caveman.md` (style) and `~/Agents/agents/context-economy.md
 
 ---
 
+## CLI / Skill / Slash — Parity Table
+
+Every action is reachable three ways. No CLI required.
+
+| Action | CLI | Codex Skill | Claude Code Slash |
+|--------|-----|-------------|-------------------|
+| First-time setup | `aicrew install` | `aicrew-install` | `/install` |
+| Pull new skills | `aicrew update` | `aicrew-update` | `/update` |
+| Check install | `aicrew status` | `aicrew-status` | `/status` |
+| Scaffold agent-kit | `aicrew agent-kit init` | `aicrew-agent-kit` | `/agent-kit` |
+| Scaffold cursor plugin | `aicrew cursor-plugin init` | `aicrew-cursor-plugin` | `/cursor-plugin` |
+| Full dev pipeline | — | `aicrew-dev` | `/dev` |
+| Fast bug fix | — | `aicrew-fix` | `/fix` |
+| Scout → Act | — | `aicrew-quick` | `/quick` |
+| Wrap up session | — | `aicrew-conclude` | `/conclude` |
+| Evolve project skills | — | `aicrew-update-skills` | `/update-skills` |
+| Audit harness | — | `aicrew-harness-audit` | `/harness-audit` |
+| Session checkpoint label | — | `aicrew-session` | `/session` |
+| Cross-tool handoff | — | `aicrew-handoff` | `/handoff` |
+| Benchmark skills | `aicrew benchmark` _(planned)_ | `aicrew-benchmark` | `/benchmark` |
+| Design brainstorm | — | `brainstorm` | `/brainstorm` |
+| Lean/terse output on | — | `lean` | `/lean on` |
+| Lean/terse output off | — | `aicrew-normal` | `/lean off` or `/normal` |
+| Re-enable terse | — | `aicrew-terse` | `/terse` |
+
+---
+
 ## Platform Support
 
 All commands and agents work across:
 
 | Tool | How it uses this system |
 |---|---|
-| **Claude Code** | `/dev`, `/fix`, `/quick`, `/conclude`, `/lean`, `/session` via `~/.claude/commands/` symlinks |
+| **Claude Code** | All slash commands via `~/.claude/commands/` symlinks |
 | **Cursor** | Agent rules via `.cursor/rules/` → `~/Agents/agents/` |
-| **Codex CLI** | Use `aicrew-*` skills from `~/.codex/skills/` (no slash commands); `AGENTS.md` in repo can reference `~/Agents/` |
+| **Codex CLI** | All `aicrew-*` skills from `~/.codex/skills/` (no slash commands); `AGENTS.md` in repo can reference `~/Agents/` |
 | **Antigravity** | System prompt references `~/Agents/commands/dev.md` (+ `lean.md`, `session.md`) |
 | **Gemini CLI** | System prompt references `~/Agents/commands/dev.md` (+ `lean.md`, `session.md`) |
 
@@ -189,6 +219,22 @@ cd ~/Workspace/aicrew && git add skills/ && git commit
 ---
 
 ## Commands
+
+### `/benchmark` — Token savings estimate + session report
+
+Scans the project, estimates baseline (naive full-read) vs aicrew token usage, and writes
+`.ai/reports/TOKEN_REPORT.<timestamp>.md`.
+
+```bash
+aicrew benchmark                        # print summary for cwd
+aicrew benchmark --report               # also write markdown report
+aicrew benchmark --project ./myapp -r   # scan a specific project
+aicrew benchmark -s "session-name" -r   # label the report
+```
+
+All figures are **estimated** (bytes/4 rule + documented grep/graph ratio from codebase-memory-mcp).
+
+---
 
 ### `/quick` — Scout → Act (graph-first)
 
@@ -282,6 +328,7 @@ RED → GREEN → REFACTOR per acceptance criterion. Relaxed mode requires opt-o
 | `~/Agents/commands/dev.md` | Pipeline phases or specialist routing |
 | `~/Agents/commands/fix.md` | Fast-fix flow |
 | `~/Agents/commands/quick.md` | Scout → Act flow |
+| `~/Agents/commands/benchmark.md` | Token savings benchmark + report |
 | `~/Agents/agents/karpathy-guardrails.md` | Karpathy coding principles |
 | `~/Agents/agents/context-scout.md` | Speculative context scout agent |
 | `~/Agents/docs/guardrails-taxonomy.md` | NeMo ↔ aicrew guardrails map |

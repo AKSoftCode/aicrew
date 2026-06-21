@@ -1,0 +1,8 @@
+interface:
+  display_name: "AICrew Install"
+  short_description: "Run aicrew install — first-time global setup"
+  brand_color: "#0F766E"
+  default_prompt: "Use $aicrew-install to run or guide the aicrew global install."
+
+policy:
+  allow_implicit_invocation: true

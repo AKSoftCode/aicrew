@@ -1,0 +1,8 @@
+interface:
+  display_name: "AICrew Handoff"
+  short_description: "Generate compact cross-tool session handoff block"
+  brand_color: "#0F766E"
+  default_prompt: "Use $aicrew-handoff to generate a compact handoff block for switching tools or models without losing context."
+
+policy:
+  allow_implicit_invocation: true

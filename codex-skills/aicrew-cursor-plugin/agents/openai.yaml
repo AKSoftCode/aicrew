@@ -1,0 +1,8 @@
+interface:
+  display_name: "AICrew Cursor Plugin"
+  short_description: "Scaffold Cursor multi-tool terminal panel extension"
+  brand_color: "#0F766E"
+  default_prompt: "Use $aicrew-cursor-plugin to scaffold a Cursor extension for a multi-tool AI terminal panel."
+
+policy:
+  allow_implicit_invocation: true

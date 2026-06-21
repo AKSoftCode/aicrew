@@ -1,0 +1,8 @@
+interface:
+  display_name: "AICrew Normal"
+  short_description: "Disable lean mode — restore verbose output"
+  brand_color: "#0F766E"
+  default_prompt: "Use $aicrew-normal to disable lean/terse mode and restore full verbose output."
+
+policy:
+  allow_implicit_invocation: true

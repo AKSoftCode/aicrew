@@ -70,6 +70,35 @@ Store what you find. Use project-specific roles where they exist; use generic ag
 
 ---
 
+## Token foundation (mandatory)
+
+All phases apply the shared token-saving stack from `~/Agents/docs/token-foundation.md`:
+
+1. **Graph-first research** — `codebase-memory-mcp` before any Grep/Glob/file-read:
+   `list_projects` → `search_graph` → `trace_path` → `get_code_snippet`
+   Fallback: `git diff --name-only` → targeted grep → slice reads only.
+
+2. **Speculative context** — cheap Scout compresses; main agent verifies SCOUT schema before acting.
+   Phase 1 Research **must** open with a Scout pass (graph-first) before any broader exploration.
+   Re-scout between phases if context grew significantly.
+   Two-model routing: Scout on `haiku/mini`, Research/Implement on `sonnet/opus`.
+
+3. **Layered guardrails**:
+   - Input: `security-guard.py` hook (always active)
+   - Scope: Phase 0 Checkpoint C locks acceptance criteria
+   - Phase gate: user confirmation required before each phase
+   - Implementation: `karpathy-guardrails` in Phase 4 (think → simplest → surgical → goal-driven)
+   - Output: `security-reviewer` Phase 6 + `conclude`
+   - Context budget: `context-economy` always on; `/compact` between phases
+
+4. **Context economy** — `context-economy` read policy always active; `/lean on` amplifies.
+
+5. **State** — update `.ai/state/AI_STATE.<tool>.<session>.md` after every checkpoint.
+
+See full reference: `~/Agents/docs/token-foundation.md`
+
+---
+
 ## PHASE 0 — INTAKE
 
 **Goal:** Know exactly what to build, confirm acceptance criteria, and agree on which pipeline stages to run.
@@ -184,15 +213,22 @@ After the user confirms the pipeline: update the state file.
 The bug analyst traces symptom → entry point → call chain → confirmed root cause.
 Do not proceed to Phase 3 until root cause is confirmed (not suspected).
 
-**For features and refactors — use Glob, Grep, Read:**
-- Trace the affected code paths end-to-end
+**For features and refactors — graph-first, then Glob/Grep/Read:**
+
+Start with a Scout pass before any broader exploration:
+1. Graph MCP (`search_graph` → `trace_path` → `get_code_snippet`) — emit SCOUT: schema
+2. Verify SCOUT schema (all fields populated, constraints verbatim) before proceeding
+3. Fallback to `git diff --name-only` → targeted grep → slice reads if graph insufficient
+
+Then trace fully:
+- Confirm affected code paths end-to-end
 - Identify which files will need changing
 - Find existing tests that cover this area
 - Spot invariants, contracts, or constraints that must be preserved
 - Find the closest existing pattern in the codebase to follow as a template
 - **Identify the change type** (frontend / backend / DB schema / infra) for specialist routing
 
-For complex areas, launch a parallel sub-agent (subagent_type: Explore):
+For complex areas, launch a parallel sub-agent (subagent_type: Explore) **after Scout**:
 > "Trace [affected area] end-to-end. Return: key files, existing test coverage, invariants at risk."
 
 **Output:** Confirmed root cause (bug) or key files + risks (feature/refactor) + **change type classification**.
@@ -234,6 +270,12 @@ The architect agent:
 ## PHASE 4 — IMPLEMENT
 
 **Goal:** Build it. Tests FIRST — always. TDD is the default; relaxed mode requires explicit opt-out at Checkpoint C.
+
+**Load karpathy-guardrails before any edit** (lookup order):
+1. `.ai/skills/agents/karpathy-guardrails.md`
+2. `~/Agents/agents/karpathy-guardrails.md`
+
+Think before coding → simplest change → surgical edits → goal-driven execution.
 
 ### Specialist routing (auto-select based on Research findings)
 

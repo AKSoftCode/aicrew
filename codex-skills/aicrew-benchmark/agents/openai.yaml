@@ -1,0 +1,8 @@
+interface:
+  display_name: "AICrew Benchmark"
+  short_description: "Measure skill quality, token efficiency, and pipeline timing"
+  brand_color: "#0F766E"
+  default_prompt: "Use $aicrew-benchmark to measure aicrew skill trigger accuracy, output quality, and token efficiency."
+
+policy:
+  allow_implicit_invocation: true

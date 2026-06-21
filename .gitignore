@@ -4,3 +4,4 @@ node_modules/
 .DS_Store
 .env
 config/mcp/cursor.local.json
+.ai/reports/

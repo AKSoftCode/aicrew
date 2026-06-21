@@ -1,0 +1,8 @@
+interface:
+  display_name: "AICrew Update"
+  short_description: "Re-merge new aicrew skills (preserves edits)"
+  brand_color: "#0F766E"
+  default_prompt: "Use $aicrew-update to pull in new aicrew skills without overwriting local edits."
+
+policy:
+  allow_implicit_invocation: true

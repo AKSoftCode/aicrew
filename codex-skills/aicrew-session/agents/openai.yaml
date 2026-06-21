@@ -1,0 +1,8 @@
+interface:
+  display_name: "AICrew Session"
+  short_description: "Set session label for multi-tool state checkpoints"
+  brand_color: "#0F766E"
+  default_prompt: "Use $aicrew-session to set the session label for .ai/state/ checkpoint files."
+
+policy:
+  allow_implicit_invocation: true

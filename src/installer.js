@@ -100,8 +100,13 @@ function install() {
   console.log('  /quick           — Scout → Act (graph-first, Karpathy guardrails)');
   console.log('  /conclude        — wrap up a session and save learnings');
   console.log('  /update-skills   — maintain and evolve the skills system');
+  console.log('  /install  /update  /status  /agent-kit  /cursor-plugin');
+  console.log('  /benchmark  /brainstorm  /session  /handoff  /lean  /terse  /normal');
   console.log('\nAvailable skills in Codex:');
-  console.log('  aicrew-dev, aicrew-fix, aicrew-quick, aicrew-conclude, aicrew-harness-audit, aicrew-update-skills, brainstorm, lean');
+  console.log('  aicrew-dev, aicrew-fix, aicrew-quick, aicrew-conclude, aicrew-harness-audit, aicrew-update-skills');
+  console.log('  aicrew-install, aicrew-update, aicrew-status, aicrew-agent-kit, aicrew-cursor-plugin');
+  console.log('  aicrew-session, aicrew-handoff, aicrew-benchmark, aicrew-terse, aicrew-normal');
+  console.log('  brainstorm, lean');
 }
 
 // Copy files from src that don't already exist in dest (preserve user edits)

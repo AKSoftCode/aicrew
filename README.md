@@ -60,6 +60,35 @@ In **Cursor**, ask the agent and it uses the shared `~/Agents/` rules automatica
 
 ---
 
+## CLI or skill — same action
+
+Every aicrew action is reachable three ways. No CLI required.
+
+| Action | CLI | Codex skill | Claude Code slash |
+|--------|-----|-------------|-------------------|
+| First-time setup | `aicrew install` | `aicrew-install` | `/install` |
+| Pull new skills | `aicrew update` | `aicrew-update` | `/update` |
+| Check install | `aicrew status` | `aicrew-status` | `/status` |
+| Scaffold agent-kit | `aicrew agent-kit init` | `aicrew-agent-kit` | `/agent-kit` |
+| Scaffold cursor plugin | `aicrew cursor-plugin init` | `aicrew-cursor-plugin` | `/cursor-plugin` |
+| Full dev pipeline | — | `aicrew-dev` | `/dev` |
+| Fast bug fix | — | `aicrew-fix` | `/fix` |
+| Scout → Act | — | `aicrew-quick` | `/quick` |
+| Wrap up session | — | `aicrew-conclude` | `/conclude` |
+| Evolve project skills | — | `aicrew-update-skills` | `/update-skills` |
+| Audit harness | — | `aicrew-harness-audit` | `/harness-audit` |
+| Session checkpoint label | — | `aicrew-session` | `/session` |
+| Cross-tool handoff | — | `aicrew-handoff` | `/handoff` |
+| Benchmark skills | `aicrew benchmark` _(planned)_ | `aicrew-benchmark` | `/benchmark` |
+| Design brainstorm | — | `brainstorm` | `/brainstorm` |
+| Lean/terse output on | — | `lean` | `/lean on` |
+| Lean/terse output off | — | `aicrew-normal` | `/lean off` or `/normal` |
+| Re-enable terse | — | `aicrew-terse` | `/terse` |
+
+> **Example:** install on a new machine: `aicrew install` OR skill `aicrew-install` OR `/install` in Claude Code.
+
+---
+
 ## Which command when?
 
 Use this table to match your situation to the right command.
@@ -72,7 +101,7 @@ Use this table to match your situation to the right command.
 | Switching tools mid-task (Cursor → Claude, etc.) | `/handoff` then `/session` in the new tool | Writes a compact `.ai/state/` checkpoint you can paste into any tool |
 | Wrapping up a session | `/conclude` (Claude) / `aicrew-conclude` (Codex) | Captures learnings, proposes commit message, updates `AGENTS.md` |
 | Session feels slow or context window is filling up | `/lean on` + `codebase-memory-mcp` | Terse output + diff/tree/graph-before-read policy; 99% fewer tokens on exploration |
-| "I want to think through design options before coding" | `brainstorm` skill or `/dev` (design phase) | Generates 3 materially different options with trade-offs before any code |
+| "I want to think through design options before coding" | `brainstorm` skill or `/brainstorm` (Claude) | Generates 3 materially different options with trade-offs before any code |
 | Output is too verbose — want shorter responses | Default is already caveman/terse; use `/normal` to go verbose | aicrew defaults to lean output; `/terse` or `/lean` tighten further |
 | Auditing or reviewing the harness itself | `/harness-audit` / `aicrew-harness-audit` | Checks skill health, hook registration, MCP wiring |
 
@@ -87,7 +116,10 @@ Use this table to match your situation to the right command.
 Use slash commands — they resolve from `~/.claude/commands/` which symlinks to `~/Agents/commands/`:
 
 ```
-/dev     /fix     /quick     /conclude     /lean     /handoff     /session
+/dev     /fix     /quick     /conclude     /update-skills     /harness-audit
+/benchmark     /brainstorm     /lean     /terse     /normal
+/session     /handoff
+/install     /update     /status     /agent-kit     /cursor-plugin
 ```
 
 ### Codex
@@ -95,8 +127,13 @@ Use slash commands — they resolve from `~/.claude/commands/` which symlinks to
 Use skill names — they live under `~/.codex/skills/` after install:
 
 ```
-aicrew-dev    aicrew-fix    aicrew-quick    aicrew-conclude
-brainstorm    lean          aicrew-harness-audit
+aicrew-dev    aicrew-fix    aicrew-quick    aicrew-conclude    aicrew-update-skills
+aicrew-harness-audit    aicrew-benchmark    brainstorm    lean
+
+aicrew-install    aicrew-update    aicrew-status
+aicrew-agent-kit    aicrew-cursor-plugin
+
+aicrew-session    aicrew-handoff    aicrew-terse    aicrew-normal
 ```
 
 Invoke via your Codex UI's skill picker (exact invocation depends on your Codex product).
@@ -137,6 +174,49 @@ After install, the `~/Agents/` tree and `AGENTS.md` / `CLAUDE.md` provide the sh
 | Compress accumulated context between phases | `/dev` does this automatically at phase boundaries |
 
 Use `/normal` or `/lean off` to restore full verbosity when you need it.
+
+---
+
+## How aicrew saves tokens
+
+Every aicrew feature targets a specific source of token waste. Here's what each one does in plain English, with concrete numbers.
+
+> **Measure it yourself:** `aicrew benchmark --report` scans your project and writes a per-session TOKEN_REPORT to `.ai/reports/`. All numbers are clearly labeled **estimated** — exact counts need your tool's token-usage log.
+
+### The sources of waste (and the fix for each)
+
+| Feature | The problem | What aicrew does | Typical saving |
+|---------|-------------|------------------|----------------|
+| **`/quick` Scout → Act** | Exploring a codebase with raw grep reads every file it touches — ~80,000 tokens for a typical scan | Scout runs a graph query instead: one `search_graph` call returns the relevant symbol in ~500 tokens. The main model only sees the compact `SCOUT:` block, never the raw repo. | ~79K tokens per session |
+| **`/lean` slice reads** | Reading a whole 500-line file to change 3 lines costs 500+ tokens | `/lean` enforces `git diff` → directory tree → slice-read order. You get the 20–30 lines you need, not the whole file. | ~70% fewer read tokens |
+| **graph MCP (`codebase-memory-mcp`)** | "What calls `authMiddleware`?" via grep scans every file: ~80K tokens | The same query via `search_graph` costs ~500 tokens — a 160× reduction. Index once; every session benefits. | ~79.5K per 3 queries |
+| **`/handoff` + `.ai/state`** | Switching from Cursor to Claude Code mid-task means re-pasting the full chat — 10–20K tokens | `/handoff` writes a compact `.ai/state/AI_STATE.<tool>.<session>.md` (~300 tokens). Paste that instead of the whole conversation. | ~14.7K per tool switch |
+| **`/dev` phase compaction** | A full 9-phase `/dev` session accumulates context. Later phases carry everything from earlier ones. | `/dev` runs `/compact` automatically at every phase boundary, pruning stale context before the next phase starts. | ~60% context at each boundary |
+| **caveman/terse output** | Verbose AI responses add 30–40% more output tokens with no extra information | aicrew defaults to caveman/lean style — lead with the answer, drop filler. Use `/normal` when you want prose. | ~35% fewer output tokens |
+| **speculative Scout → Act** | On large context windows, even the discovery step fills the window before coding starts | `/quick` routes Scout to a cheap fast model (Haiku/gpt-4o-mini) and hands only the `SCOUT:` block to the capable model. See [`skills/docs/speculative-context.md`](./skills/docs/speculative-context.md). | Context window stays headroom |
+| **`context-mode` / `token-optimizer-mcp`** | Long sessions accumulate KV-cache misses as context grows | These optional MCP servers shape long-session context and keep the cache warm so repeated prompts don't re-spend tokens. | Varies; biggest on sessions > 30min |
+
+### Concrete scenarios
+
+**"I need to fix a login bug in a large monorepo"**
+→ Open with `/quick`. Scout runs a graph query (~500 tok) instead of grepping 1,000 files (~80K tok). Act makes the surgical fix. Total cost: ~1–2K tokens vs 80K+ for a naive grep-and-read approach.
+
+**"I'm doing a multi-day feature with `/dev`"**
+→ Turn on `/lean` at the start. Phase compaction fires at each gate. Each phase starts with a clean context instead of carrying everything from Phase 1 forward. For a 9-phase session this can halve total context spend.
+
+**"I keep switching between Cursor and Claude Code"**
+→ Run `/handoff` before switching. Paste the `.ai/state/` file into the new tool. No chat replay, no re-explaining the goal. Each switch costs ~300 tokens instead of 15,000.
+
+**"The AI keeps writing long explanations I don't need"**
+→ aicrew is already in caveman mode by default. If it slipped to verbose, type `/terse` or check `~/Agents/agents/caveman.md`. Use `/normal` when you actually want the prose.
+
+### See the numbers for your project
+
+```bash
+aicrew benchmark --report
+```
+
+Opens a report at `.ai/reports/TOKEN_REPORT.<timestamp>.md` showing baseline vs aicrew estimates for your specific codebase size. The biggest win varies by repo — small projects benefit most from lean reads; large ones from graph MCP.
 
 ---
 
@@ -201,6 +281,7 @@ aicrew --help
 | `aicrew install` | First-time or fresh machine; merge skills and hooks |
 | `aicrew update` | Same as `install` — picks up new files from the package |
 | `aicrew status` | Shows `~/Agents`, global skills, command symlinks, hooks, Codex skills, and cwd `.ai/skills/` if present |
+| `aicrew benchmark [options]` | Estimate token savings for a project; `--report` writes `.ai/reports/TOKEN_REPORT.<ts>.md` |
 | `aicrew agent-kit init [path]` | Scaffolds a shared Cursor `.mdc` rules layout (default `./agent-kit`) |
 | `aicrew cursor-plugin init [path]` | Scaffolds a local Cursor extension for multi-tool terminals (default `./cursor-multi-tool-plugin`) |
 | `aicrew --version` / `-v` | Print package version |
@@ -213,6 +294,7 @@ aicrew --help
 
 | Area | What changed |
 |------|----------------|
+| **`/benchmark`** | `aicrew benchmark --report` scans your project and writes a per-session `TOKEN_REPORT` to `.ai/reports/` — shows baseline vs aicrew token estimates, savings by feature, and top recommendations. |
 | **`/quick` + speculative context** | Scout → Act shortcut with graph-first exploration, Karpathy guardrails, and a dedicated `context-scout` agent. See [`skills/docs/speculative-context.md`](./skills/docs/speculative-context.md). |
 | **Guardrails taxonomy** | `skills/docs/guardrails-taxonomy.md` maps NeMo rail types to aicrew primitives (hooks, phase gates, session memory). |
 | **Lean mode** | `/lean` (Claude Code), `context-economy` agent, and Codex `lean` skill — terse output plus diff/tree/search-before-read policy. |

@@ -1,0 +1,8 @@
+interface:
+  display_name: "AICrew Agent Kit"
+  short_description: "Scaffold shared Cursor .mdc rules (single source of truth)"
+  brand_color: "#0F766E"
+  default_prompt: "Use $aicrew-agent-kit to scaffold a shared agent-kit for Cursor .mdc rules across repos."
+
+policy:
+  allow_implicit_invocation: true

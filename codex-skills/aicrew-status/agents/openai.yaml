@@ -1,0 +1,8 @@
+interface:
+  display_name: "AICrew Status"
+  short_description: "Show installed skills, hooks, and Codex skills"
+  brand_color: "#0F766E"
+  default_prompt: "Use $aicrew-status to check what aicrew has installed and diagnose missing components."
+
+policy:
+  allow_implicit_invocation: true

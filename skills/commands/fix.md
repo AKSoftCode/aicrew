@@ -33,6 +33,30 @@ Use `/dev` instead if you need brainstorming, refactor planning, or a feature.
 
 ---
 
+## Token foundation (mandatory)
+
+All phases apply the shared token-saving stack from `~/Agents/docs/token-foundation.md`:
+
+1. **Graph-first** — `codebase-memory-mcp` before any file read:
+   `search_graph` → `trace_path` → `get_code_snippet`; fallback to `git diff` + targeted grep.
+
+2. **Speculative context** — Phase 1 opens with a Scout pass (emit SCOUT: schema) before
+   bug-analyst deep dive. Verify schema; two-model: Scout on `haiku/mini`, fix on `sonnet`.
+
+3. **Layered guardrails**:
+   - Input: `security-guard.py` hook (always active)
+   - Scope: acceptance criteria locked at intake
+   - Implementation: `karpathy-guardrails` mandatory in Phase 2 Implement
+   - Output: `security-reviewer` Phase 4
+
+4. **Context economy** — `context-economy` always on; slice reads over whole-file.
+
+5. **State** — update `.ai/state/AI_STATE.<tool>.<session>.md` at each phase.
+
+See full reference: `~/Agents/docs/token-foundation.md`
+
+---
+
 ## INTAKE — 3 questions only
 
 If `$ARGUMENTS` describes the bug clearly, use it and skip straight to question 3.
@@ -63,6 +87,20 @@ Say **go** to start or adjust anything.
 
 ## PHASE 1 — BUG ANALYSIS
 
+**Step 1 — Scout pass (mandatory, before bug-analyst):**
+
+Use context-scout (lookup order):
+1. `.ai/skills/agents/context-scout.md`
+2. `~/Agents/agents/context-scout.md`
+
+Discovery order:
+1. Graph MCP: `search_graph` → `trace_path` → `get_code_snippet`
+2. Fallback: `git diff --name-only` + targeted `rg` for error symbol
+3. Emit SCOUT: schema (Goal / Status / Constraints verbatim / Relevant files / Call chain / Next action / Tests / Risks)
+4. Verify schema — reject and re-scout if any critical field is `n/a` or constraints are paraphrased
+
+**Step 2 — Deep trace (after Scout accepted):**
+
 Use the bug analyst agent (lookup order):
 1. `.ai/skills/agents/bug-analyst.md`
 2. `~/Agents/agents/bug-analyst.md`
@@ -71,17 +109,15 @@ Trace symptom → entry point → call chain → confirmed root cause.
 
 **Do not touch any code until root cause is confirmed.**
 
-> **Large repo tip:** If the codebase is large or unfamiliar, run a scout pass first.
-> Use graph MCP (`search_graph` → `trace_path` → `get_code_snippet`) or
-> `git diff --name-only` + targeted grep before reading files.
-> Apply Karpathy guardrails (`~/Agents/agents/karpathy-guardrails.md`) during fix:
-> think first, simplest change, surgical edits only.
-
 ---
 
 ## PHASE 2 — IMPLEMENT (TDD mandatory)
 
-Optional: apply `karpathy-guardrails` during implementation (lookup `~/Agents/agents/karpathy-guardrails.md`) for minimal, surgical fixes.
+**Load karpathy-guardrails before any edit** (lookup order):
+1. `.ai/skills/agents/karpathy-guardrails.md`
+2. `~/Agents/agents/karpathy-guardrails.md`
+
+Think before coding → simplest change → surgical edit → stop when test passes.
 
 1. Write the smallest test that **reproduces** the bug. Run it. Must **FAIL**.
    If it passes, the test is wrong — fix the test.

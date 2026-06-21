@@ -13,6 +13,7 @@ const pkg       = require('../package.json');
 const installer = require('./installer');
 const agentKit  = require('./agent-kit');
 const cursorPlugin = require('./cursor-plugin');
+const benchmark = require('./benchmark');
 const { menu, ask } = require('./utils');
 
 const args = process.argv.slice(2);
@@ -68,12 +69,18 @@ async function main() {
     return;
   }
 
+  if (cmd === 'benchmark') {
+    benchmark.runBenchmark(args.slice(1));
+    return;
+  }
+
   // No command — interactive menu
   printBanner();
   const choice = await menu('What would you like to do?', [
     'install          — first-time setup (skills, symlinks, hooks)',
     'update           — update global skills (merge, keeps your edits)',
     'status           — show what is installed',
+    'benchmark        — estimate token savings for this project',
     'agent-kit init   — scaffold Cursor-rules single source of truth (./agent-kit)',
     'cursor-plugin init — scaffold Cursor extension for multi-tool terminals',
     'exit',
@@ -83,21 +90,22 @@ async function main() {
     case 1: installer.install(); break;
     case 2: installer.install(); break;
     case 3: showStatus(); break;
-    case 4: {
+    case 4: benchmark.runBenchmark(['--report']); break;
+    case 5: {
       const def = path.join(process.cwd(), 'agent-kit');
       const answer = await ask(`Directory for agent-kit [${def}]: `);
       const dest = answer.trim() || def;
       agentKit.initAgentKit(dest);
       break;
     }
-    case 5: {
+    case 6: {
       const def = path.join(process.cwd(), 'cursor-multi-tool-plugin');
       const answer = await ask(`Directory for cursor plugin [${def}]: `);
       const dest = answer.trim() || def;
       cursorPlugin.initCursorPlugin(dest);
       break;
     }
-    case 6: break;
+    case 7: break;
   }
 }
 
@@ -121,6 +129,7 @@ COMMANDS
   install        Install skills globally (~/.claude/skills/, ~/.codex/skills, hooks, symlinks)
   update         Re-run install to pick up new skills (preserves your edits)
   status         Show installed skills and active hooks
+  benchmark [options]        Estimate token savings for a project (--report writes .ai/reports/)
   agent-kit init [path]      Scaffold Cursor-rules single source of truth (default: ./agent-kit)
   cursor-plugin init [path]   Scaffold Cursor extension (default: ./cursor-multi-tool-plugin)
   --version      Show version
@@ -201,8 +210,9 @@ function showStatus() {
   // Codex skills
   if (fs.existsSync(codexSkillsDir)) {
     const codexSkills = fs.readdirSync(codexSkillsDir)
-      .filter(d => d.startsWith('aicrew-') || d === 'brainstorm' || d === 'lean');
-    console.log(`\nCodex skills: ${codexSkills.length ? codexSkills.join(', ') : '(not installed)'}`);
+      .filter(d => d.startsWith('aicrew-') || d === 'brainstorm' || d === 'lean')
+      .sort();
+    console.log(`\nCodex skills (${codexSkills.length}): ${codexSkills.length ? codexSkills.join(', ') : '(not installed)'}`);
   }
 
   // Project skills
