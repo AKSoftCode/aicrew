@@ -153,6 +153,8 @@ After install, the `~/Agents/` tree and `AGENTS.md` / `CLAUDE.md` provide the sh
 
 **The solution:** aicrew wires three MCP servers and a read policy that route every query to the cheapest strategy first.
 
+> **Plain-English guide to every token-saving mechanism:** [`skills/docs/how-token-savings-work.md`](./skills/docs/how-token-savings-work.md)
+
 ### How it works
 
 1. **`codebase-memory-mcp`** indexes your project into a knowledge graph. A graph query for "what calls `authMiddleware`?" costs ~500 tokens — the same query via grep costs ~80,000. Index once per repo, then every session benefits.
@@ -180,6 +182,8 @@ Use `/normal` or `/lean off` to restore full verbosity when you need it.
 ## How aicrew saves tokens
 
 Every aicrew feature targets a specific source of token waste. Here's what each one does in plain English, with concrete numbers.
+
+> **Full guide with diagrams and worked examples:** [`skills/docs/how-token-savings-work.md`](./skills/docs/how-token-savings-work.md)
 
 > **Measure it yourself:** `aicrew benchmark --report` scans your project and writes a per-session TOKEN_REPORT to `.ai/reports/`. All numbers are clearly labeled **estimated** — exact counts need your tool's token-usage log.
 
@@ -434,8 +438,21 @@ Every command (`/dev`, `/fix`, `/quick`) uses **mandatory stop-and-wait gates**.
 
 ---
 
+## Inspired by
+
+aicrew draws **architectural inspiration** (no code copied) from:
+
+- **[forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills)** (MIT) — Karpathy-style agent safety heuristics informed the guardrail layer and phase-gate checkpoints.
+- **[NVIDIA/NeMo-Guardrails](https://github.com/NVIDIA/NeMo-Guardrails)** (NVIDIA license) — input/output/dialog rail taxonomy inspired `security-guard.py`, phase gates, and the `security-reviewer` pattern.
+- **[chopratejas/headroom](https://github.com/chopratejas/headroom)** (Apache 2.0) — CCR, ContentRouter, RollingWindow, and `headroom learn` patterns informed the context budget rail.
+- **Academic:** Leviathan et al. speculative decoding (2023), Anthropic context engineering guidance, ReSum, CoMem.
+
+Full attribution with license details: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+---
+
 ## License
 
-MIT — see [LICENSE](LICENSE).
+aicrew is MIT — see [LICENSE](LICENSE).
 
-Third-party MCP servers and inspiration credits: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Third-party components and inspirations: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

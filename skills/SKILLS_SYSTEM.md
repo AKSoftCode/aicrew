@@ -26,7 +26,9 @@ See `~/Agents/agents/caveman.md` (style) and `~/Agents/agents/context-economy.md
 
 ## Shared Token Stack
 
-All entry-point commands (`/dev`, `/fix`, `/quick`) share a common token-saving foundation — defined once in `~/Agents/docs/token-foundation.md` and referenced (not duplicated) by each command:
+All entry-point commands (`/dev`, `/fix`, `/quick`) share a common token-saving foundation — defined once in `~/Agents/docs/token-foundation.md` and referenced (not duplicated) by each command.
+
+> **Plain-English explanation of every token-saving mechanism:** [`~/Agents/docs/how-token-savings-work.md`](./docs/how-token-savings-work.md)
 
 - **Graph-first research** — `codebase-memory-mcp` (`search_graph` → `trace_path` → `get_code_snippet`) runs before any `Grep`/`Glob`/file-read in every phase. Graph query ≈ 500 tokens vs repo-wide grep ≈ 80 K.
 - **Speculative context** — a cheap Scout agent (haiku/mini) emits the fixed `SCOUT:` schema; the capable main agent (sonnet/opus) verifies the schema and acts from it — never from raw repo content. This is the speculative-decoding pattern applied to multi-agent orchestration.
@@ -79,6 +81,8 @@ All entry-point commands (`/dev`, `/fix`, `/quick`) share a common token-saving 
     token-foundation.md              ← shared token stack for /dev, /fix, /quick (graph-first + speculative + guardrails + economy)
     guardrails-taxonomy.md           ← NeMo rails ↔ aicrew hooks/phases (docs only)
     speculative-context.md           ← speculative context pattern: Scout-as-draft-model, two-model routing, failure modes
+    how-token-savings-work.md        ← plain-English guide to every token-saving mechanism
+    token-foundation.md              ← shared token stack referenced by /dev, /fix, /quick
   hooks/
     session-memory.py                ← Stop: journals changed files per session
     security-guard.py                ← PreToolUse: blocks keys, warns on injection
@@ -342,6 +346,7 @@ RED → GREEN → REFACTOR per acceptance criterion. Relaxed mode requires opt-o
 | `~/Agents/agents/karpathy-guardrails.md` | Karpathy coding principles |
 | `~/Agents/agents/context-scout.md` | Speculative context scout agent |
 | `~/Agents/docs/token-foundation.md` | Shared token stack for /dev, /fix, /quick (graph-first + speculative + guardrails + economy) |
+| `~/Agents/docs/how-token-savings-work.md` | Plain-English guide: speculative decoding, graph memory, lean, handoff, guardrails, benchmark |
 | `~/Agents/docs/guardrails-taxonomy.md` | NeMo ↔ aicrew guardrails map |
 | `~/Agents/docs/speculative-context.md` | Speculative context pattern (two-model routing) |
 | `~/Agents/agents/frontend-specialist.md` | Frontend TDD patterns |

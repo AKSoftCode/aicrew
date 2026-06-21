@@ -2,6 +2,8 @@
 
 This file lists the MCP servers, npm packages, and external projects that aicrew references, installs, or draws architectural inspiration from.
 
+> **User-friendly explanation of how aicrew uses these techniques:** [`skills/docs/how-token-savings-work.md`](./skills/docs/how-token-savings-work.md)
+
 ---
 
 ## Bundled / installed via `aicrew install`
@@ -145,19 +147,22 @@ The **speculative context** pattern in aicrew (`skills/docs/speculative-context.
 - **Leviathan et al., "Fast Inference from Transformers via Speculative Decoding" (2023)**
   - arXiv: https://arxiv.org/abs/2211.17192
   - Inspiration: draft-model/target-model accept/reject loop — mapped to Scout/Main agent handoff in aicrew.
+  - Type: academic paper reference only. No code used.
 
 - **ReSum — LLM-based Recursive Summarization for long-context compression**
   - Conceptual reference for recursive summarization as a token-reduction strategy in multi-agent pipelines.
   - No specific repository bundled; referenced as a class of technique.
+  - Type: academic concept reference only.
 
 - **COMEM / CoMem — Collaborative Memory for Multi-Agent Systems**
   - Conceptual reference for shared structured memory across agent roles (analogous to the `SCOUT:` schema handoff and `.ai/state/` checkpoints in aicrew).
   - No specific repository bundled; referenced as a class of technique.
+  - Type: academic concept reference only.
 
 - **Anthropic context engineering guidance (2025–2026)**
   - Source: https://www.anthropic.com/engineering/building-effective-agents
   - Inspiration: sub-agents returning 1–2 K token summaries as the primary context interface to parent agents.
-  - No code copied.
+  - Type: public guidance / blog reference only. No code used.
 
 ---
 
