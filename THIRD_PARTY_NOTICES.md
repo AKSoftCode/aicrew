@@ -131,6 +131,15 @@ The following projects are **not included in aicrew** in any form. They influenc
 
 ---
 
+### rtk-ai/rtk
+
+- **Repository:** https://github.com/rtk-ai/rtk
+- **License:** See repository (reviewed June 2026)
+- **Inspiration:** RTK (Rust Token Killer) is a CLI proxy that intercepts AI agent shell commands (via PreToolUse hooks) and compresses verbose command output before it reaches the LLM — achieving 60–90% token savings on common dev commands (`git`, `cargo`, `pytest`, etc.). Three patterns from RTK informed aicrew design: (1) **thin-delegate hook architecture** — hooks are minimal scripts that call a binary, keeping hook logic decoupled from the policy engine; (2) **fail-safe graceful degradation** — if the proxy binary is missing or a rewrite fails, the hook exits 0 and the original command runs unchanged, matching aicrew's philosophy that guardrails must never block work; (3) **cross-platform hook compatibility matrix** — PreToolUse (Claude Code/Cursor), BeforeTool (Gemini), plugin API (Codex), and rules-file fallback — the same four tiers aicrew uses for `security-guard.py` and future hook extensions.
+- **No code copied. Architecture reference and complementary tool.**
+
+---
+
 ### chopratejas/headroom
 
 - **Repository:** https://github.com/chopratejas/headroom

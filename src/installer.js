@@ -15,7 +15,7 @@
 
 const fs   = require('fs');
 const path = require('path');
-const { expandHome, mkdirp, symlink, copyDir, run } = require('./utils');
+const { expandHome, mkdirp, symlink, copyDir } = require('./utils');
 const { registerStopHook, registerPreToolUseHook, registerCodexMcpServers }  = require('./settings');
 
 const SKILLS_PACKAGE_DIR       = path.join(__dirname, '..', 'skills');

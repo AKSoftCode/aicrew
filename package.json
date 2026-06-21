@@ -23,6 +23,6 @@
   "dependencies": {},
   "devDependencies": {},
   "scripts": {
-    "test": "node src/index.js --version"
+    "test": "node bin/aicrew.js --version"
   }
 }

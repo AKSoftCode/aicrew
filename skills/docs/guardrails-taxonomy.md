@@ -105,6 +105,30 @@ In aicrew, this rail runs implicitly across every command:
 
 ---
 
+## RTK-inspired shell output compression rail
+
+[rtk (Rust Token Killer)](https://github.com/rtk-ai/rtk) is a CLI proxy that intercepts AI agent shell commands and compresses verbose output before it reaches the LLM — achieving 60–90% token savings on common dev commands (`git`, `cargo`, `pytest`, docker, etc.).
+
+aicrew borrows **three patterns** — not code — from RTK. No RTK dependency is added.
+
+| RTK pattern | aicrew equivalent | Status |
+|---|---|---|
+| **Thin-delegate hook** — hooks are minimal scripts that call a binary; policy logic stays in the binary, not the hook | `security-guard.py` and `session-memory.py` are thin Python scripts; policy logic is in the script body, not inlined in `settings.json` hook entries. Extension point: replace script path to swap policy without changing hook registration. | Equivalent |
+| **Fail-safe graceful degradation** — if the proxy binary is missing or a rewrite fails, hook exits 0 and original command runs unchanged | `security-guard.py` exits 0 on unexpected errors (non-blocking by default). `symlinkMcp` in the installer warns and continues rather than aborting if a source file is missing. aicrew as a whole degrades gracefully: MCP servers are optional, hooks are optional, `/quick` falls back from graph to grep. | Equivalent |
+| **Cross-platform hook compatibility matrix** — four tiers: shell PreToolUse hook, plugin API, rules-file instruction, no-op | aicrew hooks register via: PreToolUse (Claude Code/Cursor), hooks.json (Cursor), BeforeTool (Gemini), AGENTS.md instructions (Codex/rules-file agents). Same four-tier matrix. | Equivalent |
+
+### Shell output compression as a future rail
+
+RTK's core technique — compressing shell command output at the hook level before it reaches the LLM — is **not yet implemented** in aicrew but is a natural extension:
+
+- A future `PreToolUse` hook could intercept `Bash` tool calls and pipe output through a compressor (RTK-style binary, or a Python equivalent).
+- `security-guard.py` already fires on `Edit|Write|MultiEdit`; extending it or adding a sibling hook for `Bash` tool calls is the natural slot.
+- Short-term workaround: agents using aicrew can `brew install rtk && rtk init -g` independently — RTK and aicrew hooks coexist because they use different `matcher` patterns (`Bash` vs `Edit|Write|MultiEdit`).
+
+Attribution: `THIRD_PARTY_NOTICES.md` → rtk-ai/rtk section.
+
+---
+
 ## Why no NeMo Python dependency
 
 NeMo Guardrails is a Python runtime library designed for inference pipelines.
