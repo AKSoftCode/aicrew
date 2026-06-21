@@ -98,12 +98,12 @@ All three commands carry **identical** token capabilities. Full detail: [`skills
 | 10 | Optional `context-mode` + `token-optimizer-mcp` | Session shaping for long runs (> 30 min) |
 | 11 | Caveman default output | Terse by default; `/normal` or `/lean off` for verbose |
 
-### Documented token figures
+### Token figures (illustrative — project-dependent)
 
-| Lever | Approximate cost | vs |
+| Lever | Approximate cost | vs (illustrative baseline) |
 |-------|------------------|-----|
-| Graph query (`codebase-memory-mcp`) | ~500 tokens | Repo-wide grep ~80 K tokens |
-| Scout block (SCOUT schema output) | ~1–2 K tokens | Raw repo content |
+| Graph query (`codebase-memory-mcp`) | ~500 tokens | Repo-wide grep ~80 K tokens (documented ratio) |
+| Scout block (`SCOUT:` schema from `context-scout`) | ~1–2 K tokens | Raw grep/file dumps (often 10–80 K+ depending on repo) |
 | `/handoff` state file | ~300 tokens | ~15 K chat replay (estimated) |
 
 Run `aicrew benchmark --report` for repo-specific estimates (writes `.ai/reports/TOKEN_REPORT.<timestamp>.md`; all numbers labeled **estimated**).
@@ -127,7 +127,7 @@ Mirrors speculative decoding: a cheap draft model (Scout) does graph-first disco
 User goal
     │
     ▼
-Scout (haiku/mini) ── graph query ~500 tok, diff/tree ~1–2 K tok
+Scout (`context-scout`) ── graph ~500 tok + diff/tree reads + SCOUT block ~1–2 K
     │
     ▼
 Verification gate ── reject if constraints paraphrased, fields missing, or paths invented

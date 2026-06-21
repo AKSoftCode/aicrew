@@ -102,7 +102,8 @@ const CONSTANTS = {
   // From README: "A graph query costs ~500 tokens"
   graphQueryTokens: 500,
 
-  // /quick SCOUT schema: fixed fields ≈ 150 words → ~200 tokens output
+  // /quick SCOUT schema: fixed fields ≈ 150 words → ~200 tokens output.
+  // Docs cite ~1–2 K for the full SCOUT block; 200 is a conservative floor / schema minimum.
   scoutSchemaTokens: 200,
 
   // Average lines read per "slice" read vs full file

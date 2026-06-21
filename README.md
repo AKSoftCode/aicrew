@@ -60,7 +60,7 @@ Codex: `aicrew-fix`
 
 ### `/quick` — scoped task, lowest tokens
 
-Scout → Act. A cheap model does a graph-first discovery pass (~500 tokens) and emits a summary; the main model acts from that summary only — no pipeline overhead.
+Scout → Act. A cheap model (`context-scout`) runs graph-first discovery (graph query ~500 tok; Scout pass may also use targeted diff/tree reads) and emits a fixed `SCOUT:` schema (~1–2 K); the main model acts from that block only — no pipeline overhead.
 
 > Use when: a rename, a tweak, or a small well-defined addition.
 
@@ -94,10 +94,10 @@ Codex: `aicrew-quick`
 - **Security review** — `security-reviewer` on changed files; `security-guard.py` blocks secrets on every write
 - **Scout → verify** — cheap model maps the problem; capable model acts from a verified summary only
 
-### Token savings (documented figures)
+### Token savings (illustrative figures — project-dependent)
 
-- Graph query **~500 tok** vs repo-wide grep **~80 K** ([`token-foundation.md`](./skills/docs/token-foundation.md))
-- Scout block **~1–2 K** vs raw repo content ([`speculative-context.md`](./skills/docs/speculative-context.md))
+- Graph query **~500 tok** vs repo-wide grep **~80 K** (documented ratio; [`token-foundation.md`](./skills/docs/token-foundation.md))
+- Scout block **~1–2 K** `SCOUT:` schema from `context-scout` vs reading raw grep/file dumps (often **10–80 K+** depending on repo; [`speculative-context.md`](./skills/docs/speculative-context.md))
 - `/handoff` **~300 tok** vs **~15 K** chat replay (estimated)
 
 All three commands share the same 11-capability token foundation — only pipeline depth differs.
