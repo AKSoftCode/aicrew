@@ -170,8 +170,42 @@ Report summary, diff stat, and proposed commit message (if applicable). **Wait**
 
 ---
 
+---
+
+## Speculative context (two-model routing)
+
+`/quick` implements the **speculative context** pattern: Scout is the cheap draft model step; Act is the capable target model step. The SCOUT: schema is the token handoff contract between them.
+
+**When to use a separate fast model for Scout:**
+- Session context is large (risk of window pressure in Act)
+- You want to minimize cost on discovery before committing a capable model
+- Cross-tool handoff: Scout on one tool, Act on another
+
+**Optional two-model routing:**
+
+| Step | Recommended model |
+|---|---|
+| Scout (Phase 1) | `claude-3-5-haiku` / `gpt-4o-mini` |
+| Act (Phase 2) | `claude-sonnet-4` / `gpt-4o` |
+| Deep fallback | `claude-opus-4` / `o3` |
+
+Switch model after Checkpoint B. Pass only the SCOUT: block + original goal to the Act model — do not carry the full Scout conversation.
+
+**Verification gate (main agent checks before Act):**
+- All SCOUT: fields non-empty and non-`n/a` (except `Call chain`)
+- `Key constraints` contains user's verbatim words — reject if paraphrased
+- `Relevant files` lists real paths — reject if any path is invented
+- On rejection: re-scout (widen one read step); max 2 retries before asking user
+
+See full pattern: `~/Agents/docs/speculative-context.md`
+Scout agent schema + re-scout rules: `~/Agents/agents/context-scout.md`
+
+---
+
 ## Related docs
 
+- Speculative context pattern: `~/Agents/docs/speculative-context.md`
+- Scout agent (standalone or two-model): `~/Agents/agents/context-scout.md`
 - NeMo-style guardrails mapping: `~/Agents/docs/guardrails-taxonomy.md`
 - Lean mode: `/lean on` + `~/Agents/commands/lean.md`
 - Session labels: `/session <tool> <label>`

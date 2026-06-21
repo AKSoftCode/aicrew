@@ -138,4 +138,27 @@ The following projects are **not included in aicrew** in any form. They influenc
 
 ---
 
+### Speculative decoding analogy (academic references)
+
+The **speculative context** pattern in aicrew (`skills/docs/speculative-context.md`) draws on the conceptual parallel between speculative decoding in LLM inference and multi-agent context compression. The following papers/repos are referenced as conceptual inspiration only. No code was copied.
+
+- **Leviathan et al., "Fast Inference from Transformers via Speculative Decoding" (2023)**
+  - arXiv: https://arxiv.org/abs/2211.17192
+  - Inspiration: draft-model/target-model accept/reject loop — mapped to Scout/Main agent handoff in aicrew.
+
+- **ReSum — LLM-based Recursive Summarization for long-context compression**
+  - Conceptual reference for recursive summarization as a token-reduction strategy in multi-agent pipelines.
+  - No specific repository bundled; referenced as a class of technique.
+
+- **COMEM / CoMem — Collaborative Memory for Multi-Agent Systems**
+  - Conceptual reference for shared structured memory across agent roles (analogous to the `SCOUT:` schema handoff and `.ai/state/` checkpoints in aicrew).
+  - No specific repository bundled; referenced as a class of technique.
+
+- **Anthropic context engineering guidance (2025–2026)**
+  - Source: https://www.anthropic.com/engineering/building-effective-agents
+  - Inspiration: sub-agents returning 1–2 K token summaries as the primary context interface to parent agents.
+  - No code copied.
+
+---
+
 *This file is maintained manually. If you add a new MCP server to `config/mcp/`, please add a corresponding entry here.*

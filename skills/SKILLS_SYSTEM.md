@@ -62,9 +62,11 @@ See `~/Agents/agents/caveman.md` (style) and `~/Agents/agents/context-economy.md
     terse.md                         ← Default output policy + evidence footer
     context-economy.md               ← Default read policy (diff/slice first)
     karpathy-guardrails.md           ← /quick Act: think, simplicity, surgical, goal-driven
+    context-scout.md                 ← speculative context: cheap Scout agent with fixed SCOUT: schema and re-scout rules
     state-checkpoint.md              ← .ai/state checkpoint format
   docs/
     guardrails-taxonomy.md           ← NeMo rails ↔ aicrew hooks/phases (docs only)
+    speculative-context.md           ← speculative context pattern: Scout-as-draft-model, two-model routing, failure modes
   hooks/
     session-memory.py                ← Stop: journals changed files per session
     security-guard.py                ← PreToolUse: blocks keys, warns on injection
@@ -250,6 +252,7 @@ RED → GREEN → REFACTOR per acceptance criterion. Relaxed mode requires opt-o
 | `cloud-expert` | 8 | Migration, deps, env, concurrency |
 | `karpathy-guardrails` | `/quick` Act | Think, simplicity, surgical changes, goal-driven |
 | `context-economy` | `/lean` | Token-saving read policy |
+| `context-scout` | `/quick` Scout (two-model) | Speculative-context draft: fixed SCOUT: schema, re-scout rules |
 | `state-checkpoint` | All pipelines | `.ai/state/AI_STATE.*.md` format |
 
 ### Specialists (Phase 4 — auto-routed)
@@ -280,7 +283,9 @@ RED → GREEN → REFACTOR per acceptance criterion. Relaxed mode requires opt-o
 | `~/Agents/commands/fix.md` | Fast-fix flow |
 | `~/Agents/commands/quick.md` | Scout → Act flow |
 | `~/Agents/agents/karpathy-guardrails.md` | Karpathy coding principles |
+| `~/Agents/agents/context-scout.md` | Speculative context scout agent |
 | `~/Agents/docs/guardrails-taxonomy.md` | NeMo ↔ aicrew guardrails map |
+| `~/Agents/docs/speculative-context.md` | Speculative context pattern (two-model routing) |
 | `~/Agents/agents/frontend-specialist.md` | Frontend TDD patterns |
 | `~/Agents/agents/backend-specialist.md` | Backend API patterns |
 | `~/Agents/agents/db-migration.md` | Migration safety rules |
