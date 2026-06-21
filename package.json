@@ -2,7 +2,21 @@
   "name": "aicrew",
   "version": "0.1.0",
   "description": "TDD-first AI development pipeline for Claude Code, Cursor, Codex, Gemini CLI, and Antigravity.",
-  "keywords": ["claude-code", "ai-agents", "sdlc", "tdd", "cursor", "codex", "gemini-cli", "antigravity", "hooks", "token-saving", "mcp", "developer-tools", "workflow"],
+  "keywords": [
+    "claude-code",
+    "ai-agents",
+    "sdlc",
+    "tdd",
+    "cursor",
+    "codex",
+    "gemini-cli",
+    "antigravity",
+    "hooks",
+    "token-saving",
+    "mcp",
+    "developer-tools",
+    "workflow"
+  ],
   "homepage": "https://github.com/AKSoftCode/aicrew",
   "license": "MIT",
   "main": "src/index.js",
@@ -24,5 +38,9 @@
   "devDependencies": {},
   "scripts": {
     "test": "node bin/aicrew.js --version"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AKSoftCode/aicrew.git"
   }
 }
