@@ -187,7 +187,7 @@ function installGemini() {
   console.log('    Paste contents of ~/Agents/commands/dev.md as a system prompt.');
   console.log('    Or reference ~/Agents/ in your Gemini config as a rules path.');
   console.log('');
-  console.log('  Interactive checkpoints: Gemini CLI uses `ask_human` tool.');
+  console.log("  Interactive checkpoints: use Gemini's native ask tool (e.g. `ask_human`) if available; otherwise end response and wait.");
   console.log('');
   console.log('  See: skills/docs/platform-entry-points.md for full Gemini notes.');
   console.log('  Gemini CLI docs: https://ai.google.dev/gemini-api/docs/gemini-cli');

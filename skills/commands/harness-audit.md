@@ -43,7 +43,8 @@ ls ~/Agents/hooks/
 For each file, verify:
 - [ ] Has `description:` field with trigger conditions only (not workflow summary)
 - [ ] Has `⚠️ INTERACTIVE CHECKPOINTS` table with all 5 platforms
-- [ ] Platform table uses native ask tools (`AskUserQuestion`, `askFollowupQuestion`, `ask_human`) not just "end response"
+- [ ] Leads with the generic "use your platform's native interactive ask/question tool" instruction before the platform table
+- [ ] Platform table lists known native ask tools (`AskUserQuestion`, `askFollowupQuestion`, native ask tool e.g. `ask_human`) as best-effort hints, not just "end response"
 - [ ] Agent cross-references use `~/Agents/agents/` path (not `~/.claude/skills/`)
 
 ---

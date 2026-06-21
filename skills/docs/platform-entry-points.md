@@ -81,13 +81,13 @@ All platforms consume from there — via symlinks, merged copies, or config refe
 - Each skill is a `SKILL.md` that the Codex skill runner picks up automatically
 - MCP wired via `~/.codex/config.toml` (patched by installer)
 - No slash commands — use skill names directly (e.g., `aicrew-dev`)
-- Interactive checkpoints: uses `ask_human` tool
+- Interactive checkpoints: use the platform's native ask tool (e.g. `ask_human`) if available; otherwise end response and wait
 
 ### Gemini CLI
 - References `~/Agents/` commands if Gemini supports slash commands from a config path
 - `aicrew install gemini` ensures `~/Agents/` is populated; outputs Gemini config instructions
 - Gemini-native wiring (config file path) varies by Gemini CLI version — see printed instructions after install
-- Interactive checkpoints: uses `ask_human` tool
+- Interactive checkpoints: use the platform's native ask tool (e.g. `ask_human`) if available; otherwise end response and wait
 
 ### Antigravity
 - Reads `~/Agents/commands/` directly when configured
@@ -97,15 +97,17 @@ All platforms consume from there — via symlinks, merged copies, or config refe
 
 ## Interactive checkpoint platform matrix
 
-All commands use mandatory stop-and-wait checkpoints. Platform behavior:
+All commands use mandatory stop-and-wait checkpoints. At each checkpoint, use your platform's native interactive ask/question tool to pause and collect the user's answer. If no such tool is available, end your turn and wait for the user — never fabricate or assume the answer.
+
+Known tools by platform (use if available):
 
 | Platform | Tool call | Fallback |
 |----------|-----------|---------|
 | Claude Code | `AskUserQuestion` | End response, wait for reply |
 | Cursor | `askFollowupQuestion` | End response, wait for reply |
-| Gemini CLI | `ask_human` | End response, wait for reply |
-| Codex CLI | `ask_human` | End response, wait for reply |
-| Antigravity | `ask` (if available) | End response, wait for reply |
+| Gemini CLI | Native ask tool (e.g. `ask_human`) | End response, wait for reply |
+| Codex CLI | Native ask tool (e.g. `ask_human`) | End response, wait for reply |
+| Antigravity | Native `ask` tool (if available) | End response, wait for reply |
 | Autonomous script | Stops execution | Never invents answer |
 
 ---

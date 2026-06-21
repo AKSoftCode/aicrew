@@ -93,7 +93,9 @@ Or run `aicrew install mcp` for the full checklist.
 
 ### Interactive checkpoints
 
-Uses `AskUserQuestion` tool — never invents your answer.
+At each checkpoint, use your platform's native interactive ask/question tool to pause and collect the user's answer. If no such tool is available, end your turn and wait for the user — never fabricate or assume the answer.
+
+Known tool (use if available): `AskUserQuestion`.
 
 ---
 
@@ -157,7 +159,9 @@ Optional servers: GitHub, filesystem, memory, Brave, Playwright, SQLite, Postgre
 
 ### Interactive checkpoints
 
-Uses `askFollowupQuestion` tool.
+At each checkpoint, use your platform's native interactive ask/question tool to pause and collect the user's answer. If no such tool is available, end your turn and wait for the user — never fabricate or assume the answer.
+
+Known tool (use if available): `askFollowupQuestion`.
 
 ---
 
@@ -235,7 +239,9 @@ npm install -g codebase-memory-mcp   # required for graph queries
 
 ### Interactive checkpoints
 
-Uses `ask_human` tool.
+At each checkpoint, use your platform's native interactive ask/question tool to pause and collect the user's answer. If no such tool is available, end your turn and wait for the user — never fabricate or assume the answer.
+
+Known tool (use if available): native ask tool (e.g. `ask_human`).
 
 ---
 
@@ -277,7 +283,9 @@ All commands in `~/Agents/commands/` are available:
 
 ### Interactive checkpoints
 
-Uses `ask_human` tool (or ends response and waits).
+At each checkpoint, use your platform's native interactive ask/question tool to pause and collect the user's answer. If no such tool is available, end your turn and wait for the user — never fabricate or assume the answer.
+
+Known tool (use if available): native ask tool (e.g. `ask_human`).
 
 ---
 
@@ -312,7 +320,9 @@ All slash commands from `~/Agents/commands/`:
 
 ### Interactive checkpoints
 
-Uses `ask` tool (if available), or ends response and waits.
+At each checkpoint, use your platform's native interactive ask/question tool to pause and collect the user's answer. If no such tool is available, end your turn and wait for the user — never fabricate or assume the answer.
+
+Known tool (use if available): native `ask` tool.
 
 ---
 
