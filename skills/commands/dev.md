@@ -72,30 +72,21 @@ Store what you find. Use project-specific roles where they exist; use generic ag
 
 ## Token foundation (mandatory)
 
-All phases apply the shared token-saving stack from `~/Agents/docs/token-foundation.md`:
+All phases share the same 11-capability token-saving stack. Full reference: `~/Agents/docs/token-foundation.md`.
 
-1. **Graph-first research** — `codebase-memory-mcp` before any Grep/Glob/file-read:
-   `list_projects` → `search_graph` → `trace_path` → `get_code_snippet`
-   Fallback: `git diff --name-only` → targeted grep → slice reads only.
+1. **Graph-first** (`codebase-memory-mcp`) — `list_projects` → `search_graph` → `trace_path` → `get_code_snippet`. Fallback: `git diff --name-only` → targeted grep → slice reads only.
+2. **Speculative Scout → verify** (`context-scout`, SCOUT schema) — Phase 1 Research **must** open with Scout (graph-first) before any Glob/Grep/Read. Re-scout between phases if context grew significantly. Two-model routing: Scout on `haiku/mini`, Research/Implement on `sonnet/opus`.
+3. **Karpathy guardrails** — load `~/Agents/agents/karpathy-guardrails.md` before every implementation step: think → simplest → surgical → goal-driven.
+4. **Layered guardrails** (`guardrails-taxonomy.md`) — input → scope/topic → phase gate → implementation → output → context budget.
+5. **Context-economy read policy** — diff/tree/search before file reads; slice over whole-file; always on; `/lean on` amplifies.
+6. **`security-guard.py` hooks** — PreToolUse hook; blocks secrets before any file write; always active.
+7. **`.ai/state` checkpoints** — write/update `AI_STATE.<tool>.<session>.md` after every checkpoint.
+8. **`/compact` between phases** — run at every phase boundary to prune stale context before the next phase.
+9. **`/handoff` on tool switch** — prunes conversation to SCOUT block + state file before switching tool or model.
+10. **Optional: `context-mode` + `token-optimizer-mcp`** — session-level output shaping and cache-aware response shaping; biggest impact on sessions > 30 min.
+11. **Caveman default output** — terse by default; `/normal` or `/lean off` for verbose. See `~/Agents/agents/caveman.md`.
 
-2. **Speculative context** — cheap Scout compresses; main agent verifies SCOUT schema before acting.
-   Phase 1 Research **must** open with a Scout pass (graph-first) before any broader exploration.
-   Re-scout between phases if context grew significantly.
-   Two-model routing: Scout on `haiku/mini`, Research/Implement on `sonnet/opus`.
-
-3. **Layered guardrails**:
-   - Input: `security-guard.py` hook (always active)
-   - Scope: Phase 0 Checkpoint C locks acceptance criteria
-   - Phase gate: user confirmation required before each phase
-   - Implementation: `karpathy-guardrails` in Phase 4 (think → simplest → surgical → goal-driven)
-   - Output: `security-reviewer` Phase 6 + `conclude`
-   - Context budget: `context-economy` always on; `/compact` between phases
-
-4. **Context economy** — `context-economy` read policy always active; `/lean on` amplifies.
-
-5. **State** — update `.ai/state/AI_STATE.<tool>.<session>.md` after every checkpoint.
-
-See full reference: `~/Agents/docs/token-foundation.md`
+See full reference and rationale: `~/Agents/docs/token-foundation.md`
 
 ---
 

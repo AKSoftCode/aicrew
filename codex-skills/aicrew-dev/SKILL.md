@@ -7,6 +7,10 @@ description: Run the aicrew /dev pipeline in Codex (intake -> research -> design
 
 Codex does not support slash commands. Use this skill when the user asks for "/dev" or a full SDLC pipeline.
 
+## Token foundation (mandatory)
+
+`/dev`, `/fix`, and `/quick` all share the same 11-capability token-saving stack — only pipeline depth differs. Full reference: `~/Agents/docs/token-foundation.md`. Stack: graph-first (`codebase-memory-mcp`), speculative Scout → verify (SCOUT schema, two-model routing), Karpathy guardrails, layered guardrails (`guardrails-taxonomy.md`), context-economy read policy, `security-guard.py` hooks, `.ai/state` checkpoints, `/compact` between phases, `/handoff` on tool switch, optional `context-mode` + `token-optimizer-mcp`, caveman default output. For `/dev`, Scout opens Phase 1 Research before any Glob/Grep/Read; re-scout between phases if context grew.
+
 ## Default output
 
 Caveman/lean style by default. See `~/Agents/agents/caveman.md` and `~/Agents/agents/context-economy.md`. `/normal` or `/lean off` restores verbose.

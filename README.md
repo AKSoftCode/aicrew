@@ -19,8 +19,14 @@ If you've ever lost a long session to a context-window overflow, or found your A
 ### 1. Install
 
 ```bash
-# One-off (no global binary needed):
+# Install all platforms (default):
 npx aicrew install
+
+# Install for one platform only:
+npx aicrew install claude    # Claude Code only
+npx aicrew install codex     # Codex only
+npx aicrew install cursor    # Cursor only
+npx aicrew install gemini    # Gemini CLI only
 
 # Or, after cloning this repo, install globally:
 npm install -g .
@@ -60,32 +66,38 @@ In **Cursor**, ask the agent and it uses the shared `~/Agents/` rules automatica
 
 ---
 
-## CLI or skill — same action
+## Same action, every platform
 
-Every aicrew action is reachable three ways. No CLI required.
+Every aicrew action is reachable from every supported platform. No CLI required anywhere.
 
-| Action | CLI | Codex skill | Claude Code slash |
-|--------|-----|-------------|-------------------|
-| First-time setup | `aicrew install` | `aicrew-install` | `/install` |
-| Pull new skills | `aicrew update` | `aicrew-update` | `/update` |
-| Check install | `aicrew status` | `aicrew-status` | `/status` |
-| Scaffold agent-kit | `aicrew agent-kit init` | `aicrew-agent-kit` | `/agent-kit` |
-| Scaffold cursor plugin | `aicrew cursor-plugin init` | `aicrew-cursor-plugin` | `/cursor-plugin` |
-| Full dev pipeline | — | `aicrew-dev` | `/dev` |
-| Fast bug fix | — | `aicrew-fix` | `/fix` |
-| Scout → Act | — | `aicrew-quick` | `/quick` |
-| Wrap up session | — | `aicrew-conclude` | `/conclude` |
-| Evolve project skills | — | `aicrew-update-skills` | `/update-skills` |
-| Audit harness | — | `aicrew-harness-audit` | `/harness-audit` |
-| Session checkpoint label | — | `aicrew-session` | `/session` |
-| Cross-tool handoff | — | `aicrew-handoff` | `/handoff` |
-| Benchmark skills | `aicrew benchmark` _(planned)_ | `aicrew-benchmark` | `/benchmark` |
-| Design brainstorm | — | `brainstorm` | `/brainstorm` |
-| Lean/terse output on | — | `lean` | `/lean on` |
-| Lean/terse output off | — | `aicrew-normal` | `/lean off` or `/normal` |
-| Re-enable terse | — | `aicrew-terse` | `/terse` |
+> Full per-platform matrix with invocation details: [`skills/docs/platform-entry-points.md`](./skills/docs/platform-entry-points.md)
 
-> **Example:** install on a new machine: `aicrew install` OR skill `aicrew-install` OR `/install` in Claude Code.
+| Action | CLI | Claude Code | Cursor | Codex | Gemini / Antigravity |
+|--------|-----|-------------|--------|-------|----------------------|
+| First-time setup | `aicrew install` | `/install` | `aicrew install cursor` | `aicrew-install` | `aicrew install gemini` |
+| Platform-only setup | `aicrew install <platform>` | — | — | — | — |
+| Pull new skills | `aicrew update` | `/update` | re-run install | `aicrew-update` | re-run install |
+| Check install | `aicrew status` | `/status` | `aicrew status` | `aicrew-status` | `aicrew status` |
+| Scaffold agent-kit | `aicrew agent-kit init` | `/agent-kit` | same CLI | `aicrew-agent-kit` | — |
+| Scaffold cursor plugin | `aicrew cursor-plugin init` | `/cursor-plugin` | same CLI | `aicrew-cursor-plugin` | — |
+| Full dev pipeline | — | `/dev` | `/dev` | `aicrew-dev` | `/dev` |
+| Fast bug fix | — | `/fix` | `/fix` | `aicrew-fix` | `/fix` |
+| Scout → Act | — | `/quick` | `/quick` | `aicrew-quick` | `/quick` |
+| Wrap up session | — | `/conclude` | `/conclude` | `aicrew-conclude` | `/conclude` |
+| Evolve project skills | — | `/update-skills` | `/update-skills` | `aicrew-update-skills` | `/update-skills` |
+| Audit harness | — | `/harness-audit` | `/harness-audit` | `aicrew-harness-audit` | `/harness-audit` |
+| Session checkpoint | — | `/session` | `/session` | `aicrew-session` | `/session` |
+| Cross-tool handoff | — | `/handoff` | `/handoff` | `aicrew-handoff` | `/handoff` |
+| Benchmark token savings | `aicrew benchmark` | `/benchmark` | `aicrew benchmark` | `aicrew-benchmark` | `aicrew benchmark` |
+| Design brainstorm | — | `/brainstorm` | `/brainstorm` | `brainstorm` | `/brainstorm` |
+| Lean/terse on | — | `/lean on` | `/lean on` | `lean` | `/lean on` |
+| Lean/terse off | — | `/lean off` or `/normal` | `/lean off` | `aicrew-normal` | `/lean off` |
+| Re-enable terse | — | `/terse` | `/terse` | `aicrew-terse` | `/terse` |
+
+> **Example:** install on a new machine:
+> - Claude-only: `aicrew install claude`
+> - Codex-only: `aicrew install codex`
+> - Everything: `aicrew install` (default, all platforms)
 
 ---
 
@@ -111,9 +123,13 @@ Use this table to match your situation to the right command.
 
 ## Tool-specific entry points
 
+> Full invocation details for all platforms: [`skills/docs/platform-entry-points.md`](./skills/docs/platform-entry-points.md)
+
 ### Claude Code
 
-Use slash commands — they resolve from `~/.claude/commands/` which symlinks to `~/Agents/commands/`:
+Install: `aicrew install claude`
+
+Slash commands resolve from `~/.claude/commands/` (symlinked from `~/Agents/commands/`):
 
 ```
 /dev     /fix     /quick     /conclude     /update-skills     /harness-audit
@@ -122,9 +138,13 @@ Use slash commands — they resolve from `~/.claude/commands/` which symlinks to
 /install     /update     /status     /agent-kit     /cursor-plugin
 ```
 
+Hooks auto-registered: `session-memory.py` (Stop) + `security-guard.py` (PreToolUse).
+
 ### Codex
 
-Use skill names — they live under `~/.codex/skills/` after install:
+Install: `aicrew install codex`
+
+Skill names — live under `~/.codex/skills/` after install:
 
 ```
 aicrew-dev    aicrew-fix    aicrew-quick    aicrew-conclude    aicrew-update-skills
@@ -136,14 +156,27 @@ aicrew-agent-kit    aicrew-cursor-plugin
 aicrew-session    aicrew-handoff    aicrew-terse    aicrew-normal
 ```
 
-Invoke via your Codex UI's skill picker (exact invocation depends on your Codex product).
+Invoke via your Codex UI's skill picker or `$<skill-name>` syntax.
 
 ### Cursor
 
+Install: `aicrew install cursor`
+
 After install, the `~/Agents/` tree and `AGENTS.md` / `CLAUDE.md` provide the shared context. Use:
-- The **agent-kit** to symlink `.mdc` rules into each repo's `.cursor/rules/` (run `aicrew agent-kit init ./agent-kit`)
-- The **cursor-plugin** for a multi-tool terminal panel (Claude Code + Codex + Gemini in one window)
-- MCP servers wired via `~/.cursor/mcp.json` (set up by `aicrew install`)
+- Slash commands if Claude integration is active (same commands as Claude Code above)
+- The **agent-kit** to symlink `.mdc` rules into each repo's `.cursor/rules/` (`aicrew agent-kit init ./agent-kit`)
+- The **cursor-plugin** for a multi-tool terminal panel (`aicrew cursor-plugin init`)
+- MCP servers wired via `~/.cursor/mcp.json` → `config/mcp/cursor.local.json`
+
+### Gemini CLI
+
+Install: `aicrew install gemini`
+
+Populates `~/Agents/` and prints Gemini-specific config instructions. Slash commands (`/dev`, `/fix`, etc.) work if Gemini CLI supports loading commands from a config path. Interactive checkpoints use `ask_human`.
+
+### Antigravity
+
+Reference `~/Agents/commands/` in your Antigravity config. Slash commands (`/dev`, `/fix`, `/quick`, etc.) work natively. Interactive checkpoints use the platform `ask` tool.
 
 ---
 
@@ -163,17 +196,17 @@ After install, the `~/Agents/` tree and `AGENTS.md` / `CLAUDE.md` provide the sh
 
 3. **`context-mode`** and **`token-optimizer-mcp`** shape long sessions — compressing stale context between phases, keeping the KV-cache warm so repeated prompts don't re-spend tokens.
 
-4. **`/quick`'s Scout → Act pattern** goes further: a cheap fast model does a graph-first "Scout" pass (1–2 K tokens) and emits a fixed summary schema. The main model receives *only that summary* — never the raw repo. This mirrors speculative decoding from LLM inference. See [`skills/docs/speculative-context.md`](./skills/docs/speculative-context.md) for details.
+4. **Scout → Act pattern** (all commands): a cheap fast model does a graph-first "Scout" pass (1–2 K tokens) and emits a fixed summary schema. The main model receives *only that summary* — never the raw repo. This mirrors speculative decoding from LLM inference. Scout timing: `/quick` Scout is Phase 1; `/dev` Scout opens Phase 1 Research; `/fix` Scout opens Phase 1 Bug Analysis. See [`skills/docs/speculative-context.md`](./skills/docs/speculative-context.md) for details.
 
 ### When to use each lever
 
 | You want to… | Use |
 |---|---|
-| Explore a large codebase without burning context | `codebase-memory-mcp` graph queries |
-| Keep a long `/dev` session from filling the window | `/lean on` |
-| Save tokens on small, well-scoped tasks | `/quick` (Scout → Act) |
-| Hand off a session to a different tool | `/handoff` (writes `.ai/state/` checkpoint) |
-| Compress accumulated context between phases | `/dev` does this automatically at phase boundaries |
+| Explore a large codebase without burning context | `codebase-memory-mcp` graph queries (all commands use this) |
+| Keep sessions from filling the context window | `/lean on` (amplifies the always-on context-economy policy) |
+| Compress stale context between phases | `/compact` at phase boundaries — all commands; `/dev` has 9 gates, `/fix` 5, `/quick` 1 |
+| Hand off a session to a different tool | `/handoff` (writes `.ai/state/` checkpoint, ~300 tokens) |
+| Scout-first discovery with minimal pipeline overhead | `/quick` (Scout → Act; same token stack as `/dev`/`/fix`, fewer phases) |
 
 Use `/normal` or `/lean off` to restore full verbosity when you need it.
 
@@ -181,24 +214,35 @@ Use `/normal` or `/lean off` to restore full verbosity when you need it.
 
 ## How aicrew saves tokens
 
-Every aicrew feature targets a specific source of token waste. Here's what each one does in plain English, with concrete numbers.
+Every aicrew feature targets a specific source of token waste. **All three entry-point commands (`/dev`, `/fix`, `/quick`) carry the identical 11-capability token stack** — only pipeline depth differs. See [`skills/docs/token-foundation.md`](./skills/docs/token-foundation.md) for the authoritative list.
 
 > **Full guide with diagrams and worked examples:** [`skills/docs/how-token-savings-work.md`](./skills/docs/how-token-savings-work.md)
 
 > **Measure it yourself:** `aicrew benchmark --report` scans your project and writes a per-session TOKEN_REPORT to `.ai/reports/`. All numbers are clearly labeled **estimated** — exact counts need your tool's token-usage log.
 
-### The sources of waste (and the fix for each)
+### The 11 token capabilities (all commands, always)
 
-| Feature | The problem | What aicrew does | Typical saving |
-|---------|-------------|------------------|----------------|
-| **`/quick` Scout → Act** | Exploring a codebase with raw grep reads every file it touches — ~80,000 tokens for a typical scan | Scout runs a graph query instead: one `search_graph` call returns the relevant symbol in ~500 tokens. The main model only sees the compact `SCOUT:` block, never the raw repo. | ~79K tokens per session |
-| **`/lean` slice reads** | Reading a whole 500-line file to change 3 lines costs 500+ tokens | `/lean` enforces `git diff` → directory tree → slice-read order. You get the 20–30 lines you need, not the whole file. | ~70% fewer read tokens |
-| **graph MCP (`codebase-memory-mcp`)** | "What calls `authMiddleware`?" via grep scans every file: ~80K tokens | The same query via `search_graph` costs ~500 tokens — a 160× reduction. Index once; every session benefits. | ~79.5K per 3 queries |
-| **`/handoff` + `.ai/state`** | Switching from Cursor to Claude Code mid-task means re-pasting the full chat — 10–20K tokens | `/handoff` writes a compact `.ai/state/AI_STATE.<tool>.<session>.md` (~300 tokens). Paste that instead of the whole conversation. | ~14.7K per tool switch |
-| **`/dev` phase compaction** | A full 9-phase `/dev` session accumulates context. Later phases carry everything from earlier ones. | `/dev` runs `/compact` automatically at every phase boundary, pruning stale context before the next phase starts. | ~60% context at each boundary |
-| **caveman/terse output** | Verbose AI responses add 30–40% more output tokens with no extra information | aicrew defaults to caveman/lean style — lead with the answer, drop filler. Use `/normal` when you want prose. | ~35% fewer output tokens |
-| **speculative Scout → Act** | On large context windows, even the discovery step fills the window before coding starts | `/quick` routes Scout to a cheap fast model (Haiku/gpt-4o-mini) and hands only the `SCOUT:` block to the capable model. See [`skills/docs/speculative-context.md`](./skills/docs/speculative-context.md). | Context window stays headroom |
-| **`context-mode` / `token-optimizer-mcp`** | Long sessions accumulate KV-cache misses as context grows | These optional MCP servers shape long-session context and keep the cache warm so repeated prompts don't re-spend tokens. | Varies; biggest on sessions > 30min |
+| # | Capability | The problem | What aicrew does | Typical saving |
+|---|---|---|---|---|
+| 1 | **Graph-first** (`codebase-memory-mcp`) | "What calls `authMiddleware`?" via grep: ~80K tokens | `search_graph` costs ~500 tokens — 160× reduction. Index once; every session benefits. | ~79.5K per 3 queries |
+| 2 | **Speculative Scout → verify** (SCOUT schema) | Exploring a codebase reads every file it touches — ~80K tokens | Scout runs a graph query (~500 tok); main model sees only the `SCOUT:` block. Scout timing varies by command (see pipeline depth table). | ~79K per session |
+| 3 | **Karpathy guardrails** | Agent rewrites more than needed; scope creep | think → simplest → surgical → goal-driven; loaded before every implementation step | Reduces re-work |
+| 4 | **Layered guardrails** | Agent acts outside scope or skips safety | input → scope lock → phase gate → implementation → output → context budget | Prevents runaway sessions |
+| 5 | **Context-economy read policy** | Reading a whole 500-line file to change 3 lines costs 500+ tokens | diff/tree/search before file reads; slice over whole-file; always on; `/lean on` amplifies | ~70% fewer read tokens |
+| 6 | **`security-guard.py` hooks** | Secrets written to disk before review | PreToolUse hook fires before every write; blocks PEM keys and AWS secrets outright | Prevents credential leaks |
+| 7 | **`.ai/state` checkpoints** | Long sessions lost to context-window reset | State file written after every phase; paste into new tool instead of replaying chat | Survives context resets |
+| 8 | **`/compact` between phases** | Later phases carry all context from earlier ones | Fires at every phase boundary, pruning stale context before next phase — all commands | ~60% context at each boundary |
+| 9 | **`/handoff` on tool switch** | Switching tools means re-pasting the full chat — 10–20K tokens | `/handoff` writes a compact state file (~300 tokens); pass that, not the whole conversation | ~14.7K per tool switch |
+| 10 | **Optional: `context-mode` + `token-optimizer-mcp`** | Long sessions accumulate KV-cache misses as context grows | These optional MCP servers shape session context and keep the cache warm | Varies; biggest on sessions > 30min |
+| 11 | **Caveman default output** | Verbose AI responses add 30–40% more output tokens | aicrew defaults to terse/caveman style — lead with the answer, drop filler. Use `/normal` for prose. | ~35% fewer output tokens |
+
+### Pipeline depth (the only thing that differs per command)
+
+| Command | Phases | Use when |
+|---|---|---|
+| `/dev` | 9 (intake → research → brainstorm → design → implement → tests → security → audit → conclude) | Feature, refactor, or anything needing design spec |
+| `/fix` | 5 (intake → bug analysis → implement → tests → security → conclude) | Bug fix with mandatory TDD and security review |
+| `/quick` | 2 (Scout → Act) | Scoped task; want graph-first discovery without pipeline overhead |
 
 ### Concrete scenarios
 

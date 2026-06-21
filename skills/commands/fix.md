@@ -33,30 +33,6 @@ Use `/dev` instead if you need brainstorming, refactor planning, or a feature.
 
 ---
 
-## Token foundation (mandatory)
-
-All phases apply the shared token-saving stack from `~/Agents/docs/token-foundation.md`:
-
-1. **Graph-first** — `codebase-memory-mcp` before any file read:
-   `search_graph` → `trace_path` → `get_code_snippet`; fallback to `git diff` + targeted grep.
-
-2. **Speculative context** — Phase 1 opens with a Scout pass (emit SCOUT: schema) before
-   bug-analyst deep dive. Verify schema; two-model: Scout on `haiku/mini`, fix on `sonnet`.
-
-3. **Layered guardrails**:
-   - Input: `security-guard.py` hook (always active)
-   - Scope: acceptance criteria locked at intake
-   - Implementation: `karpathy-guardrails` mandatory in Phase 2 Implement
-   - Output: `security-reviewer` Phase 4
-
-4. **Context economy** — `context-economy` always on; slice reads over whole-file.
-
-5. **State** — update `.ai/state/AI_STATE.<tool>.<session>.md` at each phase.
-
-See full reference: `~/Agents/docs/token-foundation.md`
-
----
-
 ## INTAKE — 3 questions only
 
 If `$ARGUMENTS` describes the bug clearly, use it and skip straight to question 3.
@@ -82,6 +58,26 @@ Pipeline (fixed — no choices needed):
 ```
 
 Say **go** to start or adjust anything.
+
+---
+
+## Token foundation (mandatory)
+
+All phases share the same 11-capability token-saving stack. Full reference: `~/Agents/docs/token-foundation.md`.
+
+1. **Graph-first** (`codebase-memory-mcp`) — `list_projects` → `search_graph` → `trace_path` → `get_code_snippet`. Fallback: `git diff --name-only` → targeted grep → slice reads only.
+2. **Speculative Scout → verify** (`context-scout`, SCOUT schema) — Phase 1 Bug Analysis **must** open with Scout before the bug-analyst deep dive. Two-model routing: Scout on `haiku/mini`, Fix on `sonnet/opus`.
+3. **Karpathy guardrails** — load `~/Agents/agents/karpathy-guardrails.md` before every implementation step: think → simplest → surgical → goal-driven.
+4. **Layered guardrails** (`guardrails-taxonomy.md`) — input → scope/topic → phase gate → implementation → output → context budget.
+5. **Context-economy read policy** — diff/tree/search before file reads; slice over whole-file; always on; `/lean on` amplifies.
+6. **`security-guard.py` hooks** — PreToolUse hook; blocks secrets before any file write; always active.
+7. **`.ai/state` checkpoints** — write/update `AI_STATE.<tool>.<session>.md` after every checkpoint.
+8. **`/compact` between phases** — run at every phase boundary to prune stale context before the next phase.
+9. **`/handoff` on tool switch** — prunes conversation to SCOUT block + state file before switching tool or model.
+10. **Optional: `context-mode` + `token-optimizer-mcp`** — session-level output shaping and cache-aware response shaping; biggest impact on sessions > 30 min.
+11. **Caveman default output** — terse by default; `/normal` or `/lean off` for verbose. See `~/Agents/agents/caveman.md`.
+
+See full reference and rationale: `~/Agents/docs/token-foundation.md`
 
 ---
 

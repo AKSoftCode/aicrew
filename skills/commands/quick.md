@@ -70,6 +70,26 @@ State acceptance criteria, then say **go** to start Scout (or adjust).
 
 ---
 
+## Token foundation (mandatory)
+
+All phases share the same 11-capability token-saving stack. Full reference: `~/Agents/docs/token-foundation.md`.
+
+1. **Graph-first** (`codebase-memory-mcp`) — `list_projects` → `search_graph` → `trace_path` → `get_code_snippet`. Fallback: `git diff --name-only` → targeted grep → slice reads only.
+2. **Speculative Scout → verify** (`context-scout`, SCOUT schema) — Scout **IS** Phase 1 (built-in, always first); Act is Phase 2. Two-model routing: Scout on `haiku/mini`, Act on `sonnet/opus`.
+3. **Karpathy guardrails** — load `~/Agents/agents/karpathy-guardrails.md` before every implementation step: think → simplest → surgical → goal-driven.
+4. **Layered guardrails** (`guardrails-taxonomy.md`) — input → scope/topic → phase gate → implementation → output → context budget.
+5. **Context-economy read policy** — diff/tree/search before file reads; slice over whole-file; always on; `/lean on` amplifies.
+6. **`security-guard.py` hooks** — PreToolUse hook; blocks secrets before any file write; always active.
+7. **`.ai/state` checkpoints** — write/update `AI_STATE.<tool>.<session>.md` after every checkpoint.
+8. **`/compact` between phases** — run at every phase boundary to prune stale context before the next phase.
+9. **`/handoff` on tool switch** — prunes conversation to SCOUT block + state file before switching tool or model.
+10. **Optional: `context-mode` + `token-optimizer-mcp`** — session-level output shaping and cache-aware response shaping; biggest impact on sessions > 30 min.
+11. **Caveman default output** — terse by default; `/normal` or `/lean off` for verbose. See `~/Agents/agents/caveman.md`.
+
+See full reference and rationale: `~/Agents/docs/token-foundation.md`
+
+---
+
 ## READ POLICY — graph first, lean integrated
 
 **Forbidden until Scout completes or user explicitly overrides:** raw `Grep`, `Glob`, or `Read` of whole files.
@@ -167,36 +187,6 @@ Report summary, diff stat, and proposed commit message (if applicable). **Wait**
 | Feature needs design spec or 3 options | `/dev` |
 | Schema/migration or infra deps changed | `/dev` (Phase 8) |
 | User says "override scout" | May use Grep/Read — note override in Scout block |
-
----
-
-## Token foundation
-
-`/quick` is the reference implementation of the shared token-saving stack.
-Full spec: `~/Agents/docs/token-foundation.md`
-
-Summary:
-- **Graph-first** — `codebase-memory-mcp` before any Grep/Read (Scout enforces this)
-- **Speculative context** — Scout (cheap draft) → SCOUT: schema → verify → Act (capable model)
-- **Layered guardrails** — `security-guard.py` (input) + scope lock + karpathy (Act) + context budget
-- **Context economy** — always on; `/lean on` amplifies; state saved at Checkpoint B
-
-### Two-model routing (optional)
-
-| Step | Recommended model |
-|---|---|
-| Scout (Phase 1) | `claude-3-5-haiku` / `gpt-4o-mini` |
-| Act (Phase 2) | `claude-sonnet-4` / `gpt-4o` |
-| Deep fallback | `claude-opus-4` / `o3` |
-
-Switch model after Checkpoint B. Pass only the `SCOUT:` block + original goal to Act — not the full conversation.
-
-### Verification gate (main agent checks before Act)
-
-- All `SCOUT:` fields non-empty / non-`n/a` (except `Call chain`)
-- `Key constraints (verbatim)` not paraphrased — reject if paraphrased
-- `Relevant files` lists real paths — reject if any path is invented
-- On rejection: re-scout (widen one read step); max 2 retries, then ask user
 
 ---
 
