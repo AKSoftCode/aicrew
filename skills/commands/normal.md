@@ -1,14 +1,12 @@
 ---
-description: "Disable default terse/lean mode: return to verbose output"
+description: "Alias for /lean off — restore verbose output"
 argument-hint: ""
 ---
 
-> **Caveman is default.** Use this when you want verbose responses. Re-enable terse with `/lean on` or `/terse`.
+> **Alias for `/lean off`. Kept for convenience.** Caveman is default; this restores verbose output. Re-enable terse with `/lean on`.
 
 # /normal
 
-Disable default caveman/lean output and context-economy read policy for the rest of this session.
+Alias for `/lean off`. Disables default caveman/lean output and context-economy read policy for the rest of this session, returning to verbose explanations and fuller exploration.
 
-Return to normal explanations and fuller exploration.
-
-Re-enable with `/lean on` or `/terse`.
+Re-enable with `/lean on`.

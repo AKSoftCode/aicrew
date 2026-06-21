@@ -35,12 +35,14 @@ All platforms consume from there — via symlinks, merged copies, or config refe
 
 | Action | CLI | Claude Code | Codex |
 |--------|-----|-------------|-------|
-| **First-time setup** | `aicrew install` | `/install` | `aicrew-install` |
+| **First-time setup** | `aicrew install` | — | `aicrew-install` |
 | **Platform-only setup** | `aicrew install <platform>` | — | — |
-| **Pull new skills** | `aicrew update` | `/update` | `aicrew-update` |
-| **Check install state** | `aicrew status` | `/status` | `aicrew-status` |
-| **Scaffold agent-kit** | `aicrew agent-kit init` | `/agent-kit` | `aicrew-agent-kit` |
-| **Scaffold cursor plugin** | `aicrew cursor-plugin init` | `/cursor-plugin` | `aicrew-cursor-plugin` |
+| **Pull new skills** | `aicrew update` | — | `aicrew-update` |
+| **Check install state** | `aicrew status` | — | `aicrew-status` |
+| **Scaffold agent-kit** | `aicrew agent-kit init` | — | `aicrew-agent-kit` |
+| **Scaffold cursor plugin** | `aicrew cursor-plugin init` | — | `aicrew-cursor-plugin` |
+
+> Setup actions have no Claude/Cursor slash command — they are CLI or Codex skills only.
 
 ## Utilities (optional)
 
@@ -53,7 +55,7 @@ All platforms consume from there — via symlinks, merged copies, or config refe
 | **Cross-tool handoff** | `/handoff` | `aicrew-handoff` |
 | **Benchmark token savings** | `/benchmark` | `aicrew-benchmark` |
 
-> **Output style:** Terse by default (caveman). Use `/normal` to restore verbose. Use `/lean on` to re-enable terse if you toggled it off.
+> **Output style:** Terse by default (caveman). Use `/lean off` (aka `/normal`) to restore verbose. Use `/lean on` to re-enable / amplify terse.
 
 ---
 
@@ -116,7 +118,7 @@ All commands use mandatory stop-and-wait checkpoints. Platform behavior:
 === aicrew status ===
 
 Shared assets (~/Agents/):     ✓ populated
-Claude Code:                   ✓ ~/.claude/commands/ (17 symlinks), hooks registered
+Claude Code:                   ✓ ~/.claude/commands/ (13 symlinks), hooks registered
 Cursor:                        ✓ ~/.cursor/mcp.json linked
 Codex:                         ✓ ~/.codex/skills/ (18 skill folders)
 Gemini CLI:                    ⚠ ~/Agents/ populated; manual Gemini config needed

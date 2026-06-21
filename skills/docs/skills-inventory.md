@@ -10,18 +10,18 @@ Last updated: 2026-06-21.
 | Category | Count | Verdict |
 |----------|-------|---------|
 | Core pipeline commands | 5 | KEEP |
-| Utility commands | 7 | KEEP |
-| Style/verbosity commands | 2 active + 1 deprecated | KEEP lean + normal; DEPRECATE terse |
-| Scaffold commands | 2 | KEEP |
-| Install/meta commands | 4 | KEEP |
+| Daily utility commands | 4 (`/session`, `/handoff`, `/brainstorm`, `/lean`) | KEEP |
+| Maintenance commands (rare) | 3 (`/update-skills`, `/harness-audit`, `/benchmark`) | KEEP, grouped as Maintenance |
+| Style/verbosity commands | 1 active + 1 alias + 1 deprecated | KEEP lean; `/normal` = alias of `/lean off`; DEPRECATE terse |
+| Setup slash commands | 5 | **REMOVED (CLI/Codex only)** — install, update, status, agent-kit, cursor-plugin |
 | Pipeline-internal agents | 9 | KEEP |
 | Support agents | 5 | KEEP |
 | Codex skills (core) | 5 | KEEP |
-| Codex skills (utility) | 9 | KEEP |
+| Codex skills (utility) | 9 | KEEP (incl. install/update/status/agent-kit/cursor-plugin parity wrappers) |
 | Codex skills (style) | 2 active + 1 deprecated | lean + (aicrew-normal); DEPRECATE aicrew-terse |
 | Codex skills (scaffold) | 2 | KEEP |
 
-**Result: 49 required, 2 merged into lean, 2 deprecated (terse command + aicrew-terse codex skill)**
+**Result: command-set trim — 5 setup slash commands removed (functionality stays via CLI `src/cli.js` + Codex `codex-skills/aicrew-*`); `/normal` kept as alias of `/lean off`; maintenance commands grouped separately; `/terse` + `aicrew-terse` remain deprecated.**
 
 ---
 
@@ -43,19 +43,20 @@ Last updated: 2026-06-21.
 |---------|------|---------|-------|
 | `/session` | `session.md` | **KEEP** | Label + checkpoint mid-session |
 | `/handoff` | `handoff.md` | **KEEP** | Cross-tool state transfer |
-| `/benchmark` | `benchmark.md` | **KEEP** | Token savings report |
 | `/brainstorm` | `brainstorm.md` | **KEEP** | Standalone design brainstorm (also in /dev phase 2, but useful alone) |
-| `/harness-audit` | `harness-audit.md` | **KEEP** | Audit harness health |
-| `/install` | `install.md` | **KEEP** | First-time setup doc |
-| `/update` | `update.md` | **KEEP** | Pull new skills |
-| `/status` | `status.md` | **KEEP** | Check install state |
+| `/benchmark` | `benchmark.md` | **KEEP (maintenance)** | Token savings report — grouped under Maintenance (rare) |
+| `/harness-audit` | `harness-audit.md` | **KEEP (maintenance)** | Audit harness health — grouped under Maintenance (rare) |
+| `/update-skills` | `update-skills.md` | **KEEP (maintenance)** | Project skill evolution — grouped under Maintenance (rare) |
+| ~~`/install`~~ | _(deleted)_ | **CLI/CODEX ONLY** | Slash file removed — use `aicrew install` or `aicrew-install` |
+| ~~`/update`~~ | _(deleted)_ | **CLI/CODEX ONLY** | Slash file removed — use `aicrew update` or `aicrew-update` |
+| ~~`/status`~~ | _(deleted)_ | **CLI/CODEX ONLY** | Slash file removed — use `aicrew status` or `aicrew-status` |
 
 ### Style / Verbosity
 
 | Command | File | Verdict | Notes |
 |---------|------|---------|-------|
-| `/lean` | `lean.md` | **KEEP** | Primary toggle: `/lean on` = terse boost, `/lean off` = verbose |
-| `/normal` | `normal.md` | **KEEP** | Alias for `/lean off` — useful as a distinct command for discoverability |
+| `/lean` | `lean.md` | **KEEP** | Primary toggle: default terse; `/lean on` amplifies; `/lean off` = verbose |
+| `/normal` | `normal.md` | **ALIAS** | Alias of `/lean off`. File kept so the word keeps working; documented as alias, not a daily command |
 | `/terse` | `terse.md` | **DEPRECATED** | Alias for `/lean on` — deprecated, kept with pointer to `/lean on` |
 
 **Decision:** `/terse` is 100% covered by `/lean on`. Kept as a file so existing users aren't broken, but frontmatter updated with deprecation notice.
@@ -64,8 +65,8 @@ Last updated: 2026-06-21.
 
 | Command | File | Verdict | Notes |
 |---------|------|---------|-------|
-| `/agent-kit` | `agent-kit.md` | **KEEP** | Scaffold team-agent repo layout |
-| `/cursor-plugin` | `cursor-plugin.md` | **KEEP** | Scaffold Cursor terminal extension |
+| ~~`/agent-kit`~~ | _(deleted)_ | **CLI/CODEX ONLY** | Slash file removed — use `aicrew agent-kit init` or `aicrew-agent-kit` |
+| ~~`/cursor-plugin`~~ | _(deleted)_ | **CLI/CODEX ONLY** | Slash file removed — use `aicrew cursor-plugin init` or `aicrew-cursor-plugin` |
 
 ---
 
@@ -142,6 +143,18 @@ Last updated: 2026-06-21.
 
 ---
 
+## What was removed in the command-set trim
+
+| Item | Replacement (functionality preserved) | Reason |
+|------|----------------------------------------|--------|
+| `skills/commands/install.md` | `aicrew install` (CLI) / `aicrew-install` (Codex) | A slash command that only tells you to run a shell command is overhead |
+| `skills/commands/update.md` | `aicrew update` / `aicrew-update` | Same — terminal action, not a chat workflow |
+| `skills/commands/status.md` | `aicrew status` / `aicrew-status` | Same |
+| `skills/commands/agent-kit.md` | `aicrew agent-kit init` / `aicrew-agent-kit` | Scaffold is a one-off terminal action |
+| `skills/commands/cursor-plugin.md` | `aicrew cursor-plugin init` / `aicrew-cursor-plugin` | Scaffold is a one-off terminal action |
+
+> CLI commands (`src/cli.js`) and Codex skills (`codex-skills/aicrew-*`) for all five REMAIN and keep working — only the duplicate slash-command `.md` files were deleted.
+
 ## What was deprecated and why
 
 | Item | Replacement | Reason |
@@ -153,7 +166,7 @@ Last updated: 2026-06-21.
 
 | Item | Reason kept |
 |------|-------------|
-| `skills/commands/normal.md` | Useful alias for `/lean off`; different mental model than lean toggle |
+| `skills/commands/normal.md` | Alias of `/lean off` — kept so `/lean`'s documented off-switch word keeps working |
 | `codex-skills/aicrew-normal/SKILL.md` | Required — Codex has no argument support, needs a dedicated "go verbose" skill |
 | All 10 install-related codex skills | CLI parity requirement — users on Codex need access to install/update/status without the CLI |
 | `skills/agents/terse.md` | Behavior spec referenced by `aicrew-terse`, `aicrew-normal` as source of truth |

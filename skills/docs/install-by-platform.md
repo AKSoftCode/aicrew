@@ -359,5 +359,5 @@ aicrew install codex        # re-runs codex install
 ## See also
 
 - **Complete action matrix:** [`platform-entry-points.md`](./platform-entry-points.md)
-- **Install command reference:** [`../commands/install.md`](../commands/install.md)
+- **Install command reference:** run `aicrew install --help` (CLI) or use the `aicrew-install` Codex skill
 - **Skills system overview:** [`../SKILLS_SYSTEM.md`](../SKILLS_SYSTEM.md)

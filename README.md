@@ -104,12 +104,18 @@ Codex: `aicrew-handoff` / `aicrew-session`
 | Command | Codex skill | What it does |
 |---------|-------------|--------------|
 | `/conclude` | `aicrew-conclude` | End session — saves learnings, proposes commit message |
-| `/update-skills` | `aicrew-update-skills` | Refresh or generate project-specific skills |
-| `/harness-audit` | `aicrew-harness-audit` | Health-check your aicrew install |
 | `/session` | `aicrew-session` | Name this task so state files don't collide |
 | `/handoff` | `aicrew-handoff` | Compact summary when switching tools |
-| `/benchmark` | `aicrew-benchmark` | Estimate tokens saved (writes `.ai/reports/TOKEN_REPORT`) |
 | `/brainstorm` | `brainstorm` | 3 design options with trade-offs |
+| `/lean` | `lean` | Toggle verbosity — default terse; `/lean on` amplifies; `/lean off` (aka `/normal`) restores verbose |
+
+### Maintenance (rare)
+
+| Command | Codex skill | What it does |
+|---------|-------------|--------------|
+| `/update-skills` | `aicrew-update-skills` | Refresh or generate project-specific skills |
+| `/harness-audit` | `aicrew-harness-audit` | Health-check your aicrew install |
+| `/benchmark` | `aicrew-benchmark` | Estimate tokens saved (writes `.ai/reports/TOKEN_REPORT`) |
 
 ---
 
@@ -124,9 +130,11 @@ Codex: `aicrew-handoff` / `aicrew-session`
 | Fast bug fix | — | `/fix` | `aicrew-fix` |
 | Scout → Act | — | `/quick` | `aicrew-quick` |
 | Design brainstorm | — | `/brainstorm` | `brainstorm` |
-| First-time install | `aicrew install` | `/install` | `aicrew-install` |
-| Pull latest skills | `aicrew update` | `/update` | `aicrew-update` |
-| Check install state | `aicrew status` | `/status` | `aicrew-status` |
+| First-time install | `aicrew install` | — | `aicrew-install` |
+| Pull latest skills | `aicrew update` | — | `aicrew-update` |
+| Check install state | `aicrew status` | — | `aicrew-status` |
+
+> Setup actions (`install`, `update`, `status`, `agent-kit`, `cursor-plugin`) are CLI / Codex only — no slash command. `/normal` is an alias of `/lean off`.
 
 #### Claude Code
 
@@ -135,11 +143,11 @@ Install: `aicrew install claude`
 Slash commands (from `~/.claude/commands/`, symlinked from `~/Agents/commands/`):
 
 ```
-/dev     /fix     /quick     /conclude     /update-skills     /harness-audit
-/benchmark     /brainstorm     /lean     /normal
-/session     /handoff
-/install     /update     /status     /agent-kit     /cursor-plugin
+Daily:        /dev   /fix   /quick   /conclude   /brainstorm   /handoff   /session   /lean
+Maintenance:  /update-skills   /harness-audit   /benchmark
 ```
+
+`/normal` is kept as an alias of `/lean off`. Setup actions (`install`, `update`, `status`, `agent-kit`, `cursor-plugin`) are CLI / Codex only.
 
 Hooks auto-registered: `session-memory.py` (Stop) + `security-guard.py` (PreToolUse).
 
@@ -329,12 +337,12 @@ Or run `aicrew install mcp` for the full checklist with paths.
 
 | Command | Codex skill | Claude Code | Purpose |
 |---------|-------------|-------------|---------|
-| `aicrew install` | `aicrew-install` | `/install` | First-time or fresh machine |
-| `aicrew update` | `aicrew-update` | `/update` | Pull new files from the package |
-| `aicrew status` | `aicrew-status` | `/status` | Show install state across all platforms |
+| `aicrew install` | `aicrew-install` | — | First-time or fresh machine |
+| `aicrew update` | `aicrew-update` | — | Pull new files from the package |
+| `aicrew status` | `aicrew-status` | — | Show install state across all platforms |
 | `aicrew doctor` | — | — | Verify MCP server binaries are installed and reachable |
-| `aicrew agent-kit init [path]` | `aicrew-agent-kit` | `/agent-kit` | Scaffold shared Cursor `.mdc` rules |
-| `aicrew cursor-plugin init [path]` | `aicrew-cursor-plugin` | `/cursor-plugin` | Scaffold Cursor multi-tool terminal extension |
+| `aicrew agent-kit init [path]` | `aicrew-agent-kit` | — | Scaffold shared Cursor `.mdc` rules |
+| `aicrew cursor-plugin init [path]` | `aicrew-cursor-plugin` | — | Scaffold Cursor multi-tool terminal extension |
 | `aicrew benchmark` | `aicrew-benchmark` | `/benchmark` | Token savings estimate + report |
 | `aicrew --version` | — | — | Print package version |
 | `aicrew --help` | — | — | Help |

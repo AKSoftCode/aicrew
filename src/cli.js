@@ -194,14 +194,14 @@ INSTALL PLATFORMS
     # context-mode: no install needed — auto via npx
 
 AFTER INSTALL
-  Claude Code — slash commands:
+  Claude Code — daily slash commands:
     /dev             — full development pipeline (bug fix, feature, refactor)
     /fix             — fast bug fix (3 questions, no ceremony)
     /quick           — Scout → Act (graph-first, Karpathy guardrails)
     /conclude        — save session learnings to memory
-    /update-skills   — maintain skills + generate project-specific skills
-    /install  /update  /status  /agent-kit  /cursor-plugin
-    /benchmark  /brainstorm  /session  /handoff  /lean  /normal
+    /brainstorm  /handoff  /session  /lean   (/normal = /lean off)
+    Maintenance (rare): /update-skills  /harness-audit  /benchmark
+    Setup actions (install/update/status/agent-kit/cursor-plugin) are CLI commands above.
 
   Codex — skill names:
     aicrew-dev, aicrew-fix, aicrew-quick, aicrew-conclude, aicrew-harness-audit

@@ -7,11 +7,11 @@ argument-hint: "[on|off]"
 
 # /lean
 
-Default: already lean (caveman output + context-economy reads). See `~/Agents/agents/caveman.md`.
+Default: already terse/lean (caveman output + context-economy reads). See `~/Agents/agents/caveman.md`.
 
 Usage:
-- `/lean on` — explicit boost for the rest of this session (re-enables if `/normal` or `/lean off` was used)
-- `/lean off` — disable lean mode and return to normal verbose behavior
+- `/lean on` — amplify lean mode for the rest of this session (re-enables if `/normal` or `/lean off` was used)
+- `/lean off` — disable lean mode and return to normal verbose behavior (aka `/normal`)
 
 Aliases: `/terse` = `/lean on` (deprecated alias, kept for backward compat); `/normal` = `/lean off`.
 

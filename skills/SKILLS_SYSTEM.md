@@ -165,23 +165,32 @@ Every action is reachable from every supported platform. No CLI required on any 
 
 | Action | CLI | Claude Code | Codex |
 |--------|-----|-------------|-------|
-| First-time setup | `aicrew install` | `/install` | `aicrew-install` |
+| First-time setup | `aicrew install` | — | `aicrew-install` |
 | Platform-only setup | `aicrew install <platform>` | — | — |
-| Pull new skills | `aicrew update` | `/update` | `aicrew-update` |
-| Check install | `aicrew status` | `/status` | `aicrew-status` |
+| Pull new skills | `aicrew update` | — | `aicrew-update` |
+| Check install | `aicrew status` | — | `aicrew-status` |
+
+> Setup actions (`install`, `update`, `status`, `agent-kit`, `cursor-plugin`) are CLI / Codex only — no Claude/Cursor slash command.
 
 ### Utilities (optional)
 
 | Action | Claude Code / Cursor / Gemini / Antigravity | Codex |
 |--------|---------------------------------------------|-------|
 | Wrap up session | `/conclude` | `aicrew-conclude` |
-| Evolve project skills | `/update-skills` | `aicrew-update-skills` |
-| Health check | `/harness-audit` | `aicrew-harness-audit` |
 | Name session | `/session` | `aicrew-session` |
 | Cross-tool handoff | `/handoff` | `aicrew-handoff` |
+| Design brainstorm | `/brainstorm` | `brainstorm` |
+| Toggle verbosity | `/lean` (`/normal` = `/lean off`) | `lean` |
+
+### Maintenance (rare)
+
+| Action | Claude Code / Cursor / Gemini / Antigravity | Codex |
+|--------|---------------------------------------------|-------|
+| Evolve project skills | `/update-skills` | `aicrew-update-skills` |
+| Health check | `/harness-audit` | `aicrew-harness-audit` |
 | Benchmark token savings | `/benchmark` | `aicrew-benchmark` |
 
-> **Output style:** Terse by default (caveman). Use `/normal` to restore verbose. Use `/lean on` to re-enable terse if you toggled it off.
+> **Output style:** Terse by default (caveman). Use `/lean off` (aka `/normal`) to restore verbose. Use `/lean on` to amplify terse.
 
 ---
 

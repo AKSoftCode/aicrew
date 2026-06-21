@@ -85,8 +85,9 @@ function installClaude() {
     : 0;
 
   console.log('\n=== Claude Code install complete ===');
-  console.log(`Slash commands available (${cmdCount}): /dev /fix /quick /conclude /update-skills`);
-  console.log('  /install /update /status /benchmark /brainstorm /session /handoff /lean /normal');
+  console.log(`Slash commands available (${cmdCount}): /dev /fix /quick /conclude`);
+  console.log('  /brainstorm /session /handoff /lean   (/normal = /lean off)');
+  console.log('  Maintenance (rare): /update-skills /harness-audit /benchmark');
   console.log('\nMCP config wired — install server binaries if not already done:');
   console.log('  npm install -g codebase-memory-mcp   # required for graph queries');
   console.log('  npm install -g token-optimizer-mcp   # optional');
@@ -256,9 +257,9 @@ function install() {
 
   console.log('\n=== Install complete ===');
   console.log(`Commands available: ${cmdCount}`);
-  console.log('\nClaude Code:   /dev  /fix  /quick  /conclude  /update-skills  /harness-audit');
-  console.log('               /install  /update  /status  /benchmark  /brainstorm');
-  console.log('               /session  /handoff  /lean  /normal');
+  console.log('\nClaude Code:   /dev  /fix  /quick  /conclude  /brainstorm');
+  console.log('               /session  /handoff  /lean   (/normal = /lean off)');
+  console.log('               Maintenance (rare): /update-skills  /harness-audit  /benchmark');
   console.log('\nCodex:         aicrew-dev  aicrew-fix  aicrew-quick  aicrew-conclude');
   console.log('               aicrew-harness-audit  aicrew-update-skills  brainstorm  lean');
   console.log('               aicrew-install  aicrew-update  aicrew-status');
