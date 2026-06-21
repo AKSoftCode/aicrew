@@ -73,6 +73,13 @@ Codex: `aicrew-quick`
 ## Advanced
 
 <details>
+<summary>Demo</summary>
+
+**Demo:** ![30-second walkthrough — status, doctor, /dev /fix /quick](assets/demo.gif) · source: [`docs/demo.cast`](docs/demo.cast)
+
+</details>
+
+<details>
 <summary>Full command list (daily + maintenance)</summary>
 
 Beyond the three core commands, aicrew ships a small set of daily utilities and a few rarely-used maintenance commands.
