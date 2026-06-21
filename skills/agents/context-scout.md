@@ -17,9 +17,9 @@ Run on the cheapest model that can reliably graph-query:
 - Codex: `gpt-4o-mini`
 - Claude Code: `claude-haiku-3-5`
 
-The orchestrator **SHOULD** spawn Scout as a cheap subagent when the platform supports it (e.g. Cursor Task with explicit `model`). aicrew defines the Scout role; the host tool assigns the actual model — two-tier savings apply only when Scout truly runs on a cheaper tier.
+The orchestrator **SHOULD** spawn Scout on the cheapest available model when the platform supports subagents (e.g. Cursor Task with an explicit `model` parameter). aicrew defines the Scout role in skills; the host tool assigns the actual model — two-tier savings apply only when Scout truly runs on a cheaper tier than Act.
 
-If graph queries fail or return insufficient results, escalate to sonnet before widening reads.
+When subagents are unavailable, run Scout in the active session — you still get graph-first and `SCOUT:` compression, but not the cheap-model discount. If graph queries fail or return insufficient results, escalate to sonnet before widening reads.
 
 ---
 

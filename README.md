@@ -76,6 +76,8 @@ Codex: `aicrew-quick`
 | Bug fix — you know what's broken | `/fix` |
 | Small scoped task — rename, tweak, quick addition | `/quick` |
 
+**How discovery works:** A cheap discovery pass (Scout) maps the repo via graph + targeted reads and writes a ~1–2 K `SCOUT:` summary. The main model verifies paths and constraints, then implements from that summary—not full grep dumps. aicrew defines Scout vs Act roles; your tool (Cursor, Claude Code, Codex, etc.) picks the models. [Scout → Verify → Act](docs/pipeline-overview.md#scout--verify--act) and [model routing](docs/pipeline-overview.md#model-routing) in [pipeline-overview.md](docs/pipeline-overview.md).
+
 <details>
 <summary>Why aicrew (pipelines, benefits, token savings)</summary>
 
@@ -102,7 +104,8 @@ Codex: `aicrew-quick`
 
 All three commands share the same 11-capability token foundation — only pipeline depth differs.
 
-Scout flow and model routing → [pipeline-overview.md](docs/pipeline-overview.md#scout-in-plain-english)
+- [Scout → Verify → Act](docs/pipeline-overview.md#scout--verify--act) — discovery flow and per-command Scout timing
+- [Model routing](docs/pipeline-overview.md#model-routing) — Scout vs Act roles and cheap-model guidance
 
 [Full pipeline reference →](docs/pipeline-overview.md)
 
