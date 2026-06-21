@@ -28,7 +28,7 @@ npx aicrew doctor                # verify MCP server binaries are reachable
 
 ![~50s demo: install check, phase gates for /dev /fix /quick, live token benchmark](assets/demo.gif)
 
-Scripted terminal walkthrough (`docs/record-demo.sh`): status + doctor, slash-command help, phase-by-phase gates (TDD, security), and real `aicrew benchmark` output — not static cards. Regenerate: `bash docs/regenerate-demo.sh`
+Terminal walkthrough: status + doctor, slash-command help, phase-by-phase gates (TDD, security), and live `aicrew benchmark` output — not static cards.
 
 ---
 
