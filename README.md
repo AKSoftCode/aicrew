@@ -276,17 +276,19 @@ aicrew --help
 
 ## CLI
 
-| Command | Purpose |
-|--------|---------|
-| `aicrew install` | First-time or fresh machine; merge skills and hooks |
-| `aicrew update` | Same as `install` — picks up new files from the package |
-| `aicrew status` | Shows `~/Agents`, global skills, command symlinks, hooks, Codex skills, and cwd `.ai/skills/` if present |
-| `aicrew benchmark [options]` | Estimate token savings for a project; `--report` writes `.ai/reports/TOKEN_REPORT.<ts>.md` |
-| `aicrew agent-kit init [path]` | Scaffolds a shared Cursor `.mdc` rules layout (default `./agent-kit`) |
-| `aicrew cursor-plugin init [path]` | Scaffolds a local Cursor extension for multi-tool terminals (default `./cursor-multi-tool-plugin`) |
-| `aicrew --version` / `-v` | Print package version |
-| `aicrew --help` / `-h` | Help |
-| `aicrew` (no args) | Interactive menu |
+Each CLI action also has a Codex skill and a Claude Code slash command — see the [parity table](#cli-or-skill--same-action) above.
+
+| Command | Codex skill | Claude Code | Purpose |
+|---------|-------------|-------------|---------|
+| `aicrew install` | `aicrew-install` | `/install` | First-time or fresh machine; merge skills and hooks |
+| `aicrew update` | `aicrew-update` | `/update` | Same as `install` — picks up new files from the package |
+| `aicrew status` | `aicrew-status` | `/status` | Shows `~/Agents`, global skills, command symlinks, hooks, Codex skills, and cwd `.ai/skills/` |
+| `aicrew agent-kit init [path]` | `aicrew-agent-kit` | `/agent-kit` | Scaffolds shared Cursor `.mdc` rules layout (default `./agent-kit`) |
+| `aicrew cursor-plugin init [path]` | `aicrew-cursor-plugin` | `/cursor-plugin` | Scaffolds Cursor extension for multi-tool terminals (default `./cursor-multi-tool-plugin`) |
+| `aicrew benchmark` _(planned)_ | `aicrew-benchmark` | `/benchmark` | Measure skill quality, token efficiency, and pipeline timing |
+| `aicrew --version` / `-v` | — | — | Print package version |
+| `aicrew --help` / `-h` | — | — | Help |
+| `aicrew` (no args) | — | — | Interactive menu |
 
 ---
 

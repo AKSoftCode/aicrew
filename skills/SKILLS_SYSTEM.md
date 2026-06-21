@@ -24,6 +24,15 @@ See `~/Agents/agents/caveman.md` (style) and `~/Agents/agents/context-economy.md
 
 ---
 
+## Shared Token Stack
+
+All entry-point commands (`/dev`, `/fix`, `/quick`) share a common token-saving foundation — defined once in `~/Agents/docs/token-foundation.md` and referenced (not duplicated) by each command:
+
+- **Graph-first research** — `codebase-memory-mcp` (`search_graph` → `trace_path` → `get_code_snippet`) runs before any `Grep`/`Glob`/file-read in every phase. Graph query ≈ 500 tokens vs repo-wide grep ≈ 80 K.
+- **Speculative context** — a cheap Scout agent (haiku/mini) emits the fixed `SCOUT:` schema; the capable main agent (sonnet/opus) verifies the schema and acts from it — never from raw repo content. This is the speculative-decoding pattern applied to multi-agent orchestration.
+- **Layered guardrails** — `security-guard.py` (input), intake scope lock (topic), phase gates (dialog flow), `karpathy-guardrails` (implementation), `security-reviewer` + `conclude` (output), context-economy + `/compact` (budget).
+- **Context economy** — always on (not opt-in); `/lean on` amplifies; `/compact` runs between phases.
+
 ## Philosophy
 
 - **Single source of truth in `~/Agents/`**: not inside any tool-specific directory
@@ -331,6 +340,7 @@ RED → GREEN → REFACTOR per acceptance criterion. Relaxed mode requires opt-o
 | `~/Agents/commands/benchmark.md` | Token savings benchmark + report |
 | `~/Agents/agents/karpathy-guardrails.md` | Karpathy coding principles |
 | `~/Agents/agents/context-scout.md` | Speculative context scout agent |
+| `~/Agents/docs/token-foundation.md` | Shared token stack for /dev, /fix, /quick (graph-first + speculative + guardrails + economy) |
 | `~/Agents/docs/guardrails-taxonomy.md` | NeMo ↔ aicrew guardrails map |
 | `~/Agents/docs/speculative-context.md` | Speculative context pattern (two-model routing) |
 | `~/Agents/agents/frontend-specialist.md` | Frontend TDD patterns |

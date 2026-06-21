@@ -15,12 +15,20 @@ Source of truth:
 - `~/Agents/commands/dev.md`
 - Project overrides in `.ai/skills/` and repo `AGENTS.md` (if present)
 
+Token foundation (mandatory — all phases):
+- Graph-first research: codebase-memory-mcp (search_graph → trace_path → get_code_snippet) before any Grep/Read
+- Speculative context: Scout pass (cheap model) at start of Phase 1; emit SCOUT: schema; verify before main trace
+- Layered guardrails: security-guard.py (input) → scope lock (Phase 0) → karpathy-guardrails (Phase 4) → security-reviewer (Phase 6)
+- Context economy: always on; /compact between phases; /lean amplifies
+- Two-model routing: Scout on haiku/mini; Research+Implement on sonnet/opus
+- See: ~/Agents/docs/token-foundation.md
+
 Workflow summary:
 1. Intake: clarify bug/feature/refactor, acceptance criteria, scope, risks, test plan.
-2. Research: confirm root cause or key code paths.
+2. Research: Scout pass (graph-first) → verify SCOUT schema → confirm root cause or key code paths.
 3. Brainstorm: 3 alternatives with trade-offs (features/refactors).
 4. Design: interface spec, contract checks, over/under-engineering flags.
-5. Implement: TDD first (RED -> GREEN -> REFACTOR per acceptance criterion).
+5. Implement: load karpathy-guardrails; TDD first (RED -> GREEN -> REFACTOR per acceptance criterion).
 6. Tests: targeted automated tests + smoke path.
 7. Security: changed files only, no false positives.
 8. Audit: if project defines domain audit checks.

@@ -19,18 +19,27 @@ Caveman/lean style by default. See `~/Agents/agents/caveman.md` and `~/Agents/ag
 - `~/Agents/agents/karpathy-guardrails.md`
 - Project overrides in `.ai/skills/` and repo `AGENTS.md` (if present)
 
+## Token foundation (mandatory — both phases)
+
+- Graph-first: codebase-memory-mcp (search_graph → trace_path → get_code_snippet) before any Grep/Read
+- Speculative context: Scout IS Phase 1 (cheap model); emit SCOUT: schema; verify before Act
+- Layered guardrails: security-guard.py (input) → scope lock (SCOUT Goal:) → karpathy-guardrails (Act) → context budget
+- Context economy: always on; state saved at Checkpoint B
+- Two-model routing: Scout on haiku/mini; Act on sonnet/opus
+- See: ~/Agents/docs/token-foundation.md
+
 ## Workflow summary
 
-1. Scout — locate the relevant code before touching anything:
-   - Try graph MCP (codebase-memory-mcp): `list_projects` → `search_graph` → `trace_path` → `get_code_snippet`
+1. Scout — graph-first discovery before touching anything:
+   - Graph MCP (codebase-memory-mcp): `list_projects` → `search_graph` → `trace_path` → `get_code_snippet`
    - Fallback: `git diff --name-only`, targeted grep, slice-reads
-   - Output the fixed SCOUT schema: Goal / Files / Call chain / Constraints / Next action / Tests
+   - Emit and verify SCOUT: schema (Goal / Status / Constraints verbatim / Files / Call chain / Next action / Tests / Risks)
 2. Act — implement with Karpathy guardrails:
-   - Think Before Coding: confirmed scout before any edit
+   - Think Before Coding: Scout verified before any edit
    - Simplicity First: fewest files, smallest change
    - Surgical Changes: diff-sized edits only, no unrelated reformats
    - Goal-Driven Execution: every edit traces to the Goal line; stop when done
-3. Optionally write or update `.ai/state/AI_STATE.<tool>.<session>.md`
+3. Write/update `.ai/state/AI_STATE.<tool>.<session>.md` at Checkpoint B and after Act
 
 ## When to use /quick vs /fix vs /dev
 

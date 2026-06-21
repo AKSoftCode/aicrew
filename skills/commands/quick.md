@@ -1,5 +1,5 @@
 ---
-description: "Scout → Act flow with graph-first discovery and Karpathy guardrails (no full /dev pipeline)"
+description: "Scout → Act flow with graph-first discovery, speculative context, and Karpathy guardrails (no full /dev pipeline)"
 argument-hint: "[goal or task description]"
 ---
 
@@ -170,18 +170,18 @@ Report summary, diff stat, and proposed commit message (if applicable). **Wait**
 
 ---
 
----
+## Token foundation
 
-## Speculative context (two-model routing)
+`/quick` is the reference implementation of the shared token-saving stack.
+Full spec: `~/Agents/docs/token-foundation.md`
 
-`/quick` implements the **speculative context** pattern: Scout is the cheap draft model step; Act is the capable target model step. The SCOUT: schema is the token handoff contract between them.
+Summary:
+- **Graph-first** — `codebase-memory-mcp` before any Grep/Read (Scout enforces this)
+- **Speculative context** — Scout (cheap draft) → SCOUT: schema → verify → Act (capable model)
+- **Layered guardrails** — `security-guard.py` (input) + scope lock + karpathy (Act) + context budget
+- **Context economy** — always on; `/lean on` amplifies; state saved at Checkpoint B
 
-**When to use a separate fast model for Scout:**
-- Session context is large (risk of window pressure in Act)
-- You want to minimize cost on discovery before committing a capable model
-- Cross-tool handoff: Scout on one tool, Act on another
-
-**Optional two-model routing:**
+### Two-model routing (optional)
 
 | Step | Recommended model |
 |---|---|
@@ -189,23 +189,22 @@ Report summary, diff stat, and proposed commit message (if applicable). **Wait**
 | Act (Phase 2) | `claude-sonnet-4` / `gpt-4o` |
 | Deep fallback | `claude-opus-4` / `o3` |
 
-Switch model after Checkpoint B. Pass only the SCOUT: block + original goal to the Act model — do not carry the full Scout conversation.
+Switch model after Checkpoint B. Pass only the `SCOUT:` block + original goal to Act — not the full conversation.
 
-**Verification gate (main agent checks before Act):**
-- All SCOUT: fields non-empty and non-`n/a` (except `Call chain`)
-- `Key constraints` contains user's verbatim words — reject if paraphrased
+### Verification gate (main agent checks before Act)
+
+- All `SCOUT:` fields non-empty / non-`n/a` (except `Call chain`)
+- `Key constraints (verbatim)` not paraphrased — reject if paraphrased
 - `Relevant files` lists real paths — reject if any path is invented
-- On rejection: re-scout (widen one read step); max 2 retries before asking user
-
-See full pattern: `~/Agents/docs/speculative-context.md`
-Scout agent schema + re-scout rules: `~/Agents/agents/context-scout.md`
+- On rejection: re-scout (widen one read step); max 2 retries, then ask user
 
 ---
 
 ## Related docs
 
+- Token foundation (shared stack): `~/Agents/docs/token-foundation.md`
 - Speculative context pattern: `~/Agents/docs/speculative-context.md`
-- Scout agent (standalone or two-model): `~/Agents/agents/context-scout.md`
+- Scout agent (schema + re-scout rules): `~/Agents/agents/context-scout.md`
 - NeMo-style guardrails mapping: `~/Agents/docs/guardrails-taxonomy.md`
 - Lean mode: `/lean on` + `~/Agents/commands/lean.md`
 - Session labels: `/session <tool> <label>`
