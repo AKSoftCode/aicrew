@@ -26,9 +26,9 @@ npx aicrew doctor                # verify MCP server binaries are reachable
 
 ## Demo
 
-![30-second walkthrough: status, doctor, /dev /fix /quick](assets/demo.gif)
+![~45s walkthrough: status, doctor, /dev /fix /quick pipelines, token benchmark](assets/demo.gif)
 
-Terminal recording: [`docs/demo.cast`](docs/demo.cast)
+Install check, MCP health, command chooser, 9/5/2-phase pipelines, and illustrative token savings — not a full tutorial. Terminal recording: [`docs/demo.cast`](docs/demo.cast)
 
 ---
 
