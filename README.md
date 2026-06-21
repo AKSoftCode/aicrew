@@ -2,170 +2,135 @@
 
 **A TDD-first AI development pipeline for Claude Code, Cursor, Codex, Gemini CLI, and Antigravity.**
 
-Install once, use everywhere. One `install` command drops a set of slash commands, Codex skills, hooks, and MCP wiring into your tools — then you run `/dev`, `/fix`, `/quick`, or any other command from your AI tool of choice without thinking about setup again.
-
 ---
 
-## Who is this for?
-
-aicrew is for developers who use AI coding tools daily and want a consistent, disciplined workflow across Claude Code, Cursor, Codex, Gemini CLI, and Antigravity — without re-explaining your conventions on every session. It gives you a shared command vocabulary, automatic context-saving between sessions, token-saving graph-memory, and layered guardrails that block secrets before they land in files.
-
-If you've ever lost a long session to a context-window overflow, or found your AI diverging from your stated goal mid-task, aicrew's phase-gated pipeline and Scout → Act pattern are designed for exactly that.
-
----
-
-## Quick start (5 minutes)
-
-**Detailed per-platform guide:** [`skills/docs/install-by-platform.md`](./skills/docs/install-by-platform.md)
-
-### 1. Install
+## Install
 
 ```bash
-# Install all platforms (default):
-npx aicrew install
-
-# Install for one platform only:
-npx aicrew install claude    # Claude Code — slash commands, hooks, MCP
-npx aicrew install codex     # Codex — native skill folders, MCP config.toml
-npx aicrew install cursor    # Cursor — MCP wiring, agent-kit rules
-npx aicrew install gemini    # Gemini CLI — ~/Agents/ + config instructions
-
-# Or, after cloning this repo, install globally:
-npm install -g .
-aicrew install
+npx aicrew install               # all platforms
+npx aicrew install claude|cursor|codex|gemini   # one platform
+npx aicrew install mcp           # optional MCP servers (graph index, token optimizer)
 ```
 
-### 2. Verify
-
-```bash
-aicrew status
-```
-
-You should see `~/Agents/` populated with commands, agents, and hooks.
-
-### 3. Run your first command
-
-In **Claude Code**, type:
-```
-/dev I want to add a login page with email + password
-```
-
-In **Codex**, invoke the skill:
-```
-aicrew-dev
-```
-
-In **Cursor**, ask the agent and it uses the shared `~/Agents/` rules automatically.
-
-In **Gemini CLI** or **Antigravity**, reference `~/Agents/commands/dev.md` directly.
-
-### Where skills land
-
-| Location | Contents |
-|---|---|
-| `~/Agents/` | Single source of truth — commands, agents, hooks, docs |
-| `~/.claude/commands/` | Symlinks to `~/Agents/commands/*.md` (slash commands) |
-| `~/.codex/skills/` | Codex-native skill folders (`aicrew-dev`, `aicrew-fix`, …) |
-| `~/.claude/settings.json` | Merged hook entries (`session-memory.py`, `security-guard.py`) |
-| `~/.cursor/mcp.json` | Symlink → `config/mcp/cursor.local.json` |
-| `~/.codex/config.toml` | Patched with MCP server entries |
+**Requirements:** Node 18+. No extra Python packages.
 
 ---
 
-## Same action, every platform
+## Daily commands
 
-Install once, use everywhere. The same commands work across Claude Code, Cursor, Codex, Gemini CLI, and Antigravity.
+### `/dev` — full pipeline (features, refactors)
 
-> Full per-platform matrix: [`skills/docs/platform-entry-points.md`](./skills/docs/platform-entry-points.md)
+9-phase pipeline: intake → research → brainstorm → design → implement (TDD) → tests → security → audit → conclude. Every phase stops and waits for your go-ahead. Use for anything that needs a design spec or touches multiple systems.
+
+```
+/dev Add rate limiting to the auth API
+```
+
+Codex: `aicrew-dev`
+
+---
+
+### `/fix` — fast bug fix
+
+3 intake questions, then TDD straight to done. Skips brainstorm and design phases. Use when you know what's broken and want it fixed.
+
+```
+/fix OAuth redirect returns 500 after login
+```
+
+Codex: `aicrew-fix`
+
+---
+
+### `/quick` — small task, lowest tokens
+
+Scout → Act. A cheap model does a graph-first discovery pass (~500 tokens) and emits a summary; the main model acts from that summary only. No pipeline overhead. Use for scoped, well-defined tasks.
+
+```
+/quick Rename UserService to AccountService across the repo
+```
+
+Codex: `aicrew-quick`
+
+---
+
+## Which one?
+
+| Situation | Use |
+|-----------|-----|
+| New feature, refactor, or anything needing a design spec | `/dev` |
+| Bug fix — you know what's broken | `/fix` |
+| Small scoped task — rename, tweak, quick addition | `/quick` |
+
+> Examples: "Add login page with email + password" → `/dev`. "Fix broken OAuth redirect" → `/fix`. "Rename a variable across three files" → `/quick`.
+
+---
+
+---
+
+## Advanced
+
+### Brainstorm first
+
+Get 3 materially different approaches with trade-offs before writing any code.
+
+```
+/brainstorm How should I structure the auth layer?
+```
+
+Codex: `brainstorm`
+
+---
+
+### Cross-tool handoff
+
+Switching tools mid-task (Claude → Cursor)? Run `/handoff` to produce a compact state block (~300 tokens). Paste it into the new tool — no chat replay.
+
+1. Name the session early: `/session cursor my-feature`
+   → state file: `.ai/state/AI_STATE.cursor.my-feature.md`
+2. When ready to switch: `/handoff`
+3. In the new tool: `Continue from .ai/state/AI_STATE.cursor.my-feature.md`
+
+Each switch costs ~300 tokens instead of ~15,000.
+
+Codex: `aicrew-handoff` / `aicrew-session`
+
+---
+
+### Utilities
+
+| Command | Codex skill | What it does |
+|---------|-------------|--------------|
+| `/conclude` | `aicrew-conclude` | End session — saves learnings, proposes commit message |
+| `/update-skills` | `aicrew-update-skills` | Refresh or generate project-specific skills |
+| `/harness-audit` | `aicrew-harness-audit` | Health-check your aicrew install |
+| `/session` | `aicrew-session` | Name this task so state files don't collide |
+| `/handoff` | `aicrew-handoff` | Compact summary when switching tools |
+| `/benchmark` | `aicrew-benchmark` | Estimate tokens saved (writes `.ai/reports/TOKEN_REPORT`) |
+| `/brainstorm` | `brainstorm` | 3 design options with trade-offs |
+
+---
+
+### Platform matrix
+
+> Full invocation details: [`skills/docs/platform-entry-points.md`](./skills/docs/platform-entry-points.md)
 > Step-by-step install guide: [`skills/docs/install-by-platform.md`](./skills/docs/install-by-platform.md)
 
-### Core commands
-
-| When | Claude Code / Cursor / Gemini / Antigravity | Codex |
-|------|---------------------------------------------|-------|
-| New feature or big change | `/dev` | `aicrew-dev` |
-| Bug fix | `/fix` | `aicrew-fix` |
-| Small scoped task | `/quick` | `aicrew-quick` |
-| Brainstorm options first | `/brainstorm` | `brainstorm` |
-
-### Setup (install once per machine)
-
-| Action | CLI | Claude Code | Codex |
-|--------|-----|-------------|-------|
+| Action | CLI | Claude Code / Cursor / Gemini / Antigravity | Codex |
+|--------|-----|---------------------------------------------|-------|
+| Full dev pipeline | — | `/dev` | `aicrew-dev` |
+| Fast bug fix | — | `/fix` | `aicrew-fix` |
+| Scout → Act | — | `/quick` | `aicrew-quick` |
+| Design brainstorm | — | `/brainstorm` | `brainstorm` |
 | First-time install | `aicrew install` | `/install` | `aicrew-install` |
 | Pull latest skills | `aicrew update` | `/update` | `aicrew-update` |
 | Check install state | `aicrew status` | `/status` | `aicrew-status` |
 
-> **Output style:** Terse by default (caveman). Say `/normal` if you want verbose responses.
-
----
-
-## How handoff works
-
-When switching tools mid-task (e.g. Claude → Cursor), use `/session` and `/handoff` to carry your exact state across — no chat replay.
-
-**3 steps:**
-
-1. **Name the session** early in your current tool:
-   ```
-   /session cursor my-feature
-   ```
-   This labels the state file: `.ai/state/AI_STATE.cursor.my-feature.md`
-
-2. **Run `/handoff` when ready to switch.** Output looks like:
-   ```
-   HANDOFF:
-   Target: cursor
-   State file: .ai/state/AI_STATE.cursor.my-feature.md
-   Goal: Add rate limiting to /api/auth endpoint
-   Current status: Phase 3 design confirmed — ready to implement
-   Next step: Run TDD cycle for RateLimitMiddleware
-   Tests: not run yet
-   ```
-
-3. **Open the new tool. Paste the handoff block** (or just reference the state file):
-   ```
-   Continue from .ai/state/AI_STATE.cursor.my-feature.md
-   ```
-   No chat replay needed. Each switch costs ~300 tokens instead of 15,000.
-
----
-
-## Which command when?
-
-| Situation | Use |
-|-----------|-----|
-| New feature or non-trivial refactor | `/dev` / `aicrew-dev` — full 9-phase pipeline with TDD, security, and design spec |
-| Bug fix | `/fix` / `aicrew-fix` — three intake questions, then TDD straight to done |
-| Small well-scoped task | `/quick` / `aicrew-quick` — graph-first Scout → Act, no pipeline overhead |
-| Design options before coding | `/brainstorm` — 3 materially different approaches with trade-offs |
-
-> **Examples:** "Add rate limiting to our API" → `/dev`. "Fix the broken OAuth redirect" → `/fix`. "Rename a variable across three files" → `/quick`.
-
-## Utilities (optional)
-
-These run when you need them — not part of the core flow.
-
-| Command | Claude Code / Cursor | Codex | What it does |
-|---------|---------------------|-------|-------------|
-| `/conclude` | `/conclude` | `aicrew-conclude` | End session — saves learnings, suggests commit message |
-| `/update-skills` | `/update-skills` | `aicrew-update-skills` | Refresh or generate project-specific skills |
-| `/harness-audit` | `/harness-audit` | `aicrew-harness-audit` | Health check on your aicrew install |
-| `/session` | `/session` | `aicrew-session` | Name this task so state files don't collide |
-| `/handoff` | `/handoff` | `aicrew-handoff` | Copy compact summary when switching tools |
-| `/benchmark` | `/benchmark` | `aicrew-benchmark` | See how many tokens aicrew saved (estimated) |
-
----
-
-## Tool-specific entry points
-
-> Full invocation details for all platforms: [`skills/docs/platform-entry-points.md`](./skills/docs/platform-entry-points.md)
-
-### Claude Code
+#### Claude Code
 
 Install: `aicrew install claude`
 
-Slash commands resolve from `~/.claude/commands/` (symlinked from `~/Agents/commands/`):
+Slash commands (from `~/.claude/commands/`, symlinked from `~/Agents/commands/`):
 
 ```
 /dev     /fix     /quick     /conclude     /update-skills     /harness-audit
@@ -176,11 +141,11 @@ Slash commands resolve from `~/.claude/commands/` (symlinked from `~/Agents/comm
 
 Hooks auto-registered: `session-memory.py` (Stop) + `security-guard.py` (PreToolUse).
 
-### Codex
+#### Codex
 
 Install: `aicrew install codex`
 
-Skill names — live under `~/.codex/skills/` after install:
+Skills land in `~/.codex/skills/` after install:
 
 ```
 aicrew-dev    aicrew-fix    aicrew-quick    aicrew-conclude    aicrew-update-skills
@@ -192,129 +157,127 @@ aicrew-agent-kit    aicrew-cursor-plugin
 aicrew-session    aicrew-handoff    aicrew-normal
 ```
 
-Invoke via your Codex UI's skill picker or `$<skill-name>` syntax.
-
-### Cursor
+#### Cursor
 
 Install: `aicrew install cursor`
 
-After install, the `~/Agents/` tree and `AGENTS.md` / `CLAUDE.md` provide the shared context. Use:
-- Slash commands if Claude integration is active (same commands as Claude Code above)
-- The **agent-kit** to symlink `.mdc` rules into each repo's `.cursor/rules/` (`aicrew agent-kit init ./agent-kit`)
-- The **cursor-plugin** for a multi-tool terminal panel (`aicrew cursor-plugin init`)
+After install, `~/Agents/` and `AGENTS.md`/`CLAUDE.md` provide shared context.
+
+- Slash commands available if Claude integration is active
+- **agent-kit:** share `.mdc` rules across repos — `aicrew agent-kit init ./agent-kit`
+- **cursor-plugin:** multi-tool terminal panel — `aicrew cursor-plugin init`
 - MCP servers wired via `~/.cursor/mcp.json` → `config/mcp/cursor.local.json`
 
-### Gemini CLI
+#### Gemini CLI
 
-Install: `aicrew install gemini`
+Install: `aicrew install gemini` — populates `~/Agents/` and prints config instructions.
 
-Populates `~/Agents/` and prints Gemini-specific config instructions. Slash commands (`/dev`, `/fix`, etc.) work if Gemini CLI supports loading commands from a config path. Interactive checkpoints use `ask_human`.
+#### Antigravity
 
-### Antigravity
-
-Reference `~/Agents/commands/` in your Antigravity config. Slash commands (`/dev`, `/fix`, `/quick`, etc.) work natively. Interactive checkpoints use the platform `ask` tool.
+Reference `~/Agents/commands/` in your Antigravity config. Slash commands work natively.
 
 ---
 
-## MCP & token economy
+### Where skills land
 
-**The problem:** AI tools read files to understand your codebase. A repo-wide `grep` costs ~80,000 tokens. That burns context fast on large repos.
+| Location | Contents |
+|---|---|
+| `~/Agents/` | Single source of truth — commands, agents, hooks, docs |
+| `~/.claude/commands/` | Symlinks → `~/Agents/commands/*.md` (slash commands) |
+| `~/.codex/skills/` | Codex-native skill folders (`aicrew-dev`, `aicrew-fix`, …) |
+| `~/.claude/settings.json` | Merged hook entries (`session-memory.py`, `security-guard.py`) |
+| `~/.cursor/mcp.json` | Symlink → `config/mcp/cursor.local.json` |
+| `~/.codex/config.toml` | Patched with MCP server entries |
 
-**The solution:** aicrew wires three MCP servers and a read policy that route every query to the cheapest strategy first.
+---
 
-> **Token-saving mechanism overview:** [`skills/docs/how-token-savings-work.md`](./skills/docs/how-token-savings-work.md)
+### MCP & token economy
 
-### How it works
+**The problem:** A repo-wide grep costs ~80,000 tokens. That burns context fast on large codebases.
 
-1. **`codebase-memory-mcp`** indexes your project into a knowledge graph. A graph query for "what calls `authMiddleware`?" costs ~500 tokens — the same query via grep costs ~80,000. Index once per repo, then every session benefits.
+**The solution:** aicrew wires three MCP servers and a read policy that routes every query to the cheapest strategy first.
 
-2. **`/lean` mode** (Claude Code) or the **`lean`** skill (Codex) enables the `context-economy` policy: the agent uses `git diff`, directory trees, and graph queries *before* reading whole files. Slices only what's needed.
+> Full guide: [`skills/docs/how-token-savings-work.md`](./skills/docs/how-token-savings-work.md)
 
-3. **`context-mode`** and **`token-optimizer-mcp`** shape long sessions — compressing stale context between phases, keeping the KV-cache warm so repeated prompts don't re-spend tokens.
+1. **`codebase-memory-mcp`** indexes your project into a knowledge graph. A graph query for "what calls `authMiddleware`?" costs ~500 tokens vs ~80,000 for grep. Index once; every session benefits.
 
-4. **Scout → Act pattern** (all commands): a cheap fast model does a graph-first "Scout" pass (1–2 K tokens) and emits a fixed summary schema. The main model receives *only that summary* — never the raw repo. This mirrors speculative decoding from LLM inference. Scout timing: `/quick` Scout is Phase 1; `/dev` Scout opens Phase 1 Research; `/fix` Scout opens Phase 1 Bug Analysis. See [`skills/docs/speculative-context.md`](./skills/docs/speculative-context.md) for details.
+2. **`/lean` mode** (or the `lean` Codex skill) enables the `context-economy` policy: `git diff`, directory trees, and graph queries *before* reading whole files.
 
-### When to use each lever
+3. **`context-mode`** and **`token-optimizer-mcp`** shape long sessions — compressing stale context between phases, keeping the KV-cache warm.
+
+4. **Scout → Act pattern** (`/quick`): a cheap fast model does a graph-first Scout pass (~1–2 K tokens) and emits a fixed summary schema. The main model receives only that summary — not the raw repo.
+
+#### When to use each lever
 
 | You want to… | Use |
 |---|---|
 | Explore a large codebase without burning context | `codebase-memory-mcp` graph queries (all commands use this) |
-| Keep sessions from filling the context window | `/lean on` (amplifies the always-on context-economy policy) |
-| Compress stale context between phases | `/compact` at phase boundaries — all commands; `/dev` has 9 gates, `/fix` 5, `/quick` 1 |
-| Hand off a session to a different tool | `/handoff` (writes `.ai/state/` checkpoint, ~300 tokens) |
-| Scout-first discovery with minimal pipeline overhead | `/quick` (Scout → Act; same token stack as `/dev`/`/fix`, fewer phases) |
+| Keep sessions from filling the context window | `/lean on` |
+| Compress stale context between phases | `/compact` at phase boundaries |
+| Hand off a session to a different tool | `/handoff` (~300 tokens) |
+| Scout-first with minimal overhead | `/quick` (Scout → Act) |
 
-Use `/normal` or `/lean off` to restore full verbosity when you need it.
+Use `/normal` or `/lean off` to restore full verbosity.
 
 ---
 
-## How aicrew saves tokens
+### Token stack — all commands carry the same 11 capabilities
 
-Every aicrew feature targets a specific source of token waste. **All three entry-point commands (`/dev`, `/fix`, `/quick`) carry the identical 11-capability token stack** — only pipeline depth differs. See [`skills/docs/token-foundation.md`](./skills/docs/token-foundation.md) for the authoritative list.
+Every entry-point command (`/dev`, `/fix`, `/quick`) carries an identical token-saving foundation — only pipeline depth differs.
 
-> **Full guide with diagrams and worked examples:** [`skills/docs/how-token-savings-work.md`](./skills/docs/how-token-savings-work.md)
+> Authoritative list: [`skills/docs/token-foundation.md`](./skills/docs/token-foundation.md)
+> Full guide with worked examples: [`skills/docs/how-token-savings-work.md`](./skills/docs/how-token-savings-work.md)
 
-> **Measure it yourself:** `aicrew benchmark --report` scans your project and writes a per-session TOKEN_REPORT to `.ai/reports/`. All numbers are clearly labeled **estimated** — exact counts need your tool's token-usage log.
+| # | Capability | Typical saving |
+|---|---|---|
+| 1 | Graph-first (`codebase-memory-mcp`) | ~79.5K per 3 queries |
+| 2 | Speculative Scout → verify (SCOUT schema) | ~79K per session |
+| 3 | Karpathy guardrails (scope, simplicity, surgical edits) | Reduces re-work |
+| 4 | Layered guardrails (input → scope → phase → output → budget) | Prevents runaway sessions |
+| 5 | Context-economy read policy (diff/tree/search before reads) | ~70% fewer read tokens |
+| 6 | `security-guard.py` hooks (blocks secrets before they land on disk) | Prevents credential leaks |
+| 7 | `.ai/state` checkpoints (survives context resets) | Survives context resets |
+| 8 | `/compact` between phases (~60% context at each boundary) | ~60% context at each boundary |
+| 9 | `/handoff` on tool switch (~300 tokens per switch) | ~14.7K per tool switch |
+| 10 | Optional: `context-mode` + `token-optimizer-mcp` | Varies; biggest on sessions >30 min |
+| 11 | Caveman default output (~35% fewer output tokens) | ~35% fewer output tokens |
 
-### The 11 token capabilities (all commands, always)
-
-| # | Capability | The problem | What aicrew does | Typical saving |
-|---|---|---|---|---|
-| 1 | **Graph-first** (`codebase-memory-mcp`) | "What calls `authMiddleware`?" via grep: ~80K tokens | `search_graph` costs ~500 tokens — 160× reduction. Index once; every session benefits. | ~79.5K per 3 queries |
-| 2 | **Speculative Scout → verify** (SCOUT schema) | Exploring a codebase reads every file it touches — ~80K tokens | Scout runs a graph query (~500 tok); main model sees only the `SCOUT:` block. Scout timing varies by command (see pipeline depth table). | ~79K per session |
-| 3 | **Karpathy guardrails** | Agent rewrites more than needed; scope creep | think → simplest → surgical → goal-driven; loaded before every implementation step | Reduces re-work |
-| 4 | **Layered guardrails** | Agent acts outside scope or skips safety | input → scope lock → phase gate → implementation → output → context budget | Prevents runaway sessions |
-| 5 | **Context-economy read policy** | Reading a whole 500-line file to change 3 lines costs 500+ tokens | diff/tree/search before file reads; slice over whole-file; always on; `/lean on` amplifies | ~70% fewer read tokens |
-| 6 | **`security-guard.py` hooks** | Secrets written to disk before review | PreToolUse hook fires before every write; blocks PEM keys and AWS secrets outright | Prevents credential leaks |
-| 7 | **`.ai/state` checkpoints** | Long sessions lost to context-window reset | State file written after every phase; paste into new tool instead of replaying chat | Survives context resets |
-| 8 | **`/compact` between phases** | Later phases carry all context from earlier ones | Fires at every phase boundary, pruning stale context before next phase — all commands | ~60% context at each boundary |
-| 9 | **`/handoff` on tool switch** | Switching tools means re-pasting the full chat — 10–20K tokens | `/handoff` writes a compact state file (~300 tokens); pass that, not the whole conversation | ~14.7K per tool switch |
-| 10 | **Optional: `context-mode` + `token-optimizer-mcp`** | Long sessions accumulate KV-cache misses as context grows | These optional MCP servers shape session context and keep the cache warm | Varies; biggest on sessions > 30min |
-| 11 | **Caveman default output** | Verbose AI responses add 30–40% more output tokens | aicrew defaults to terse/caveman style — lead with the answer, drop filler. Use `/normal` for prose. | ~35% fewer output tokens |
-
-### Pipeline depth (the only thing that differs per command)
+#### Pipeline depth (the only thing that differs)
 
 | Command | Phases | Use when |
 |---|---|---|
-| `/dev` | 9 (intake → research → brainstorm → design → implement → tests → security → audit → conclude) | Feature, refactor, or anything needing design spec |
-| `/fix` | 5 (intake → bug analysis → implement → tests → security → conclude) | Bug fix with mandatory TDD and security review |
-| `/quick` | 2 (Scout → Act) | Scoped task; want graph-first discovery without pipeline overhead |
+| `/dev` | 9 (intake → research → brainstorm → design → implement → tests → security → audit → conclude) | Feature, refactor, or anything needing a design spec |
+| `/fix` | 5 (intake → bug analysis → implement → tests → security → conclude) | Bug fix with mandatory TDD |
+| `/quick` | 2 (Scout → Act) | Scoped task; graph-first without pipeline overhead |
 
-### Concrete scenarios
-
-**"I need to fix a login bug in a large monorepo"**
-→ Open with `/quick`. Scout runs a graph query (~500 tok) instead of grepping 1,000 files (~80K tok). Act makes the surgical fix. Total cost: ~1–2K tokens vs 80K+ for a naive grep-and-read approach.
-
-**"I'm doing a multi-day feature with `/dev`"**
-→ Turn on `/lean` at the start. Phase compaction fires at each gate. Each phase starts with a clean context instead of carrying everything from Phase 1 forward. For a 9-phase session this can halve total context spend.
-
-**"I keep switching between Cursor and Claude Code"**
-→ Run `/handoff` before switching. Paste the `.ai/state/` file into the new tool. No chat replay, no re-explaining the goal. Each switch costs ~300 tokens instead of 15,000.
-
-**"The AI keeps writing long explanations I don't need"**
-→ aicrew is already in caveman mode by default. If it slipped to verbose, type `/lean on` or check `~/Agents/agents/caveman.md`. Use `/normal` when you actually want the prose.
-
-### See the numbers for your project
+#### Measure it for your project
 
 ```bash
 aicrew benchmark --report
 ```
 
-Opens a report at `.ai/reports/TOKEN_REPORT.<timestamp>.md` showing baseline vs aicrew estimates for your specific codebase size. The biggest win varies by repo — small projects benefit most from lean reads; large ones from graph MCP.
+Writes `.ai/reports/TOKEN_REPORT.<timestamp>.md` — baseline vs aicrew estimates for your codebase. All numbers are clearly labeled **estimated**.
 
 ---
 
-## Guardrails — what protects you
+### Guardrails
 
-aicrew uses a layered safety model inspired by Andrej Karpathy's agent-safety writing and NVIDIA NeMo Guardrails' input/output rail architecture. **Input rail:** `security-guard.py` fires before every file write, blocking PEM private keys and AWS secrets outright, and warning on high-entropy strings or hardcoded tokens. **Output rail:** the `security-reviewer` agent scans changed files in Phase 6 of `/dev` before the session concludes. **Phase gates:** every `/dev` and `/fix` phase stops and waits for your explicit go-ahead — the agent never invents your response. **Session memory:** `session-memory.py` strips `<private>…</private>` blocks before writing session journals, so sensitive content never lands on disk. Set `ECC_HOOK_PROFILE=strict` for maximum hook verbosity, or `minimal` to quiet them down.
+aicrew uses a layered safety model inspired by Andrej Karpathy's agent-safety writing and NVIDIA NeMo Guardrails.
 
-For the full taxonomy mapping NeMo rail types to aicrew primitives, see [`skills/docs/guardrails-taxonomy.md`](./skills/docs/guardrails-taxonomy.md).
+- **Input rail:** `security-guard.py` fires before every file write — blocks PEM private keys and AWS secrets outright; warns on high-entropy strings.
+- **Output rail:** `security-reviewer` agent scans changed files in Phase 6 of `/dev`.
+- **Phase gates:** every `/dev` and `/fix` phase stops and waits for your explicit go-ahead — the agent never invents your response.
+- **Session memory:** `session-memory.py` strips `<private>…</private>` blocks before writing session journals.
+
+Set `ECC_HOOK_PROFILE=strict` for maximum hook verbosity, or `minimal` to quiet them.
+
+Full taxonomy: [`skills/docs/guardrails-taxonomy.md`](./skills/docs/guardrails-taxonomy.md)
 
 ---
 
-## Install
+### Install (full reference)
 
-### Option A — one-off (no global `aicrew` binary)
+#### Option A — one-off (no global binary)
 
 ```bash
 npx aicrew install
@@ -324,118 +287,86 @@ npx aicrew agent-kit init ./agent-kit
 npx aicrew cursor-plugin init ./cursor-multi-tool-plugin
 ```
 
-### Option B — global `aicrew` CLI (from a git clone)
+#### Option B — global CLI (from a git clone)
 
 ```bash
 cd /path/to/aicrew
 npm install -g .
 ```
 
-If you see **`EACCES`** on Linux (default prefix `/usr/local`), install to your home directory:
+If you see **`EACCES`** on Linux:
 
 ```bash
 npm install -g --prefix ~/.local/npm-global .
 export PATH="$HOME/.local/npm-global/bin:$PATH"
-# add the export line to ~/.bashrc so new shells pick it up
+# add the export to ~/.bashrc
 ```
 
-Then run `aicrew` from any directory:
+#### What `install` does
 
-```bash
-aicrew install
-aicrew --help
-```
+- Copies packaged skills into `~/Agents/` (shared source of truth).
+- Merges skills into `~/.claude/skills/` (adds missing files; does not overwrite existing).
+- Symlinks `~/.claude/commands/*.md` → `~/Agents/commands/*.md`.
+- Merges `codex-skills/` into `~/.codex/skills/`.
+- Registers `session-memory.py` and `security-guard.py` in `~/.claude/settings.json`.
+- Wires MCP config files (symlinks/patches) — does **not** install MCP server binaries.
 
-**What `install` does**
-
-- Copies packaged skills into **`~/Agents/`** (shared source of truth for commands, agents, hooks).
-- Merges skills into **`~/.claude/skills/`** (adds missing files; does not overwrite existing).
-- Symlinks **`~/.claude/commands/*.md`** → **`~/Agents/commands/*.md`**.
-- Merges **`codex-skills/`** into **`~/.codex/skills/`**.
-- Registers `session-memory.py` (Stop) and `security-guard.py` (PreToolUse) in `~/.claude/settings.json`.
-- **Wires MCP config files** (symlinks / patches) — but does **not** install MCP server binaries.
-
-**After install — MCP servers** (one-time, per machine):
+#### MCP server binaries (one-time, per machine)
 
 ```bash
 npm install -g codebase-memory-mcp   # required for graph queries (~500 tok vs ~80K grep)
-npm install -g token-optimizer-mcp   # optional; needed only for Cursor token-optimizer entry
-# context-mode needs no install — auto-downloads via npx on first use
+npm install -g token-optimizer-mcp   # optional; needed for Cursor token-optimizer entry
+# context-mode: no install needed — auto-downloads via npx on first use
 ```
 
-Or run `aicrew install mcp` for the full checklist with paths and notes.
-
-**Requirements:** Node 18+. Hooks use Python stdlib only — no extra Python packages.
+Or run `aicrew install mcp` for the full checklist with paths.
 
 ---
 
-## CLI
-
-Each CLI action also has a Codex skill and a Claude Code slash command — see the [parity table](#cli-or-skill--same-action) above.
+### CLI reference
 
 | Command | Codex skill | Claude Code | Purpose |
 |---------|-------------|-------------|---------|
-| `aicrew install` | `aicrew-install` | `/install` | First-time or fresh machine; merge skills and hooks |
-| `aicrew update` | `aicrew-update` | `/update` | Same as `install` — picks up new files from the package |
-| `aicrew status` | `aicrew-status` | `/status` | Shows `~/Agents`, global skills, command symlinks, hooks, Codex skills, and cwd `.ai/skills/` |
-| `aicrew agent-kit init [path]` | `aicrew-agent-kit` | `/agent-kit` | Scaffolds shared Cursor `.mdc` rules layout (default `./agent-kit`) |
-| `aicrew cursor-plugin init [path]` | `aicrew-cursor-plugin` | `/cursor-plugin` | Scaffolds Cursor extension for multi-tool terminals (default `./cursor-multi-tool-plugin`) |
-| `aicrew benchmark` _(planned)_ | `aicrew-benchmark` | `/benchmark` | Measure skill quality, token efficiency, and pipeline timing |
-| `aicrew --version` / `-v` | — | — | Print package version |
-| `aicrew --help` / `-h` | — | — | Help |
-| `aicrew` (no args) | — | — | Interactive menu |
+| `aicrew install` | `aicrew-install` | `/install` | First-time or fresh machine |
+| `aicrew update` | `aicrew-update` | `/update` | Pull new files from the package |
+| `aicrew status` | `aicrew-status` | `/status` | Show install state across all platforms |
+| `aicrew agent-kit init [path]` | `aicrew-agent-kit` | `/agent-kit` | Scaffold shared Cursor `.mdc` rules |
+| `aicrew cursor-plugin init [path]` | `aicrew-cursor-plugin` | `/cursor-plugin` | Scaffold Cursor multi-tool terminal extension |
+| `aicrew benchmark` | `aicrew-benchmark` | `/benchmark` | Token savings estimate + report |
+| `aicrew --version` | — | — | Print package version |
+| `aicrew --help` | — | — | Help |
 
 ---
 
-## What's new
-
-| Area | What changed |
-|------|----------------|
-| **`/benchmark`** | `aicrew benchmark --report` scans your project and writes a per-session `TOKEN_REPORT` to `.ai/reports/` — shows baseline vs aicrew token estimates, savings by feature, and top recommendations. |
-| **`/quick` + speculative context** | Scout → Act shortcut with graph-first exploration, Karpathy guardrails, and a dedicated `context-scout` agent. See [`skills/docs/speculative-context.md`](./skills/docs/speculative-context.md). |
-| **Guardrails taxonomy** | `skills/docs/guardrails-taxonomy.md` maps NeMo rail types to aicrew primitives (hooks, phase gates, session memory). |
-| **Lean mode** | `/lean` (Claude Code), `context-economy` agent, and Codex `lean` skill — terse output plus diff/tree/search-before-read policy. |
-| **Graph memory MCP** | `codebase-memory-mcp` indexes the repo into a knowledge graph — structural queries cost ~500 tokens vs ~80K for broad grep/file reads. |
-| **State checkpoints** | Per-session files under `.ai/state/AI_STATE.<tool>.<session>.md`, set with `/session`, handed off with `/handoff`. |
-| **MCP config** | `config/mcp/` is the single source of truth. `aicrew install` symlinks Claude and Cursor MCP configs and patches Codex `config.toml`. |
-| **Cursor multi-tool** | `aicrew cursor-plugin init` scaffolds a local extension; `aicrew agent-kit init` shares `.mdc` rules across repos. |
-| **Context compression** | `context-mode` and `token-optimizer-mcp` MCP servers for session-level context shaping and cache-aware summarisation. |
-
----
-
-## MCP integration
+### MCP integration
 
 `aicrew install` wires MCP servers from `config/mcp/` into each tool:
 
 | Tool | Target | Source in repo |
 |------|--------|----------------|
 | **Claude Code** | `~/.claude/.mcp.json` (symlink) | `config/mcp/claude.json` |
-| **Cursor** | `~/.cursor/mcp.json` (symlink) | `config/mcp/cursor.local.json` (created from template on first install) |
+| **Cursor** | `~/.cursor/mcp.json` (symlink) | `config/mcp/cursor.local.json` |
 | **Codex** | `~/.codex/config.toml` (merged) | `config/mcp/codex.toml` |
 
-**Cursor secrets:** `config/mcp/cursor.json` is the committed template — placeholders only. `config/mcp/cursor.local.json` is gitignored; install seeds it from the template, then symlinks Cursor to it so real API keys never land in git.
+**Cursor secrets:** `config/mcp/cursor.json` is the committed template (placeholders only). `config/mcp/cursor.local.json` is gitignored; install seeds it from the template and symlinks Cursor to it.
 
-### Core servers (all three tools)
-
-> **Why "install separately"?** `aicrew install` only wires the MCP config files (symlinks and patches). It does **not** install the server binaries or npm packages — that is a one-time step you do yourself. Run `aicrew install mcp` to print the exact commands.
-
-| Server | Role | How to get it |
-|--------|------|---------------|
-| **`codebase-memory-mcp`** | Graph index of functions, classes, call chains, routes. | `npm install -g codebase-memory-mcp` — installs the binary. Config points to `~/.local/bin/codebase-memory-mcp`. [Source](https://github.com/DeusData/codebase-memory-mcp) |
-| **`context-mode`** | Context shaping / mode helpers for long sessions. | **Auto via `npx` on first use** — no separate install needed. |
-| **`token-optimizer-mcp`** | Token budgeting and cache-friendly MCP responses. _(optional)_ | `npm install -g token-optimizer-mcp` — optional; Cursor config uses the globally-installed path. |
+| Server | Role | Install |
+|--------|------|---------|
+| **`codebase-memory-mcp`** | Graph index of functions, classes, call chains, routes | `npm install -g codebase-memory-mcp` |
+| **`context-mode`** | Context shaping for long sessions | Auto via `npx` — no install needed |
+| **`token-optimizer-mcp`** | Token budgeting and cache-friendly responses _(optional)_ | `npm install -g token-optimizer-mcp` |
 
 The Cursor template also lists optional servers (GitHub, filesystem, memory, Brave, Playwright, SQLite, Postgres, GitKraken, Perplexity) — enable and fill env vars in `cursor.local.json` as needed.
 
 ---
 
-## Pipeline reference (`/dev` phases)
+### Pipeline reference (`/dev` phases)
 
 | Phase | Name | Notes |
 |------:|------|--------|
 | 0 | Intake | Work type, clarifying questions, which stages run |
 | 1 | Research | Bug analyst vs exploration |
-| 2 | Brainstorm | On by default for features/refactors; often off for bugs |
+| 2 | Brainstorm | On by default for features/refactors |
 | 3 | Design | Contracts, interfaces, over/under-build flags |
 | 4 | Implement | TDD default; specialist routing from changed file paths |
 | 5 | Tests | Pyramid, coverage, smoke path |
@@ -448,7 +379,7 @@ TDD is the default in Phase 4; opt out explicitly at intake.
 
 **State files:** `/dev` writes to `.ai/state/AI_STATE.<tool>.<session>.md`. Use `/session` early, `/handoff` when switching tools, and clean up old states with `~/Agents/bin/cleanup-ai-state.sh 3 .`.
 
-### Specialist routing (Phase 4)
+#### Specialist routing (Phase 4)
 
 | Signals in changed paths | Agent |
 |--------------------------|--------|
@@ -459,9 +390,7 @@ TDD is the default in Phase 4; opt out explicitly at intake.
 
 ---
 
-## Agent files
-
-Shipped markdown agents (resolved from `~/Agents/agents/`, with project `.ai/skills/agents/` overrides taking precedence):
+### Agent files
 
 | Group | Agents |
 |-------|--------|
@@ -471,22 +400,20 @@ Shipped markdown agents (resolved from `~/Agents/agents/`, with project `.ai/ski
 
 ---
 
-## Hooks
+### Hooks
 
 | Script | Claude hook | Role |
 |--------|-------------|------|
 | `session-memory.py` | Stop | Session journal, optional batch typecheck, `<private>` stripping |
 | `security-guard.py` | PreToolUse (Edit / Write) | Blocks obvious secrets; warns on risky patterns |
 
-Set `ECC_HOOK_PROFILE` to `minimal`, `standard` (default), or `strict` to tune hook verbosity.
-
-Wrap sensitive content in `<private>...</private>` so session memory does not persist it.
+Set `ECC_HOOK_PROFILE` to `minimal`, `standard` (default), or `strict`.
 
 ---
 
-## Project layer (`.ai/skills/`)
+### Project layer (`.ai/skills/`)
 
-Use `/update-skills` (Claude Code) or `aicrew-update-skills` (Codex) to generate repo-local overrides:
+Use `/update-skills` (or `aicrew-update-skills`) to generate repo-local overrides:
 
 - `.ai/skills/commands/dev.md` — planner templates, phase goals, validation, git safety
 - `.ai/skills/agents/brainstorm.md` — design decisions before coding
@@ -497,7 +424,7 @@ Commit `.ai/skills/` so the whole team shares the same guardrails.
 
 ---
 
-## Layout after install
+### Layout after install
 
 ```
 ~/Agents/                 # merged from package skills/ — commands, agents, hooks, docs, bin/
@@ -514,7 +441,13 @@ Commit `.ai/skills/` so the whole team shares the same guardrails.
 
 ---
 
-## Design principles
+### Interactive checkpoints
+
+Every command (`/dev`, `/fix`, `/quick`) uses mandatory stop-and-wait gates. The agent never invents your response. On platforms without an explicit ask tool, it ends its response and waits. Phase progression always requires your explicit go-ahead.
+
+---
+
+### Design principles
 
 - **Single shared tree** — `~/Agents/` is the source of truth all tools resolve commands from
 - **Merge, do not clobber** — existing `~/.claude/skills` files are kept on update
@@ -525,13 +458,7 @@ Commit `.ai/skills/` so the whole team shares the same guardrails.
 
 ---
 
-## Interactive checkpoints
-
-Every command (`/dev`, `/fix`, `/quick`) uses **mandatory stop-and-wait gates**. The agent never invents your response. On platforms without an explicit ask tool, it ends its response and waits. This is by design — phase progression requires your explicit go-ahead.
-
----
-
-## Inspired by
+### Inspired by
 
 aicrew draws **architectural inspiration** (no code copied) from:
 
@@ -540,18 +467,18 @@ aicrew draws **architectural inspiration** (no code copied) from:
 - **[chopratejas/headroom](https://github.com/chopratejas/headroom)** (Apache 2.0) — CCR, ContentRouter, RollingWindow, and `headroom learn` patterns informed the context budget rail.
 - **Academic:** Leviathan et al. speculative decoding (2023), Anthropic context engineering guidance, ReSum, CoMem.
 
-Full attribution with license details: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Full attribution: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
 
 ---
 
-## License
+### License
 
 aicrew is MIT — see [LICENSE](LICENSE).
 
-Third-party components and inspirations: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Third-party components: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
 
 ---
 
-## Discoverability
+### Discoverability
 
 **GitHub topics:** `ai-agents` · `claude-code` · `codex` · `cursor` · `mcp` · `developer-tools` · `agent-skills` · `hooks` · `workflow` · `tdd` · `sdlc` · `context-engineering` · `token-optimization` · `token-saving` · `guardrails` · `speculative-decoding` · `ai-workflow` · `prompt-engineering` · `context-compression` · `devtools`
