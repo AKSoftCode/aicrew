@@ -1,5 +1,8 @@
 # aicrew
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Node 18+](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](package.json)
+
 **A TDD-first AI development pipeline for Claude Code, Cursor, Codex, Gemini CLI, and Antigravity.**
 
 One command set and one source of truth across every major AI coding tool — install once, drive your whole SDLC from a handful of commands.
@@ -401,4 +404,6 @@ Third-party runtime components: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
 
 ### Discoverability
 
-**GitHub topics:** `ai-agents` · `claude-code` · `codex` · `cursor` · `mcp` · `developer-tools` · `agent-skills` · `hooks` · `workflow` · `tdd` · `sdlc` · `context-engineering` · `token-optimization` · `token-saving` · `guardrails` · `speculative-decoding` · `ai-workflow` · `prompt-engineering` · `context-compression` · `devtools`
+**GitHub topics:** `ai-agents` · `claude-code` · `codex` · `cursor` · `gemini-cli` · `antigravity` · `mcp` · `developer-tools` · `agent-skills` · `hooks` · `workflow` · `tdd` · `sdlc` · `context-engineering` · `token-optimization` · `token-saving` · `guardrails` · `ai-workflow` · `open-source` · `cli`
+
+**Search keywords:** reduce AI coding tokens · multi-agent dev pipeline · cross-platform agent skills · TDD-first SDLC · graph-first codebase reads · Claude Code Cursor Codex Gemini hooks
