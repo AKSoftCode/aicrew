@@ -1,16 +1,52 @@
 # Third-Party Notices
 
-This file lists the MCP servers, npm packages, and external projects that aicrew references, installs, or draws architectural inspiration from.
+This file lists the MCP servers and npm packages that aicrew references, installs, or wires into a host tool. It covers software whose code executes at runtime.
 
-> **User-friendly explanation of how aicrew uses these techniques:** [`skills/docs/how-token-savings-work.md`](./skills/docs/how-token-savings-work.md)
+aicrew itself bundles **no npm runtime dependencies** (`package.json` `dependencies` is empty). The packages below are **not** bundled inside the aicrew npm package; they are pulled at runtime by the MCP host (Claude Code, Cursor, Codex, Gemini CLI, or Antigravity) using the server definitions in `config/mcp/`.
+
+> For design inspirations (no code used), see README → Acknowledgements / Inspiration.
+
+> User-facing explanation of how aicrew uses these techniques: [`skills/docs/how-token-savings-work.md`](./skills/docs/how-token-savings-work.md)
+
+---
+
+## Core MCP servers
+
+These three power aicrew's token economy and are recommended for every install.
+
+### `codebase-memory-mcp`
+
+- **Version:** 0.8.1 (latest at time of writing)
+- **License:** MIT
+- **Source:** https://www.npmjs.com/package/codebase-memory-mcp
+- **Install location:** `~/.local/bin/codebase-memory-mcp` (standalone binary; **not** bundled in the aicrew npm package)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
 
 ---
 
-## Bundled / installed via `aicrew install`
+### `context-mode`
 
-The following packages are **not bundled inside the aicrew npm package**. They are pulled at runtime by the MCP host (Claude Code, Cursor, Codex, Gemini CLI, or Antigravity) using the server definitions in `config/mcp/`.
+- **Version:** 1.0.162 (latest at time of writing)
+- **License:** Elastic License 2.0 (ELv2)
+- **Source:** https://www.npmjs.com/package/context-mode
+- **Notes:** Free to use for internal and non-commercial purposes. Production SaaS use requires a separate commercial agreement. See [elastic.co/licensing/elastic-license](https://www.elastic.co/licensing/elastic-license) for full terms.
 
 ---
+
+### `token-optimizer-mcp`
+
+- **Version:** 2.17.0 (latest at time of writing)
+- **License:** MIT
+- **Source:** https://www.npmjs.com/package/token-optimizer-mcp
+
+See MIT license text above; same terms apply.
+
+---
+
+## Optional MCP servers (wired via the Cursor template)
+
+`config/mcp/cursor.json` lists these optional servers as commented/placeholder entries. They run only if a user enables them and supplies credentials. License notices are retained because their code executes when enabled.
 
 ### `@modelcontextprotocol/server-github`
 
@@ -19,7 +55,7 @@ The following packages are **not bundled inside the aicrew npm package**. They a
 - **Source:** https://www.npmjs.com/package/@modelcontextprotocol/server-github
 - **Copyright:** Anthropic, PBC and contributors
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+See MIT license text above; same terms apply.
 
 ---
 
@@ -77,102 +113,4 @@ See MIT license text above; same terms apply.
 
 ---
 
-### `context-mode`
-
-- **Version:** 1.0.162 (latest at time of writing)
-- **License:** Elastic License 2.0 (ELv2)
-- **Source:** https://www.npmjs.com/package/context-mode
-- **Notes:** Free to use for internal and non-commercial purposes. Production SaaS use requires a separate commercial agreement. See [elastic.co/licensing/elastic-license](https://www.elastic.co/licensing/elastic-license) for full terms.
-
----
-
-### `token-optimizer-mcp`
-
-- **Version:** 2.17.0 (latest at time of writing)
-- **License:** MIT
-- **Source:** https://www.npmjs.com/package/token-optimizer-mcp
-
-See MIT license text above; same terms apply.
-
----
-
-### `codebase-memory-mcp`
-
-- **Version:** 0.8.1 (latest at time of writing)
-- **License:** MIT
-- **Source:** https://www.npmjs.com/package/codebase-memory-mcp
-- **Install location:** `~/.local/bin/codebase-memory-mcp` (standalone binary; **not** bundled in the aicrew npm package)
-
-See MIT license text above; same terms apply.
-
----
-
-## Architecture inspiration (not bundled, not distributed)
-
-The following projects are **not included in aicrew** in any form. They influenced design decisions and are credited here for transparency.
-
----
-
-### forrestchang/andrej-karpathy-skills
-
-- **Repository:** https://github.com/forrestchang/andrej-karpathy-skills
-- **License:** MIT
-- **Inspiration:** Karpathy-style agent safety heuristics (slow down before irreversible actions, prefer reversible steps, checkpoint state) informed the design of aicrew's guardrail layer and phase-gate checkpoints.
-- **No code copied.**
-
----
-
-### NVIDIA NeMo Guardrails
-
-- **Repository:** https://github.com/NVIDIA/NeMo-Guardrails
-- **License:** [NVIDIA NeMo Guardrails License](https://github.com/NVIDIA/NeMo-Guardrails/blob/main/LICENSE) — not MIT; review before any redistribution.
-- **Inspiration:** The input-rail / output-rail / dialogue-rail layered architecture (input guard → phase logic → output reviewer) influenced aicrew's `security-guard.py` (PreToolUse), phase-gate checkpoints, and `security-reviewer` agent pattern.
-- **No code copied. Architecture reference only.**
-
----
-
-### rtk-ai/rtk
-
-- **Repository:** https://github.com/rtk-ai/rtk
-- **License:** See repository (reviewed June 2026)
-- **Inspiration:** RTK (Rust Token Killer) is a CLI proxy that intercepts AI agent shell commands (via PreToolUse hooks) and compresses verbose command output before it reaches the LLM — achieving 60–90% token savings on common dev commands (`git`, `cargo`, `pytest`, etc.). Three patterns from RTK informed aicrew design: (1) **thin-delegate hook architecture** — hooks are minimal scripts that call a binary, keeping hook logic decoupled from the policy engine; (2) **fail-safe graceful degradation** — if the proxy binary is missing or a rewrite fails, the hook exits 0 and the original command runs unchanged, matching aicrew's philosophy that guardrails must never block work; (3) **cross-platform hook compatibility matrix** — PreToolUse (Claude Code/Cursor), BeforeTool (Gemini), plugin API (Codex), and rules-file fallback — the same four tiers aicrew uses for `security-guard.py` and future hook extensions.
-- **No code copied. Architecture reference and complementary tool.**
-
----
-
-### chopratejas/headroom
-
-- **Repository:** https://github.com/chopratejas/headroom
-- **License:** Apache 2.0
-- **Inspiration:** Headroom's context compression architecture — CCR (Compress-Cache-Retrieve), ContentRouter, CacheAligner, RollingWindow, and the `headroom learn` → AGENTS.md pattern — informed aicrew's "context budget rail" concept and the Headroom-inspired section in `skills/docs/guardrails-taxonomy.md`.
-- **No code copied. Architecture reference only.**
-
----
-
-### Speculative decoding analogy (academic references)
-
-The **speculative context** pattern in aicrew (`skills/docs/speculative-context.md`) draws on the conceptual parallel between speculative decoding in LLM inference and multi-agent context compression. The following papers/repos are referenced as conceptual inspiration only. No code was copied.
-
-- **Leviathan et al., "Fast Inference from Transformers via Speculative Decoding" (2023)**
-  - arXiv: https://arxiv.org/abs/2211.17192
-  - Inspiration: draft-model/target-model accept/reject loop — mapped to Scout/Main agent handoff in aicrew.
-  - Type: academic paper reference only. No code used.
-
-- **ReSum — LLM-based Recursive Summarization for long-context compression**
-  - Conceptual reference for recursive summarization as a token-reduction strategy in multi-agent pipelines.
-  - No specific repository bundled; referenced as a class of technique.
-  - Type: academic concept reference only.
-
-- **COMEM / CoMem — Collaborative Memory for Multi-Agent Systems**
-  - Conceptual reference for shared structured memory across agent roles (analogous to the `SCOUT:` schema handoff and `.ai/state/` checkpoints in aicrew).
-  - No specific repository bundled; referenced as a class of technique.
-  - Type: academic concept reference only.
-
-- **Anthropic context engineering guidance (2025–2026)**
-  - Source: https://www.anthropic.com/engineering/building-effective-agents
-  - Inspiration: sub-agents returning 1–2 K token summaries as the primary context interface to parent agents.
-  - Type: public guidance / blog reference only. No code used.
-
----
-
-*This file is maintained manually. If you add a new MCP server to `config/mcp/`, please add a corresponding entry here.*
+*This file is maintained manually and covers only software whose code runs at runtime. If you add a new MCP server to `config/mcp/`, add a corresponding entry here. Design inspirations that contributed ideas or patterns (no code) live in README → Acknowledgements / Inspiration.*

@@ -7,13 +7,17 @@ argument-hint: "[goal or task description]"
 
 > **⚠️ INTERACTIVE CHECKPOINTS — MANDATORY RULE**
 >
+> At each checkpoint, use your platform's native interactive ask/question tool to pause and collect the user's answer. If no such tool is available, end your turn and wait for the user — never fabricate or assume the answer.
+>
+> **Known tools by platform (use if available):**
+>
 > | Platform | Checkpoint behavior |
 > |---|---|
 > | **Claude Code** | Call `AskUserQuestion` tool if available; otherwise end response and wait |
 > | **Cursor** | Call `askFollowupQuestion` tool if available; otherwise end response and wait |
-> | **Antigravity** | Call ask tool if available; otherwise end response and wait |
-> | **Gemini CLI** | Call `ask_human` tool if available; otherwise end response and wait |
-> | **Codex CLI** | Call `ask_human` tool if available; otherwise end response and wait |
+> | **Antigravity** | Native ask tool if available; otherwise end response and wait |
+> | **Gemini CLI** | Native ask tool (e.g. `ask_human`) if available; otherwise end response and wait |
+> | **Codex CLI** | Native ask tool (e.g. `ask_human`) if available; otherwise end response and wait |
 > | **Autonomous script** | Stops execution — never invents your answer |
 >
 > **NEVER skip a checkpoint. NEVER fabricate the user's response.**

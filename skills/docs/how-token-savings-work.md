@@ -322,4 +322,5 @@ Output:       caveman by default; /normal for prose; /terse to re-enable
 - [`skills/docs/speculative-context.md`](./speculative-context.md) — deep dive: two-model routing, SCOUT schema, failure modes, model selection table
 - [`skills/docs/token-foundation.md`](./token-foundation.md) — shared token stack reference used by all entry-point commands
 - [`skills/docs/guardrails-taxonomy.md`](./guardrails-taxonomy.md) — NeMo rail types ↔ aicrew mechanisms, Headroom pattern mapping
-- [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) — attribution for all inspiration sources and MCP dependencies
+- [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) — license notices for the MCP servers aicrew installs or wires
+- README → Acknowledgements / Inspiration — design inspirations (ideas/patterns only, no code used)

@@ -125,7 +125,7 @@ RTK's core technique — compressing shell command output at the hook level befo
 - `security-guard.py` already fires on `Edit|Write|MultiEdit`; extending it or adding a sibling hook for `Bash` tool calls is the natural slot.
 - Short-term workaround: agents using aicrew can `brew install rtk && rtk init -g` independently — RTK and aicrew hooks coexist because they use different `matcher` patterns (`Bash` vs `Edit|Write|MultiEdit`).
 
-Attribution: `THIRD_PARTY_NOTICES.md` → rtk-ai/rtk section.
+Attribution: README → Acknowledgements / Inspiration (rtk-ai/rtk).
 
 ---
 
