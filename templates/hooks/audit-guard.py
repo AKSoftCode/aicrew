@@ -12,6 +12,12 @@ Design principles:
 - Low false-positive rate: skips tests, migrations, docs
 - Warnings only (exit 0) unless truly destructive (exit 2)
 - Never crashes or slows the session
+
+NeMo Guardrails taxonomy (see skills/docs/guardrails-taxonomy.md):
+- This hook = INPUT RAIL: intercepts tool input before the model acts on it
+- BLOCK_PATTERNS  → hard input rail (exit 2, blocks the write)
+- WARN_CHECKS     → soft input rail (exit 0, advisory only)
+- Pair with security-reviewer agent (output rail) + phase gates (dialog flows)
 """
 
 import json

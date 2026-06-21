@@ -6,7 +6,21 @@ One `/dev` command — works in any project on tools that support slash commands
 Source of truth: `~/Agents/` (platform-agnostic)
 Published as: `npx aicrew install` (from `~/Workspace/aicrew/`)
 
-Last updated: 2026-04-04
+Last updated: 2026-06-21
+
+---
+
+## Default Communication Style
+
+All aicrew skills and commands use **caveman/lean output by default** — no opt-in required.
+
+- Lead with answer or action; short sentences, compact fragments OK
+- No filler, pleasantries, or hedging
+- Keep technical strings verbatim (paths, commands, errors, versions)
+- Safety exception: destructive actions, security warnings, and multi-step instructions remain explicit; resume terse after
+- Disable with `/normal` or `/lean off`; re-enable with `/lean on`
+
+See `~/Agents/agents/caveman.md` (style) and `~/Agents/agents/context-economy.md` (read policy).
 
 ---
 
@@ -16,6 +30,7 @@ Last updated: 2026-04-04
 - **All tools consume via symlinks**: Claude Code, Cursor, Codex, Antigravity, Gemini all reference `~/Agents/`
 - **No copies**: edit `~/Agents/` once — every symlink picks it up instantly
 - **TDD first by default**: strict RED → GREEN → REFACTOR is the default; relaxed mode requires opt-out
+- **Caveman/lean output by default**: terse answers + context-economy reads; `/normal` or `/lean off` restores verbose
 - **Expert specialist routing**: /dev auto-selects the right domain specialist based on what files change
 - **Generic base, project overrides**: global agents work anywhere; project layer adds domain knowledge
 
@@ -28,6 +43,7 @@ Last updated: 2026-04-04
   commands/
     dev.md                           ← /dev   — universal 9-phase pipeline
     fix.md                           ← /fix   — fast 5-phase bug fix
+    quick.md                         ← /quick — Scout → Act (graph-first, Karpathy guardrails)
     conclude.md                      ← /conclude — session wrap-up + memory
     update-skills.md                 ← /update-skills — maintain + evolve
   agents/
@@ -42,6 +58,13 @@ Last updated: 2026-04-04
     security-reviewer.md             ← Phase 6: real vulns, no false positives
     cloud-expert.md                  ← Phase 8: migration, deps, env, concurrency
     bug-analyst.md                   ← Phase 1 (bugs): symptom → root cause
+    caveman.md                       ← Default terse output style (not opt-in)
+    terse.md                         ← Default output policy + evidence footer
+    context-economy.md               ← Default read policy (diff/slice first)
+    karpathy-guardrails.md           ← /quick Act: think, simplicity, surgical, goal-driven
+    state-checkpoint.md              ← .ai/state checkpoint format
+  docs/
+    guardrails-taxonomy.md           ← NeMo rails ↔ aicrew hooks/phases (docs only)
   hooks/
     session-memory.py                ← Stop: journals changed files per session
     security-guard.py                ← PreToolUse: blocks keys, warns on injection
@@ -92,13 +115,33 @@ All commands and agents work across:
 
 | Tool | How it uses this system |
 |---|---|
-| **Claude Code** | `/dev`, `/fix`, `/conclude`, `/lean`, `/session` via `~/.claude/commands/` symlinks |
+| **Claude Code** | `/dev`, `/fix`, `/quick`, `/conclude`, `/lean`, `/session` via `~/.claude/commands/` symlinks |
 | **Cursor** | Agent rules via `.cursor/rules/` → `~/Agents/agents/` |
 | **Codex CLI** | Use `aicrew-*` skills from `~/.codex/skills/` (no slash commands); `AGENTS.md` in repo can reference `~/Agents/` |
 | **Antigravity** | System prompt references `~/Agents/commands/dev.md` (+ `lean.md`, `session.md`) |
 | **Gemini CLI** | System prompt references `~/Agents/commands/dev.md` (+ `lean.md`, `session.md`) |
 
 Checkpoints work across all platforms — see the `⚠️ INTERACTIVE CHECKPOINTS` table in every skill file.
+
+---
+
+## Default output: caveman/lean
+
+All aicrew skills and commands use terse output and context-economy reads **by default**. Not opt-in.
+
+| Agent file | Role |
+|---|---|
+| `caveman.md` | Canonical style: lead with answer, short lines, no filler; safety boundaries for destructive/security/multi-step content |
+| `terse.md` | Default output policy, evidence footer, fidelity rules |
+| `context-economy.md` | Default read policy: diff/tree/search before reads, slice over whole-file |
+
+| Command | Role |
+|---|---|
+| `/lean on` | Explicit boost or re-enable after disable |
+| `/lean off` or `/normal` | Restore verbose output and relaxed read policy |
+| `/terse` | Re-enable terse if previously disabled |
+
+Interactive checkpoints, constraints, acceptance criteria, and security warnings are never compressed away.
 
 ---
 
@@ -145,6 +188,22 @@ cd ~/Workspace/aicrew && git add skills/ && git commit
 
 ## Commands
 
+### `/quick` — Scout → Act (graph-first)
+
+Two phases: **Scout** (graph MCP or diff/tree/search; fixed `SCOUT:` schema) then **Act** (Karpathy guardrails). No full `/dev` pipeline.
+
+| Phase | What | Gate |
+|---|---|---|
+| Intake | Goal, constraints, done-when | User confirms |
+| Scout | `search_graph` → `trace_path` → `get_code_snippet`; fallback diff/tree | User confirms Scout block |
+| Act | `karpathy-guardrails` + minimal implementation | Acceptance criteria |
+
+Read policy: no raw Grep/Read whole files until Scout completes or user overrides. Integrates with `/lean` via `context-economy`. State file updated after Scout.
+
+See also: `docs/guardrails-taxonomy.md` for NeMo-style rail mapping.
+
+---
+
 ### `/dev` — Universal Development Pipeline
 
 | # | Phase | Agent(s) | Gate |
@@ -189,6 +248,9 @@ RED → GREEN → REFACTOR per acceptance criterion. Relaxed mode requires opt-o
 | `test-engineer` | 5 | Pyramid, coverage, quality, smoke |
 | `security-reviewer` | 6 | Real vulns, changed files only |
 | `cloud-expert` | 8 | Migration, deps, env, concurrency |
+| `karpathy-guardrails` | `/quick` Act | Think, simplicity, surgical changes, goal-driven |
+| `context-economy` | `/lean` | Token-saving read policy |
+| `state-checkpoint` | All pipelines | `.ai/state/AI_STATE.*.md` format |
 
 ### Specialists (Phase 4 — auto-routed)
 
@@ -216,6 +278,9 @@ RED → GREEN → REFACTOR per acceptance criterion. Relaxed mode requires opt-o
 |---|---|
 | `~/Agents/commands/dev.md` | Pipeline phases or specialist routing |
 | `~/Agents/commands/fix.md` | Fast-fix flow |
+| `~/Agents/commands/quick.md` | Scout → Act flow |
+| `~/Agents/agents/karpathy-guardrails.md` | Karpathy coding principles |
+| `~/Agents/docs/guardrails-taxonomy.md` | NeMo ↔ aicrew guardrails map |
 | `~/Agents/agents/frontend-specialist.md` | Frontend TDD patterns |
 | `~/Agents/agents/backend-specialist.md` | Backend API patterns |
 | `~/Agents/agents/db-migration.md` | Migration safety rules |

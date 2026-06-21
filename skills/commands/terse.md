@@ -1,11 +1,13 @@
 ---
-description: "Opt-in token saver: terse output mode (style only)"
+description: "Reinforce default terse output (already on by default)"
 argument-hint: ""
 ---
 
 # /terse
 
-Enable terse mode for the rest of this session until `/normal`.
+Default output is already terse/caveman. See `~/Agents/agents/caveman.md`.
+
+Use `/terse` to explicitly re-enable terse mode if `/normal` or `/lean off` was used earlier in the session.
 
 Rules:
 - Bullets, short lines, no filler/pleasantries.

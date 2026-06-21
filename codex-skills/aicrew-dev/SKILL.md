@@ -7,6 +7,10 @@ description: Run the aicrew /dev pipeline in Codex (intake -> research -> design
 
 Codex does not support slash commands. Use this skill when the user asks for "/dev" or a full SDLC pipeline.
 
+## Default output
+
+Caveman/lean style by default. See `~/Agents/agents/caveman.md` and `~/Agents/agents/context-economy.md`. `/normal` or `/lean off` restores verbose.
+
 Source of truth:
 - `~/Agents/commands/dev.md`
 - Project overrides in `.ai/skills/` and repo `AGENTS.md` (if present)

@@ -1,0 +1,8 @@
+interface:
+  display_name: "AICrew Quick"
+  short_description: "Scout → Act: lightweight scoped task with Karpathy guardrails"
+  brand_color: "#7C3AED"
+  default_prompt: "Use $aicrew-quick to scout the relevant code and act with minimal, surgical changes for this task."
+
+policy:
+  allow_implicit_invocation: true

@@ -3,6 +3,8 @@ description: "Use at session end to save project learnings and produce a commit 
 argument-hint: "optional: topic to focus memory capture on"
 ---
 
+> **Default output: caveman/lean** — terse by default. `/normal` or `/lean off` for verbose. See `~/Agents/agents/caveman.md`.
+
 > **⚠️ INTERACTIVE CHECKPOINTS — MANDATORY RULE**
 >
 > | Platform | Checkpoint behavior |

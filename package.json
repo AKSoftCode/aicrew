@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Adaptive AI development pipeline — /dev, /conclude, /update-skills for Claude Code, Cursor, and Codex",
   "keywords": ["claude-code", "ai-agents", "sdlc", "tdd", "cursor", "codex", "hooks"],
-  "homepage": "https://github.com/abhimanyuaryan/aicrew",
+  "homepage": "https://github.com/AKSoftCode/aicrew",
   "license": "MIT",
   "main": "src/index.js",
   "bin": {

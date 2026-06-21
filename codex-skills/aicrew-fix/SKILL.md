@@ -7,6 +7,10 @@ description: Run the aicrew /fix fast bug fix flow in Codex (triage -> root caus
 
 Use for fast bug fixes. This mirrors the `/fix` command but runs inline in Codex.
 
+## Default output
+
+Caveman/lean style by default. See `~/Agents/agents/caveman.md` and `~/Agents/agents/context-economy.md`. `/normal` or `/lean off` restores verbose.
+
 Source of truth:
 - `~/Agents/commands/fix.md`
 - Project overrides in `.ai/skills/` and repo `AGENTS.md` (if present)

@@ -18,6 +18,11 @@ This repo uses the **aicrew** skills system. Agents working in this codebase mus
 {{LINT_COMMAND}}
 ```
 
+## Default communication style
+
+Caveman/lean by default — terse, direct, no filler. See `~/Agents/agents/caveman.md`.
+Disable with `/normal` or `/lean off`. Re-enable with `/lean on`.
+
 ## Non-negotiables
 
 - Never commit secrets or credentials to source

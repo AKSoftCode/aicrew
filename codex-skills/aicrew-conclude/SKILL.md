@@ -7,6 +7,10 @@ description: Wrap up a session in Codex with summary, tests, risks, and a commit
 
 Use to wrap up any session with a clean, reviewable summary.
 
+## Default output
+
+Caveman/lean style by default. See `~/Agents/agents/caveman.md` and `~/Agents/agents/context-economy.md`. `/normal` or `/lean off` restores verbose.
+
 Source of truth:
 - `~/Agents/commands/conclude.md`
 - Project overrides in `.ai/skills/` and repo `AGENTS.md` (if present)

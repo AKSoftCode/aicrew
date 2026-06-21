@@ -97,10 +97,11 @@ function install() {
   console.log(`Commands available: ${cmdCount}`);
   console.log('\nAvailable commands in Claude Code:');
   console.log('  /dev             — start the development pipeline');
+  console.log('  /quick           — Scout → Act (graph-first, Karpathy guardrails)');
   console.log('  /conclude        — wrap up a session and save learnings');
   console.log('  /update-skills   — maintain and evolve the skills system');
   console.log('\nAvailable skills in Codex:');
-  console.log('  aicrew-dev, aicrew-fix, aicrew-conclude, aicrew-harness-audit, aicrew-update-skills, brainstorm, lean');
+  console.log('  aicrew-dev, aicrew-fix, aicrew-quick, aicrew-conclude, aicrew-harness-audit, aicrew-update-skills, brainstorm, lean');
 }
 
 // Copy files from src that don't already exist in dest (preserve user edits)

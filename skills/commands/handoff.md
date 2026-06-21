@@ -3,6 +3,8 @@ description: "Generate a compact cross-tool handoff block from current session s
 argument-hint: "[optional: target tool or note]"
 ---
 
+> **Default output: caveman/lean** — terse by default. `/normal` or `/lean off` for verbose. See `~/Agents/agents/caveman.md`.
+
 # /handoff
 
 Generate a compact handoff package for switching tools/models without losing context.

@@ -1,13 +1,15 @@
 ---
-description: "Enable or disable lean mode: terse output plus context-economy reads"
+description: "Boost or disable lean mode: terse output plus context-economy reads (default is already lean)"
 argument-hint: "[on|off]"
 ---
 
 # /lean
 
+Default: already lean (caveman output + context-economy reads). See `~/Agents/agents/caveman.md`.
+
 Usage:
-- `/lean on` — enable lean mode for the rest of this session
-- `/lean off` — disable lean mode and return to normal behavior
+- `/lean on` — explicit boost for the rest of this session (re-enables if `/normal` or `/lean off` was used)
+- `/lean off` — disable lean mode and return to normal verbose behavior
 
 Lean mode combines:
 - Terse output with no filler
@@ -30,6 +32,7 @@ Never omit:
 - Required warnings
 - Edge cases that affect correctness
 - Acceptance criteria
+- Interactive checkpoint pauses
 
 When proposing changes, debugging, or reporting tests, add a short footer:
 - Tests: ran / not run

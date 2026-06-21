@@ -3,6 +3,8 @@ description: "Use when starting any development task — bug fix, feature, or re
 argument-hint: "[bug|feature|refactor|review|audit] [optional description]"
 ---
 
+> **Default output: caveman/lean** — terse by default. `/normal` or `/lean off` for verbose. See `~/Agents/agents/caveman.md`.
+
 > **⚠️ INTERACTIVE CHECKPOINTS — MANDATORY RULE**
 > This pipeline contains checkpoints where Claude **must** pause and wait for your response.
 > Checkpoints are marked **"Wait for answer"** or **"Wait for confirmation"**.

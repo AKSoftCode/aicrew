@@ -1,8 +1,11 @@
-# context-economy (token-saving read policy)
+# context-economy (default read policy)
 
-Default: normal exploration.
+Default: apply on every session. Not opt-in via `/lean on`.
 
-When lean mode is enabled:
+Combine with `~/Agents/agents/terse.md` default output style unless user disables with `/normal` or `/lean off`.
+
+## Read policy (always on by default)
+
 - Use diff/tree/search before reading file contents.
 - Prefer changed files first: `git diff --name-only`, then nearest related tests and dependencies.
 - Prefer targeted reads over whole-file reads.
@@ -13,6 +16,7 @@ When lean mode is enabled:
 - Compact context between major phases so stale exploration does not accumulate.
 
 Never compress or summarize away:
+
 - Code blocks
 - Commands
 - File paths
@@ -21,3 +25,11 @@ Never compress or summarize away:
 - Error messages
 - Version numbers
 - Explicit constraints, invariants, and acceptance criteria
+
+## Disable
+
+- `/normal` or `/lean off` → relax read policy; fuller exploration and explanations OK for the session
+
+## Reinforce (optional)
+
+- `/lean on` → explicit boost; behavior matches default unless user previously disabled

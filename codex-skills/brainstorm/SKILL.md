@@ -7,6 +7,10 @@ description: Generate 3 materially different implementation options with trade-o
 
 Use this skill when the user asks to brainstorm, compare approaches, or resolve design decisions before implementation.
 
+## Default output
+
+Caveman/lean style by default. See `~/Agents/agents/caveman.md` and `~/Agents/agents/context-economy.md`. `/normal` or `/lean off` restores verbose.
+
 ## Lookup order
 
 Before generating options, check for project-specific guidance in this order:

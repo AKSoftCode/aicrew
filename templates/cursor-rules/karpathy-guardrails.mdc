@@ -1,0 +1,26 @@
+---
+description: Karpathy coding guardrails — think first, simplicity, surgical changes, goal-driven
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# Karpathy Guardrails
+
+Apply these four principles to every code change in this project.
+Full agent spec: `~/Agents/agents/karpathy-guardrails.md`
+
+## 1. Think Before Coding
+State the goal in one sentence before touching any file.
+Identify the entry point, call chain, and files that will change.
+
+## 2. Simplicity First
+Prefer fewer files, fewer abstractions, shortest path to passing tests.
+No new dependencies unless confirmed necessary.
+
+## 3. Surgical Changes
+Change only what is required for the goal.
+Do not reformat, rename, or touch code outside the affected region.
+
+## 4. Goal-Driven Execution
+Every edit traces back to the stated goal.
+Stop when the acceptance criterion is met. Do not gold-plate.

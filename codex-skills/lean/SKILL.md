@@ -1,11 +1,13 @@
 ---
 name: lean
-description: Enable low-token operating mode with terse output and context-economy read policy.
+description: Default low-token operating mode for aicrew — terse output and context-economy read policy. Use /lean on to boost or re-enable after /normal.
 ---
 
 # Lean (Codex)
 
-Use this skill when the user asks for lower token usage, terse replies, or says `/lean on`.
+Default for all aicrew Codex skills. Not opt-in.
+
+Applies caveman output (`~/Agents/agents/caveman.md`) and context-economy reads (`~/Agents/agents/context-economy.md`) on every session unless the user disables with `/normal` or `/lean off`.
 
 ## What lean mode does
 
@@ -15,10 +17,16 @@ Use this skill when the user asks for lower token usage, terse replies, or says 
 4. Reuse prior summaries unless files changed.
 5. Keep correctness and safety constraints intact.
 
+## Session controls
+
+- `/lean on` — explicit boost or re-enable after disable
+- `/normal` or `/lean off` — verbose output and relaxed read policy
+
 ## Safety and fidelity rules
 
 - Never drop constraints, invariants, acceptance criteria, or required warnings.
 - Keep technical strings verbatim: code, commands, paths, flags, URLs, errors, versions.
+- Interactive checkpoints: still pause and wait — never skip or fabricate answers.
 - If uncertain, ask one short clarifying question or state one explicit assumption.
 
 ## Evidence footer (only when relevant)

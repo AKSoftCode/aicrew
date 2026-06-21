@@ -1,8 +1,12 @@
 ---
-description: "Disable terse mode: return to normal output"
+description: "Disable default terse/lean mode: return to verbose output"
 argument-hint: ""
 ---
 
 # /normal
 
-Disable terse mode. Return to normal explanations and detail level.
+Disable default caveman/lean output and context-economy read policy for the rest of this session.
+
+Return to normal explanations and fuller exploration.
+
+Re-enable with `/lean on` or `/terse`.

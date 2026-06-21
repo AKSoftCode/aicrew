@@ -3,6 +3,8 @@ description: "Use for a fast bug fix with minimal ceremony (3 questions, TDD, do
 argument-hint: "[description of the bug]"
 ---
 
+> **Default output: caveman/lean** — terse by default. `/normal` or `/lean off` for verbose. See `~/Agents/agents/caveman.md`.
+
 > **⚠️ INTERACTIVE CHECKPOINTS — MANDATORY RULE**
 >
 > | Platform | Checkpoint behavior |
@@ -69,9 +71,17 @@ Trace symptom → entry point → call chain → confirmed root cause.
 
 **Do not touch any code until root cause is confirmed.**
 
+> **Large repo tip:** If the codebase is large or unfamiliar, run a scout pass first.
+> Use graph MCP (`search_graph` → `trace_path` → `get_code_snippet`) or
+> `git diff --name-only` + targeted grep before reading files.
+> Apply Karpathy guardrails (`~/Agents/agents/karpathy-guardrails.md`) during fix:
+> think first, simplest change, surgical edits only.
+
 ---
 
 ## PHASE 2 — IMPLEMENT (TDD mandatory)
+
+Optional: apply `karpathy-guardrails` during implementation (lookup `~/Agents/agents/karpathy-guardrails.md`) for minimal, surgical fixes.
 
 1. Write the smallest test that **reproduces** the bug. Run it. Must **FAIL**.
    If it passes, the test is wrong — fix the test.
