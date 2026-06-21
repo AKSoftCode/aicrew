@@ -76,6 +76,36 @@ Codex: `aicrew-quick`
 | Bug fix — you know what's broken | `/fix` |
 | Small scoped task — rename, tweak, quick addition | `/quick` |
 
+<details>
+<summary>Why aicrew (pipelines, benefits, token savings)</summary>
+
+### Pipeline depth (same token stack, different ceremony)
+
+| Command | Phases | Use when |
+|---------|--------|----------|
+| `/dev` | 9 — intake → research → brainstorm → design → implement (TDD) → tests → security → audit → conclude | Feature, refactor, or anything needing a design spec |
+| `/fix` | 5 — intake → bug analysis → implement (TDD) → tests → security → conclude | Bug fix with mandatory TDD |
+| `/quick` | 2 — Scout → Act | Scoped task; graph-first without pipeline overhead |
+
+### Benefits
+
+- **TDD-first** — strict RED → GREEN → REFACTOR in `/dev` and `/fix`; tests before or with implementation
+- **Phase gates** — every phase stops for your explicit go-ahead; the agent never invents your response
+- **Security review** — `security-reviewer` on changed files; `security-guard.py` blocks secrets on every write
+- **Scout → verify** — cheap model maps the problem; capable model acts from a verified summary only
+
+### Token savings (documented figures)
+
+- Graph query **~500 tok** vs repo-wide grep **~80 K** ([`token-foundation.md`](./skills/docs/token-foundation.md))
+- Scout block **~1–2 K** vs raw repo content ([`speculative-context.md`](./skills/docs/speculative-context.md))
+- `/handoff` **~300 tok** vs **~15 K** chat replay (estimated)
+
+All three commands share the same 11-capability token foundation — only pipeline depth differs.
+
+[Full pipeline reference →](docs/pipeline-overview.md)
+
+</details>
+
 ---
 
 ## Advanced
@@ -175,6 +205,8 @@ What `install` does: copies packaged skills into `~/Agents/` (shared source of t
 
 <details>
 <summary>Token economy and how savings work</summary>
+
+> **See also:** [Pipeline overview](docs/pipeline-overview.md) — token foundation summary, Scout → verify, and command decision table.
 
 A repo-wide grep can cost ~80,000 tokens and burns context fast on large codebases. aicrew routes every query to the cheapest strategy first: a `codebase-memory-mcp` graph query for "what calls `authMiddleware`?" costs ~500 tokens instead. Every entry-point command (`/dev`, `/fix`, `/quick`) carries the same token-saving foundation — only pipeline depth differs.
 
@@ -322,6 +354,8 @@ aicrew-session   aicrew-handoff   aicrew-normal
 
 <details>
 <summary>Pipeline reference (/dev phases, agents, project layer)</summary>
+
+> **See also:** [Pipeline overview](docs/pipeline-overview.md) — canonical `/dev`, `/fix`, and `/quick` phase tables with gates.
 
 | Phase | Name | Notes |
 |------:|------|--------|
