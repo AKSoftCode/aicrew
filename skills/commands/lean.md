@@ -3,6 +3,8 @@ description: "Boost or disable lean mode: terse output plus context-economy read
 argument-hint: "[on|off]"
 ---
 
+> **Caveman is default.** These commands only matter if you toggled verbose with `/normal` or `/lean off`.
+
 # /lean
 
 Default: already lean (caveman output + context-economy reads). See `~/Agents/agents/caveman.md`.
@@ -10,6 +12,8 @@ Default: already lean (caveman output + context-economy reads). See `~/Agents/ag
 Usage:
 - `/lean on` — explicit boost for the rest of this session (re-enables if `/normal` or `/lean off` was used)
 - `/lean off` — disable lean mode and return to normal verbose behavior
+
+Aliases: `/terse` = `/lean on` (deprecated alias, kept for backward compat); `/normal` = `/lean off`.
 
 Lean mode combines:
 - Terse output with no filler

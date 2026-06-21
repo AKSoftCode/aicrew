@@ -86,7 +86,7 @@ function installClaude() {
 
   console.log('\n=== Claude Code install complete ===');
   console.log(`Slash commands available (${cmdCount}): /dev /fix /quick /conclude /update-skills`);
-  console.log('  /install /update /status /benchmark /brainstorm /session /handoff /lean /terse /normal');
+  console.log('  /install /update /status /benchmark /brainstorm /session /handoff /lean /normal');
   console.log('\nOpen Claude Code in any project and type /dev to start.');
 }
 
@@ -244,11 +244,11 @@ function install() {
   console.log(`Commands available: ${cmdCount}`);
   console.log('\nClaude Code:   /dev  /fix  /quick  /conclude  /update-skills  /harness-audit');
   console.log('               /install  /update  /status  /benchmark  /brainstorm');
-  console.log('               /session  /handoff  /lean  /terse  /normal');
+  console.log('               /session  /handoff  /lean  /normal');
   console.log('\nCodex:         aicrew-dev  aicrew-fix  aicrew-quick  aicrew-conclude');
   console.log('               aicrew-harness-audit  aicrew-update-skills  brainstorm  lean');
   console.log('               aicrew-install  aicrew-update  aicrew-status');
-  console.log('               aicrew-session  aicrew-handoff  aicrew-terse  aicrew-normal');
+  console.log('               aicrew-session  aicrew-handoff  aicrew-normal');
   console.log('\nCursor:        Slash commands via Claude integration; MCP wired; see agent-kit');
   console.log('Gemini CLI:    ~/Agents/ populated; wire manually per Gemini CLI config');
   console.log('\nRun `aicrew status` to verify per-platform install state.');

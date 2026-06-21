@@ -35,25 +35,37 @@ aicrew install claude
 
 ### Available slash commands
 
+**Core:**
+
 | Command | What it does |
 |---------|-------------|
-| `/install` | Re-run install / update |
 | `/dev` | Full 9-phase TDD pipeline |
 | `/fix` | Fast bug-fix flow |
 | `/quick` | Scout → Act (token-efficient) |
+| `/brainstorm` | 3 design options with trade-offs |
+
+**Utilities:**
+
+| Command | What it does |
+|---------|-------------|
 | `/conclude` | Wrap up session, capture learnings |
 | `/update-skills` | Evolve project-level skill overrides |
 | `/harness-audit` | Audit skill health and hook wiring |
-| `/session` | Write session checkpoint label |
+| `/session` | Name this task (avoids state file collisions) |
 | `/handoff` | Cross-tool state checkpoint |
 | `/benchmark` | Token savings estimate |
-| `/brainstorm` | 3 design options with trade-offs |
-| `/lean on` / `/lean off` | Toggle terse output mode |
-| `/terse` / `/normal` | Alias terse/verbose toggle |
+
+**Setup / maintenance:**
+
+| Command | What it does |
+|---------|-------------|
+| `/install` | Re-run install / update |
 | `/update` | Pull latest skills from package |
 | `/status` | Show install state per platform |
 | `/agent-kit` | Scaffold `.mdc` rules shared across repos |
 | `/cursor-plugin` | Scaffold Cursor multi-tool extension |
+
+> **Output style:** Terse by default (caveman). Use `/normal` to go verbose; `/lean on` or `/terse` to return to terse.
 
 ### Hooks
 
@@ -159,26 +171,37 @@ aicrew-dev
 
 ### Available Codex skills
 
+**Core:**
+
 | Skill name | Equivalent |
 |------------|-----------|
-| `aicrew-install` | `/install` |
 | `aicrew-dev` | `/dev` |
 | `aicrew-fix` | `/fix` |
 | `aicrew-quick` | `/quick` |
+| `brainstorm` | `/brainstorm` |
+
+**Utilities:**
+
+| Skill name | Equivalent |
+|------------|-----------|
 | `aicrew-conclude` | `/conclude` |
 | `aicrew-update-skills` | `/update-skills` |
 | `aicrew-harness-audit` | `/harness-audit` |
 | `aicrew-session` | `/session` |
 | `aicrew-handoff` | `/handoff` |
 | `aicrew-benchmark` | `/benchmark` |
-| `brainstorm` | `/brainstorm` |
-| `lean` | `/lean on` |
-| `aicrew-normal` | `/lean off` / `/normal` |
-| `aicrew-terse` | `/terse` |
+
+**Setup / maintenance:**
+
+| Skill name | Equivalent |
+|------------|-----------|
+| `aicrew-install` | `/install` |
 | `aicrew-update` | `/update` |
 | `aicrew-status` | `/status` |
 | `aicrew-agent-kit` | `/agent-kit` |
 | `aicrew-cursor-plugin` | `/cursor-plugin` |
+
+> **Output style:** Terse by default (caveman). Use `aicrew-normal` to go verbose; `lean` or `aicrew-terse` to return to terse.
 
 ### MCP (config.toml)
 

@@ -189,7 +189,7 @@ aicrew-harness-audit    aicrew-benchmark    brainstorm    lean
 aicrew-install    aicrew-update    aicrew-status
 aicrew-agent-kit    aicrew-cursor-plugin
 
-aicrew-session    aicrew-handoff    aicrew-terse    aicrew-normal
+aicrew-session    aicrew-handoff    aicrew-normal
 ```
 
 Invoke via your Codex UI's skill picker or `$<skill-name>` syntax.
@@ -292,7 +292,7 @@ Every aicrew feature targets a specific source of token waste. **All three entry
 → Run `/handoff` before switching. Paste the `.ai/state/` file into the new tool. No chat replay, no re-explaining the goal. Each switch costs ~300 tokens instead of 15,000.
 
 **"The AI keeps writing long explanations I don't need"**
-→ aicrew is already in caveman mode by default. If it slipped to verbose, type `/terse` or check `~/Agents/agents/caveman.md`. Use `/normal` when you actually want the prose.
+→ aicrew is already in caveman mode by default. If it slipped to verbose, type `/lean on` or check `~/Agents/agents/caveman.md`. Use `/normal` when you actually want the prose.
 
 ### See the numbers for your project
 

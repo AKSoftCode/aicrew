@@ -181,7 +181,7 @@ AFTER INSTALL
     /conclude        — save session learnings to memory
     /update-skills   — maintain skills + generate project-specific skills
     /install  /update  /status  /agent-kit  /cursor-plugin
-    /benchmark  /brainstorm  /session  /handoff  /lean  /terse  /normal
+    /benchmark  /brainstorm  /session  /handoff  /lean  /normal
 
   Codex — skill names:
     aicrew-dev, aicrew-fix, aicrew-quick, aicrew-conclude, aicrew-harness-audit

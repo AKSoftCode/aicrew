@@ -3,6 +3,8 @@ name: lean
 description: Default low-token operating mode for aicrew — terse output and context-economy read policy. Use /lean on to boost or re-enable after /normal.
 ---
 
+> **Caveman is default.** This skill only matters if you switched to verbose with `/normal` or `/lean off`.
+
 # Lean (Codex)
 
 Default for all aicrew Codex skills. Not opt-in.

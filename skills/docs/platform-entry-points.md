@@ -22,29 +22,38 @@ All platforms consume from there — via symlinks, merged copies, or config refe
 
 ---
 
-## Action → Per-platform entry point
+## Core commands — per-platform entry point
 
-| Action | CLI | Claude Code | Cursor | Codex | Gemini CLI | Antigravity |
-|--------|-----|-------------|--------|-------|------------|-------------|
-| **First-time setup** | `aicrew install` | `/install` | `aicrew install cursor` | `aicrew-install` | `aicrew install gemini` | — |
-| **Platform-only setup** | `aicrew install <platform>` | — | — | — | — | — |
-| **Pull new skills** | `aicrew update` | `/update` | re-run `aicrew install cursor` | `aicrew-update` | re-run `aicrew install gemini` | — |
-| **Check install state** | `aicrew status` | `/status` | `aicrew status` | `aicrew-status` | `aicrew status` | — |
-| **Scaffold agent-kit** | `aicrew agent-kit init` | `/agent-kit` | `aicrew agent-kit init` | `aicrew-agent-kit` | — | — |
-| **Scaffold cursor plugin** | `aicrew cursor-plugin init` | `/cursor-plugin` | `aicrew cursor-plugin init` | `aicrew-cursor-plugin` | — | — |
-| **Full dev pipeline** | — | `/dev` | `/dev` (via symlink) | `aicrew-dev` | `/dev` | `/dev` |
-| **Fast bug fix** | — | `/fix` | `/fix` (via symlink) | `aicrew-fix` | `/fix` | `/fix` |
-| **Scout → Act** | — | `/quick` | `/quick` (via symlink) | `aicrew-quick` | `/quick` | `/quick` |
-| **Wrap up session** | — | `/conclude` | `/conclude` (via symlink) | `aicrew-conclude` | `/conclude` | `/conclude` |
-| **Evolve project skills** | — | `/update-skills` | `/update-skills` (via symlink) | `aicrew-update-skills` | `/update-skills` | `/update-skills` |
-| **Audit harness** | — | `/harness-audit` | `/harness-audit` (via symlink) | `aicrew-harness-audit` | `/harness-audit` | `/harness-audit` |
-| **Session checkpoint label** | — | `/session` | `/session` (via symlink) | `aicrew-session` | `/session` | `/session` |
-| **Cross-tool handoff** | — | `/handoff` | `/handoff` (via symlink) | `aicrew-handoff` | `/handoff` | `/handoff` |
-| **Benchmark token savings** | `aicrew benchmark` | `/benchmark` | `aicrew benchmark` | `aicrew-benchmark` | `aicrew benchmark` | — |
-| **Design brainstorm** | — | `/brainstorm` | `/brainstorm` (via symlink) | `brainstorm` | `/brainstorm` | `/brainstorm` |
-| **Lean/terse on** | — | `/lean on` | `/lean on` (via symlink) | `lean` | `/lean on` | `/lean on` |
-| **Lean/terse off** | — | `/lean off` or `/normal` | `/lean off` or `/normal` | `aicrew-normal` | `/lean off` | `/lean off` |
-| **Re-enable terse** | — | `/terse` | `/terse` (via symlink) | `aicrew-terse` | `/terse` | `/terse` |
+| Action | CLI | Claude Code | Cursor | Codex | Gemini / Antigravity |
+|--------|-----|-------------|--------|-------|----------------------|
+| **Full dev pipeline** | — | `/dev` | `/dev` | `aicrew-dev` | `/dev` |
+| **Fast bug fix** | — | `/fix` | `/fix` | `aicrew-fix` | `/fix` |
+| **Scout → Act** | — | `/quick` | `/quick` | `aicrew-quick` | `/quick` |
+| **Design brainstorm** | — | `/brainstorm` | `/brainstorm` | `brainstorm` | `/brainstorm` |
+
+## Setup (install once)
+
+| Action | CLI | Claude Code | Codex |
+|--------|-----|-------------|-------|
+| **First-time setup** | `aicrew install` | `/install` | `aicrew-install` |
+| **Platform-only setup** | `aicrew install <platform>` | — | — |
+| **Pull new skills** | `aicrew update` | `/update` | `aicrew-update` |
+| **Check install state** | `aicrew status` | `/status` | `aicrew-status` |
+| **Scaffold agent-kit** | `aicrew agent-kit init` | `/agent-kit` | `aicrew-agent-kit` |
+| **Scaffold cursor plugin** | `aicrew cursor-plugin init` | `/cursor-plugin` | `aicrew-cursor-plugin` |
+
+## Utilities (optional)
+
+| Action | Claude Code / Cursor / Gemini / Antigravity | Codex |
+|--------|---------------------------------------------|-------|
+| **Wrap up session** | `/conclude` | `aicrew-conclude` |
+| **Evolve project skills** | `/update-skills` | `aicrew-update-skills` |
+| **Health check** | `/harness-audit` | `aicrew-harness-audit` |
+| **Name session** | `/session` | `aicrew-session` |
+| **Cross-tool handoff** | `/handoff` | `aicrew-handoff` |
+| **Benchmark token savings** | `/benchmark` | `aicrew-benchmark` |
+
+> **Output style:** Terse by default (caveman). Use `/normal` to restore verbose. Use `/lean on` to re-enable terse if you toggled it off.
 
 ---
 
