@@ -1,6 +1,6 @@
 # aicrew
 
-**A TDD-first AI development pipeline for Claude Code, Codex, and Cursor.**
+**A TDD-first AI development pipeline for Claude Code, Cursor, Codex, Gemini CLI, and Antigravity.**
 
 Install once, use everywhere. One `install` command drops a set of slash commands, Codex skills, hooks, and MCP wiring into your tools — then you run `/dev`, `/fix`, `/quick`, or any other command from your AI tool of choice without thinking about setup again.
 
@@ -8,7 +8,7 @@ Install once, use everywhere. One `install` command drops a set of slash command
 
 ## Who is this for?
 
-aicrew is for developers who use AI coding tools daily and want a consistent, disciplined workflow across Claude Code, Codex, and Cursor — without re-explaining your conventions on every session. It gives you a shared command vocabulary, automatic context-saving between sessions, token-saving graph-memory, and layered guardrails that block secrets before they land in files.
+aicrew is for developers who use AI coding tools daily and want a consistent, disciplined workflow across Claude Code, Cursor, Codex, Gemini CLI, and Antigravity — without re-explaining your conventions on every session. It gives you a shared command vocabulary, automatic context-saving between sessions, token-saving graph-memory, and layered guardrails that block secrets before they land in files.
 
 If you've ever lost a long session to a context-window overflow, or found your AI diverging from your stated goal mid-task, aicrew's phase-gated pipeline and Scout → Act pattern are designed for exactly that.
 

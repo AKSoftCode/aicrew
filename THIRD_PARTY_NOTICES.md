@@ -8,7 +8,7 @@ This file lists the MCP servers, npm packages, and external projects that aicrew
 
 ## Bundled / installed via `aicrew install`
 
-The following packages are **not bundled inside the aicrew npm package**. They are pulled at runtime by the MCP host (Claude Code, Codex, Cursor) using the server definitions in `config/mcp/`.
+The following packages are **not bundled inside the aicrew npm package**. They are pulled at runtime by the MCP host (Claude Code, Cursor, Codex, Gemini CLI, or Antigravity) using the server definitions in `config/mcp/`.
 
 ---
 
