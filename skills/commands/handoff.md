@@ -7,6 +7,29 @@ argument-hint: "[optional: target tool or note]"
 
 # /handoff
 
+## Overview
+
+Switching tools mid-task (e.g. Claude → Cursor)? Three steps:
+
+1. **Early in your session,** name it: `/session cursor my-task`
+   This sets the state file path: `.ai/state/AI_STATE.cursor.my-task.md`
+
+2. **When ready to switch,** run `/handoff`. You get a compact block:
+   ```
+   HANDOFF:
+   Target: cursor
+   State file: .ai/state/AI_STATE.cursor.my-task.md
+   Goal: Add rate limiting to /api/auth endpoint
+   Current status: Phase 3 design confirmed — ready to implement
+   Next step: Run TDD cycle for RateLimitMiddleware
+   Tests: not run yet
+   ```
+
+3. **In the new tool,** paste the block or just say:
+   `Continue from .ai/state/AI_STATE.cursor.my-task.md`
+
+No chat replay. Each switch costs ~300 tokens instead of 15,000.
+
 Generate a compact handoff package for switching tools/models without losing context.
 
 ## Inputs

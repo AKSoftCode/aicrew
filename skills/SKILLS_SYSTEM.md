@@ -46,7 +46,7 @@ See `~/Agents/agents/caveman.md` (style) and `~/Agents/agents/context-economy.md
 
 All entry-point commands (`/dev`, `/fix`, `/quick`) share a common token-saving foundation — defined once in `~/Agents/docs/token-foundation.md` and referenced (not duplicated) by each command.
 
-> **Plain-English explanation of every token-saving mechanism:** [`~/Agents/docs/how-token-savings-work.md`](./docs/how-token-savings-work.md)
+> **Token-saving mechanism overview:** [`~/Agents/docs/how-token-savings-work.md`](./docs/how-token-savings-work.md)
 
 - **Graph-first research** — `codebase-memory-mcp` (`search_graph` → `trace_path` → `get_code_snippet`) runs before any `Grep`/`Glob`/file-read in every phase. Graph query ≈ 500 tokens vs repo-wide grep ≈ 80 K.
 - **Speculative context** — a cheap Scout agent (haiku/mini) emits the fixed `SCOUT:` schema; the capable main agent (sonnet/opus) verifies the schema and acts from it — never from raw repo content. This is the speculative-decoding pattern applied to multi-agent orchestration.
@@ -99,7 +99,7 @@ All entry-point commands (`/dev`, `/fix`, `/quick`) share a common token-saving 
     token-foundation.md              ← shared token stack for /dev, /fix, /quick (graph-first + speculative + guardrails + economy)
     guardrails-taxonomy.md           ← NeMo rails ↔ aicrew hooks/phases (docs only)
     speculative-context.md           ← speculative context pattern: Scout-as-draft-model, two-model routing, failure modes
-    how-token-savings-work.md        ← plain-English guide to every token-saving mechanism
+    how-token-savings-work.md        ← guide to every token-saving mechanism
     token-foundation.md              ← shared token stack referenced by /dev, /fix, /quick
   hooks/
     session-memory.py                ← Stop: journals changed files per session
@@ -152,27 +152,36 @@ Every action is reachable from every supported platform. No CLI required on any 
 
 > Full matrix with per-platform install paths and notes: [`skills/docs/platform-entry-points.md`](./docs/platform-entry-points.md)
 
-| Action | CLI | Claude Code | Cursor | Codex | Gemini / Antigravity |
-|--------|-----|-------------|--------|-------|----------------------|
-| First-time setup | `aicrew install` | `/install` | `aicrew install cursor` | `aicrew-install` | `aicrew install gemini` |
-| Platform-only setup | `aicrew install <platform>` | — | — | — | — |
-| Pull new skills | `aicrew update` | `/update` | re-run install | `aicrew-update` | re-run install |
-| Check install | `aicrew status` | `/status` | `aicrew status` | `aicrew-status` | `aicrew status` |
-| Scaffold agent-kit | `aicrew agent-kit init` | `/agent-kit` | same CLI | `aicrew-agent-kit` | — |
-| Scaffold cursor plugin | `aicrew cursor-plugin init` | `/cursor-plugin` | same CLI | `aicrew-cursor-plugin` | — |
-| Full dev pipeline | — | `/dev` | `/dev` | `aicrew-dev` | `/dev` |
-| Fast bug fix | — | `/fix` | `/fix` | `aicrew-fix` | `/fix` |
-| Scout → Act | — | `/quick` | `/quick` | `aicrew-quick` | `/quick` |
-| Wrap up session | — | `/conclude` | `/conclude` | `aicrew-conclude` | `/conclude` |
-| Evolve project skills | — | `/update-skills` | `/update-skills` | `aicrew-update-skills` | `/update-skills` |
-| Audit harness | — | `/harness-audit` | `/harness-audit` | `aicrew-harness-audit` | `/harness-audit` |
-| Session checkpoint label | — | `/session` | `/session` | `aicrew-session` | `/session` |
-| Cross-tool handoff | — | `/handoff` | `/handoff` | `aicrew-handoff` | `/handoff` |
-| Benchmark skills | `aicrew benchmark` | `/benchmark` | `aicrew benchmark` | `aicrew-benchmark` | `aicrew benchmark` |
-| Design brainstorm | — | `/brainstorm` | `/brainstorm` | `brainstorm` | `/brainstorm` |
-| Lean/terse on | — | `/lean on` | `/lean on` | `lean` | `/lean on` |
-| Lean/terse off | — | `/lean off` or `/normal` | `/lean off` | `aicrew-normal` | `/lean off` |
-| Re-enable terse | — | `/terse` | `/terse` | `aicrew-terse` | `/terse` |
+### Core commands
+
+| Action | Claude Code / Cursor / Gemini / Antigravity | Codex |
+|--------|---------------------------------------------|-------|
+| Full dev pipeline | `/dev` | `aicrew-dev` |
+| Fast bug fix | `/fix` | `aicrew-fix` |
+| Scout → Act | `/quick` | `aicrew-quick` |
+| Design brainstorm | `/brainstorm` | `brainstorm` |
+
+### Setup (install once)
+
+| Action | CLI | Claude Code | Codex |
+|--------|-----|-------------|-------|
+| First-time setup | `aicrew install` | `/install` | `aicrew-install` |
+| Platform-only setup | `aicrew install <platform>` | — | — |
+| Pull new skills | `aicrew update` | `/update` | `aicrew-update` |
+| Check install | `aicrew status` | `/status` | `aicrew-status` |
+
+### Utilities (optional)
+
+| Action | Claude Code / Cursor / Gemini / Antigravity | Codex |
+|--------|---------------------------------------------|-------|
+| Wrap up session | `/conclude` | `aicrew-conclude` |
+| Evolve project skills | `/update-skills` | `aicrew-update-skills` |
+| Health check | `/harness-audit` | `aicrew-harness-audit` |
+| Name session | `/session` | `aicrew-session` |
+| Cross-tool handoff | `/handoff` | `aicrew-handoff` |
+| Benchmark token savings | `/benchmark` | `aicrew-benchmark` |
+
+> **Output style:** Terse by default (caveman). Use `/normal` to restore verbose. Use `/lean on` to re-enable terse if you toggled it off.
 
 ---
 
@@ -202,11 +211,7 @@ All aicrew skills and commands use terse output and context-economy reads **by d
 | `terse.md` | Default output policy, evidence footer, fidelity rules |
 | `context-economy.md` | Default read policy: diff/tree/search before reads, slice over whole-file |
 
-| Command | Role |
-|---|---|
-| `/lean on` | Explicit boost or re-enable after disable |
-| `/lean off` or `/normal` | Restore verbose output and relaxed read policy |
-| `/terse` | Re-enable terse if previously disabled |
+Use `/normal` (or `/lean off`) to restore verbose output. Use `/lean on` or `/terse` to re-enable terse if you toggled it off.
 
 Interactive checkpoints, constraints, acceptance criteria, and security warnings are never compressed away.
 
@@ -367,7 +372,7 @@ RED → GREEN → REFACTOR per acceptance criterion. Relaxed mode requires opt-o
 | `~/Agents/agents/karpathy-guardrails.md` | Karpathy coding principles |
 | `~/Agents/agents/context-scout.md` | Speculative context scout agent |
 | `~/Agents/docs/token-foundation.md` | Shared token stack for /dev, /fix, /quick (graph-first + speculative + guardrails + economy) |
-| `~/Agents/docs/how-token-savings-work.md` | Plain-English guide: speculative decoding, graph memory, lean, handoff, guardrails, benchmark |
+| `~/Agents/docs/how-token-savings-work.md` | Token-saving mechanisms: speculative decoding, graph memory, lean, handoff, guardrails, benchmark |
 | `~/Agents/docs/guardrails-taxonomy.md` | NeMo ↔ aicrew guardrails map |
 | `~/Agents/docs/speculative-context.md` | Speculative context pattern (two-model routing) |
 | `~/Agents/docs/install-by-platform.md` | Step-by-step install guide per provider (Claude, Cursor, Codex, Gemini, Antigravity) |

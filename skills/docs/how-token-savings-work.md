@@ -1,6 +1,6 @@
-# How aicrew Saves Tokens — Plain-English Guide
+# How aicrew Saves Tokens
 
-This document explains every token-saving mechanism in aicrew: what the problem is, how the mechanism works, and what you can expect to save. No prerequisites — written for anyone who uses AI coding tools daily.
+This document explains every token-saving mechanism in aicrew: what the problem is, how the mechanism works, and what you can expect to save.
 
 > **See it yourself:** `aicrew benchmark --report` scans your project and writes a per-session `TOKEN_REPORT` to `.ai/reports/`. All numbers are clearly labeled **estimated**.
 

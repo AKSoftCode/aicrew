@@ -74,57 +74,86 @@ In **Gemini CLI** or **Antigravity**, reference `~/Agents/commands/dev.md` direc
 
 ## Same action, every platform
 
-Every aicrew action is reachable from every supported platform. No CLI required anywhere.
+Install once, use everywhere. The same commands work across Claude Code, Cursor, Codex, Gemini CLI, and Antigravity.
 
-> Full per-platform matrix with invocation details: [`skills/docs/platform-entry-points.md`](./skills/docs/platform-entry-points.md)
-> Step-by-step install guide per provider: [`skills/docs/install-by-platform.md`](./skills/docs/install-by-platform.md)
+> Full per-platform matrix: [`skills/docs/platform-entry-points.md`](./skills/docs/platform-entry-points.md)
+> Step-by-step install guide: [`skills/docs/install-by-platform.md`](./skills/docs/install-by-platform.md)
 
-| Action | CLI | Claude Code | Cursor | Codex | Gemini / Antigravity |
-|--------|-----|-------------|--------|-------|----------------------|
-| First-time setup | `aicrew install` | `/install` | `aicrew install cursor` | `aicrew-install` | `aicrew install gemini` |
-| Platform-only setup | `aicrew install <platform>` | — | — | — | — |
-| Pull new skills | `aicrew update` | `/update` | re-run install | `aicrew-update` | re-run install |
-| Check install | `aicrew status` | `/status` | `aicrew status` | `aicrew-status` | `aicrew status` |
-| Scaffold agent-kit | `aicrew agent-kit init` | `/agent-kit` | same CLI | `aicrew-agent-kit` | — |
-| Scaffold cursor plugin | `aicrew cursor-plugin init` | `/cursor-plugin` | same CLI | `aicrew-cursor-plugin` | — |
-| Full dev pipeline | — | `/dev` | `/dev` | `aicrew-dev` | `/dev` |
-| Fast bug fix | — | `/fix` | `/fix` | `aicrew-fix` | `/fix` |
-| Scout → Act | — | `/quick` | `/quick` | `aicrew-quick` | `/quick` |
-| Wrap up session | — | `/conclude` | `/conclude` | `aicrew-conclude` | `/conclude` |
-| Evolve project skills | — | `/update-skills` | `/update-skills` | `aicrew-update-skills` | `/update-skills` |
-| Audit harness | — | `/harness-audit` | `/harness-audit` | `aicrew-harness-audit` | `/harness-audit` |
-| Session checkpoint | — | `/session` | `/session` | `aicrew-session` | `/session` |
-| Cross-tool handoff | — | `/handoff` | `/handoff` | `aicrew-handoff` | `/handoff` |
-| Benchmark token savings | `aicrew benchmark` | `/benchmark` | `aicrew benchmark` | `aicrew-benchmark` | `aicrew benchmark` |
-| Design brainstorm | — | `/brainstorm` | `/brainstorm` | `brainstorm` | `/brainstorm` |
-| Lean/terse on | — | `/lean on` | `/lean on` | `lean` | `/lean on` |
-| Lean/terse off | — | `/lean off` or `/normal` | `/lean off` | `aicrew-normal` | `/lean off` |
-| Re-enable terse | — | `/terse` | `/terse` | `aicrew-terse` | `/terse` |
+### Core commands
 
-> **Example:** install on a new machine:
-> - Claude-only: `aicrew install claude`
-> - Codex-only: `aicrew install codex`
-> - Everything: `aicrew install` (default, all platforms)
+| When | Claude Code / Cursor / Gemini / Antigravity | Codex |
+|------|---------------------------------------------|-------|
+| New feature or big change | `/dev` | `aicrew-dev` |
+| Bug fix | `/fix` | `aicrew-fix` |
+| Small scoped task | `/quick` | `aicrew-quick` |
+| Brainstorm options first | `/brainstorm` | `brainstorm` |
+
+### Setup (install once per machine)
+
+| Action | CLI | Claude Code | Codex |
+|--------|-----|-------------|-------|
+| First-time install | `aicrew install` | `/install` | `aicrew-install` |
+| Pull latest skills | `aicrew update` | `/update` | `aicrew-update` |
+| Check install state | `aicrew status` | `/status` | `aicrew-status` |
+
+> **Output style:** Terse by default (caveman). Say `/normal` if you want verbose responses.
+
+---
+
+## How handoff works
+
+When switching tools mid-task (e.g. Claude → Cursor), use `/session` and `/handoff` to carry your exact state across — no chat replay.
+
+**3 steps:**
+
+1. **Name the session** early in your current tool:
+   ```
+   /session cursor my-feature
+   ```
+   This labels the state file: `.ai/state/AI_STATE.cursor.my-feature.md`
+
+2. **Run `/handoff` when ready to switch.** Output looks like:
+   ```
+   HANDOFF:
+   Target: cursor
+   State file: .ai/state/AI_STATE.cursor.my-feature.md
+   Goal: Add rate limiting to /api/auth endpoint
+   Current status: Phase 3 design confirmed — ready to implement
+   Next step: Run TDD cycle for RateLimitMiddleware
+   Tests: not run yet
+   ```
+
+3. **Open the new tool. Paste the handoff block** (or just reference the state file):
+   ```
+   Continue from .ai/state/AI_STATE.cursor.my-feature.md
+   ```
+   No chat replay needed. Each switch costs ~300 tokens instead of 15,000.
 
 ---
 
 ## Which command when?
 
-Use this table to match your situation to the right command.
+| Situation | Use |
+|-----------|-----|
+| New feature or non-trivial refactor | `/dev` / `aicrew-dev` — full 9-phase pipeline with TDD, security, and design spec |
+| Bug fix | `/fix` / `aicrew-fix` — three intake questions, then TDD straight to done |
+| Small well-scoped task | `/quick` / `aicrew-quick` — graph-first Scout → Act, no pipeline overhead |
+| Design options before coding | `/brainstorm` — 3 materially different approaches with trade-offs |
 
-| Situation | Command | Why |
-|---|---|---|
-| Building a new feature or doing a non-trivial refactor | `/dev` (Claude) / `aicrew-dev` (Codex) | Full 9-phase pipeline: intake → research → design → TDD → tests → security → conclude |
-| "I need to fix a login bug in production — fast" | `/fix` (Claude) / `aicrew-fix` (Codex) | Three intake questions, then TDD straight to done — no 9 phases |
-| Small well-scoped task, want to save tokens | `/quick` (Claude) / `aicrew-quick` (Codex) | Scout → Act: graph-first discovery, Karpathy guardrails, no pipeline overhead |
-| Switching tools mid-task (Cursor → Claude, etc.) | `/handoff` then `/session` in the new tool | Writes a compact `.ai/state/` checkpoint you can paste into any tool |
-| Wrapping up a session | `/conclude` (Claude) / `aicrew-conclude` (Codex) | Captures learnings, proposes commit message, updates `AGENTS.md` |
-| Session feels slow or context window is filling up | `/lean on` + `codebase-memory-mcp` | Terse output + diff/tree/graph-before-read policy; 99% fewer tokens on exploration |
-| "I want to think through design options before coding" | `brainstorm` skill or `/brainstorm` (Claude) | Generates 3 materially different options with trade-offs before any code |
-| Output is too verbose — want shorter responses | Default is already caveman/terse; use `/normal` to go verbose | aicrew defaults to lean output; `/terse` or `/lean` tighten further |
-| Auditing or reviewing the harness itself | `/harness-audit` / `aicrew-harness-audit` | Checks skill health, hook registration, MCP wiring |
+> **Examples:** "Add rate limiting to our API" → `/dev`. "Fix the broken OAuth redirect" → `/fix`. "Rename a variable across three files" → `/quick`.
 
-> **Example:** "I need to add rate limiting to our API" → use `/dev`. "I need to fix the broken OAuth redirect" → use `/fix`. "I need to rename a variable across three files" → use `/quick`.
+## Utilities (optional)
+
+These run when you need them — not part of the core flow.
+
+| Command | Claude Code / Cursor | Codex | What it does |
+|---------|---------------------|-------|-------------|
+| `/conclude` | `/conclude` | `aicrew-conclude` | End session — saves learnings, suggests commit message |
+| `/update-skills` | `/update-skills` | `aicrew-update-skills` | Refresh or generate project-specific skills |
+| `/harness-audit` | `/harness-audit` | `aicrew-harness-audit` | Health check on your aicrew install |
+| `/session` | `/session` | `aicrew-session` | Name this task so state files don't collide |
+| `/handoff` | `/handoff` | `aicrew-handoff` | Copy compact summary when switching tools |
+| `/benchmark` | `/benchmark` | `aicrew-benchmark` | See how many tokens aicrew saved (estimated) |
 
 ---
 
@@ -140,7 +169,7 @@ Slash commands resolve from `~/.claude/commands/` (symlinked from `~/Agents/comm
 
 ```
 /dev     /fix     /quick     /conclude     /update-skills     /harness-audit
-/benchmark     /brainstorm     /lean     /terse     /normal
+/benchmark     /brainstorm     /lean     /normal
 /session     /handoff
 /install     /update     /status     /agent-kit     /cursor-plugin
 ```
@@ -187,13 +216,13 @@ Reference `~/Agents/commands/` in your Antigravity config. Slash commands (`/dev
 
 ---
 
-## MCP & token economy — plain English
+## MCP & token economy
 
 **The problem:** AI tools read files to understand your codebase. A repo-wide `grep` costs ~80,000 tokens. That burns context fast on large repos.
 
 **The solution:** aicrew wires three MCP servers and a read policy that route every query to the cheapest strategy first.
 
-> **Plain-English guide to every token-saving mechanism:** [`skills/docs/how-token-savings-work.md`](./skills/docs/how-token-savings-work.md)
+> **Token-saving mechanism overview:** [`skills/docs/how-token-savings-work.md`](./skills/docs/how-token-savings-work.md)
 
 ### How it works
 
