@@ -175,7 +175,7 @@ INSTALL PLATFORMS
 
   ~/Agents/ is always populated as shared source of truth — even for platform-specific installs.
 
-  NOTE: `aicrew install` wires MCP config files only. To install the MCP server binaries:
+  NOTE: aicrew install wires MCP config files only. To install the MCP server binaries:
     npm install -g codebase-memory-mcp   # required for graph queries
     npm install -g token-optimizer-mcp   # optional (Cursor)
     # context-mode: no install needed — auto via npx
