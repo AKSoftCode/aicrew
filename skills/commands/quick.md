@@ -3,6 +3,8 @@ description: "Scout → Act flow with graph-first discovery, speculative context
 argument-hint: "[goal or task description]"
 ---
 
+**Lowest-overhead entry point — graph-first Scout pass (~500 tokens) then a surgical Act. Use for small, well-scoped tasks where you don't need the full `/dev` pipeline.**
+
 > **⚠️ INTERACTIVE CHECKPOINTS — MANDATORY RULE**
 >
 > | Platform | Checkpoint behavior |

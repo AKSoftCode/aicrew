@@ -3,6 +3,8 @@ description: "Use at session end to save project learnings and produce a commit 
 argument-hint: "optional: topic to focus memory capture on"
 ---
 
+**End-of-session wrap-up — saves learnings to project memory and proposes a commit message.**
+
 > **Default output: caveman/lean** — terse by default. `/normal` or `/lean off` for verbose. See `~/Agents/agents/caveman.md`.
 
 > **⚠️ INTERACTIVE CHECKPOINTS — MANDATORY RULE**

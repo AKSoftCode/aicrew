@@ -3,6 +3,8 @@ description: "Use when auditing the Claude Code / AI harness setup for reliabili
 argument-hint: "[quick|full]"
 ---
 
+**Health-check your aicrew install — verifies hooks, symlinks, MCP wiring, and Codex skill coverage.**
+
 > **⚠️ INTERACTIVE CHECKPOINTS — MANDATORY RULE**
 >
 > | Platform | Checkpoint behavior |

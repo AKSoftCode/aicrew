@@ -3,6 +3,8 @@ description: "Use when starting any development task — bug fix, feature, or re
 argument-hint: "[bug|feature|refactor|review|audit] [optional description]"
 ---
 
+**Full 9-phase TDD pipeline for features, refactors, and any task that needs a design spec. Every phase stops for your explicit go-ahead.**
+
 > **Default output: caveman/lean** — terse by default. `/normal` or `/lean off` for verbose. See `~/Agents/agents/caveman.md`.
 
 > **⚠️ INTERACTIVE CHECKPOINTS — MANDATORY RULE**

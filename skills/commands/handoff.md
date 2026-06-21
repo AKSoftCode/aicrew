@@ -7,7 +7,7 @@ argument-hint: "[optional: target tool or note]"
 
 # /handoff
 
-## In plain English
+## Overview
 
 Switching tools mid-task (e.g. Claude → Cursor)? Three steps:
 

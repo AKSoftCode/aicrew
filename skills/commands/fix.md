@@ -3,6 +3,8 @@ description: "Use for a fast bug fix with minimal ceremony (3 questions, TDD, do
 argument-hint: "[description of the bug]"
 ---
 
+**Fast bug fix — 3 intake questions, then TDD straight to done. Use `/dev` instead for features, refactors, or anything needing a design spec.**
+
 > **Default output: caveman/lean** — terse by default. `/normal` or `/lean off` for verbose. See `~/Agents/agents/caveman.md`.
 
 > **⚠️ INTERACTIVE CHECKPOINTS — MANDATORY RULE**

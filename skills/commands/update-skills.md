@@ -3,6 +3,8 @@ description: "Use when maintaining, improving, or adding to the ~/Agents/ skills
 argument-hint: "[global|project|research|both|review] — default: ask"
 ---
 
+**Refresh or generate project-specific skills — updates `~/Agents/` globals or creates `.ai/skills/` overrides for the current repo.**
+
 > **⚠️ INTERACTIVE CHECKPOINTS — MANDATORY RULE**
 >
 > | Platform | Checkpoint behavior |
