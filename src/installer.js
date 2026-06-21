@@ -87,6 +87,11 @@ function installClaude() {
   console.log('\n=== Claude Code install complete ===');
   console.log(`Slash commands available (${cmdCount}): /dev /fix /quick /conclude /update-skills`);
   console.log('  /install /update /status /benchmark /brainstorm /session /handoff /lean /normal');
+  console.log('\nMCP config wired — install server binaries if not already done:');
+  console.log('  npm install -g codebase-memory-mcp   # required for graph queries');
+  console.log('  npm install -g token-optimizer-mcp   # optional');
+  console.log('  # context-mode: no install needed (auto via npx)');
+  console.log('  Run `aicrew install mcp` for the full checklist.');
   console.log('\nOpen Claude Code in any project and type /dev to start.');
 }
 
@@ -108,11 +113,16 @@ function installCursor() {
   symlinkMcp(cursorLocalSrc, CURSOR_MCP_LINK, 'Cursor');
 
   console.log('\n=== Cursor install complete ===');
-  console.log('MCP servers wired via ~/.cursor/mcp.json');
+  console.log('MCP config wired via ~/.cursor/mcp.json');
   console.log('\nNext steps:');
-  console.log('  1. Fill in real API keys in: config/mcp/cursor.local.json');
-  console.log('  2. Run `aicrew agent-kit init ./agent-kit` to set up shared Cursor rules');
-  console.log('  3. Run `aicrew cursor-plugin init` to scaffold multi-tool terminal panel');
+  console.log('  1. Install MCP server binaries (one-time per machine):');
+  console.log('       npm install -g codebase-memory-mcp   # required for graph queries');
+  console.log('       npm install -g token-optimizer-mcp   # optional token budgeting');
+  console.log('       # context-mode: no install needed (auto via npx)');
+  console.log('       Run `aicrew install mcp` for the full checklist.');
+  console.log('  2. Fill in real API keys in: config/mcp/cursor.local.json');
+  console.log('  3. Run `aicrew agent-kit init ./agent-kit` to set up shared Cursor rules');
+  console.log('  4. Run `aicrew cursor-plugin init` to scaffold multi-tool terminal panel');
   console.log('\nSlash commands (/dev, /fix, /quick, etc.) available via Cursor\'s Claude integration.');
   console.log('Agents reference ~/Agents/ rules automatically.');
 }
@@ -149,6 +159,10 @@ function installCodex() {
   console.log(`Skills available (${skillCount}): aicrew-dev, aicrew-fix, aicrew-quick, aicrew-conclude`);
   console.log('  aicrew-update-skills, aicrew-harness-audit, aicrew-benchmark, brainstorm, lean');
   console.log('  aicrew-install, aicrew-update, aicrew-status, aicrew-session, aicrew-handoff');
+  console.log('\nMCP config patched — install server binary if not already done:');
+  console.log('  npm install -g codebase-memory-mcp   # required for graph queries');
+  console.log('  # context-mode: no install needed (auto via npx)');
+  console.log('  Run `aicrew install mcp` for the full checklist.');
   console.log('\nInvoke via your Codex UI\'s skill picker.');
 }
 
@@ -251,7 +265,35 @@ function install() {
   console.log('               aicrew-session  aicrew-handoff  aicrew-normal');
   console.log('\nCursor:        Slash commands via Claude integration; MCP wired; see agent-kit');
   console.log('Gemini CLI:    ~/Agents/ populated; wire manually per Gemini CLI config');
+  console.log('\nMCP config wired — install server binaries if not already done (one-time):');
+  console.log('  npm install -g codebase-memory-mcp   # required for graph queries');
+  console.log('  npm install -g token-optimizer-mcp   # optional (Cursor)');
+  console.log('  # context-mode: no install needed (auto via npx)');
+  console.log('  Run `aicrew install mcp` for the full checklist with paths and notes.');
   console.log('\nRun `aicrew status` to verify per-platform install state.');
+}
+
+// ─── MCP server install checklist ────────────────────────────────────────────
+
+function installMcp() {
+  console.log('\n=== aicrew — MCP Server Setup ===\n');
+  console.log('`aicrew install` wires MCP config files only — it does NOT install server binaries.');
+  console.log('Run the commands below once per machine to install the servers themselves.\n');
+
+  console.log('1. codebase-memory-mcp  (required — powers graph queries, ~500 tok vs ~80K grep)');
+  console.log('   npm install -g codebase-memory-mcp');
+  console.log('   Binary lands at: ~/.local/bin/codebase-memory-mcp  (or your npm global bin)');
+  console.log('   Source: https://github.com/DeusData/codebase-memory-mcp\n');
+
+  console.log('2. context-mode  (no install needed)');
+  console.log('   Config uses `npx -y context-mode` — auto-downloaded on first MCP use.\n');
+
+  console.log('3. token-optimizer-mcp  (optional — Cursor only)');
+  console.log('   npm install -g token-optimizer-mcp');
+  console.log('   Cursor config points to the global node_modules dist path.\n');
+
+  console.log('After installing, restart your AI tool to pick up the new servers.');
+  console.log('Verify with: aicrew status');
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -299,4 +341,4 @@ function symlinkMcp(src, link, label) {
   console.log(`  ✓  Linked:           ${label} → ${path.basename(src)}`);
 }
 
-module.exports = { install, installClaude, installCursor, installCodex, installGemini };
+module.exports = { install, installClaude, installCursor, installCodex, installGemini, installMcp };

@@ -81,6 +81,16 @@ Tune with `ECC_HOOK_PROFILE=minimal|standard|strict`.
 `~/.claude/.mcp.json` → `config/mcp/claude.json` (symlinked).
 Core servers: `codebase-memory-mcp`, `context-mode`, `token-optimizer-mcp`.
 
+`aicrew install` only **wires the config** — it does not install server binaries. After install, run:
+
+```bash
+npm install -g codebase-memory-mcp   # graph index binary (required for graph queries)
+npm install -g token-optimizer-mcp   # optional token budgeting server
+# context-mode: no install needed — auto-downloaded via npx on first use
+```
+
+Or run `aicrew install mcp` for the full checklist.
+
 ### Interactive checkpoints
 
 Uses `AskUserQuestion` tool — never invents your answer.
@@ -134,6 +144,14 @@ aicrew cursor-plugin init    # scaffold a multi-tool terminal extension
 `~/.cursor/mcp.json` symlinks to `config/mcp/cursor.local.json`.
 `config/mcp/cursor.json` is the committed template (no secrets).
 Fill API keys in `cursor.local.json` (gitignored).
+
+`aicrew install` only **wires the config** — install the core servers first:
+
+```bash
+npm install -g codebase-memory-mcp   # required for graph queries
+npm install -g token-optimizer-mcp   # optional; Cursor config uses the global install path
+# context-mode: no install needed — auto-downloaded via npx on first use
+```
 
 Optional servers: GitHub, filesystem, memory, Brave, Playwright, SQLite, Postgres, GitKraken, Perplexity.
 
@@ -207,6 +225,13 @@ aicrew-dev
 
 `aicrew install codex` patches `~/.codex/config.toml` with MCP server entries.
 Core: `codebase-memory-mcp`, `context-mode`, `token-optimizer-mcp`.
+
+`aicrew install` only **wires the config** — install the core servers first:
+
+```bash
+npm install -g codebase-memory-mcp   # required for graph queries
+# context-mode: no install needed — auto-downloaded via npx on first use
+```
 
 ### Interactive checkpoints
 

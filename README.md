@@ -353,6 +353,17 @@ aicrew --help
 - Symlinks **`~/.claude/commands/*.md`** → **`~/Agents/commands/*.md`**.
 - Merges **`codex-skills/`** into **`~/.codex/skills/`**.
 - Registers `session-memory.py` (Stop) and `security-guard.py` (PreToolUse) in `~/.claude/settings.json`.
+- **Wires MCP config files** (symlinks / patches) — but does **not** install MCP server binaries.
+
+**After install — MCP servers** (one-time, per machine):
+
+```bash
+npm install -g codebase-memory-mcp   # required for graph queries (~500 tok vs ~80K grep)
+npm install -g token-optimizer-mcp   # optional; needed only for Cursor token-optimizer entry
+# context-mode needs no install — auto-downloads via npx on first use
+```
+
+Or run `aicrew install mcp` for the full checklist with paths and notes.
 
 **Requirements:** Node 18+. Hooks use Python stdlib only — no extra Python packages.
 
@@ -406,11 +417,13 @@ Each CLI action also has a Codex skill and a Claude Code slash command — see t
 
 ### Core servers (all three tools)
 
-| Server | Role |
-|--------|------|
-| **`codebase-memory-mcp`** | Graph index of functions, classes, call chains, routes. [Install separately](https://github.com/DeusData/codebase-memory-mcp). |
-| **`context-mode`** | Context shaping / mode helpers for long sessions. |
-| **`token-optimizer-mcp`** | Token budgeting and cache-friendly MCP responses. |
+> **Why "install separately"?** `aicrew install` only wires the MCP config files (symlinks and patches). It does **not** install the server binaries or npm packages — that is a one-time step you do yourself. Run `aicrew install mcp` to print the exact commands.
+
+| Server | Role | How to get it |
+|--------|------|---------------|
+| **`codebase-memory-mcp`** | Graph index of functions, classes, call chains, routes. | `npm install -g codebase-memory-mcp` — installs the binary. Config points to `~/.local/bin/codebase-memory-mcp`. [Source](https://github.com/DeusData/codebase-memory-mcp) |
+| **`context-mode`** | Context shaping / mode helpers for long sessions. | **Auto via `npx` on first use** — no separate install needed. |
+| **`token-optimizer-mcp`** | Token budgeting and cache-friendly MCP responses. _(optional)_ | `npm install -g token-optimizer-mcp` — optional; Cursor config uses the globally-installed path. |
 
 The Cursor template also lists optional servers (GitHub, filesystem, memory, Brave, Playwright, SQLite, Postgres, GitKraken, Perplexity) — enable and fill env vars in `cursor.local.json` as needed.
 

@@ -45,6 +45,7 @@ async function main() {
       case 'cursor':  installer.installCursor();  break;
       case 'codex':   installer.installCodex();   break;
       case 'gemini':  installer.installGemini();  break;
+      case 'mcp':     installer.installMcp();     break;
       case 'all':
       case '':
       default:        installer.install();        break;
@@ -170,8 +171,14 @@ INSTALL PLATFORMS
   aicrew install cursor      Cursor: ~/Agents/, ~/.cursor/mcp.json
   aicrew install codex       Codex: ~/Agents/, ~/.codex/skills/, config.toml MCP
   aicrew install gemini      Gemini CLI: ~/Agents/ populated + setup instructions
+  aicrew install mcp         Print MCP server install checklist (binaries / npm packages)
 
   ~/Agents/ is always populated as shared source of truth — even for platform-specific installs.
+
+  NOTE: `aicrew install` wires MCP config files only. To install the MCP server binaries:
+    npm install -g codebase-memory-mcp   # required for graph queries
+    npm install -g token-optimizer-mcp   # optional (Cursor)
+    # context-mode: no install needed — auto via npx
 
 AFTER INSTALL
   Claude Code — slash commands:
