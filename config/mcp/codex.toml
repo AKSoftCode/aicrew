@@ -1,5 +1,5 @@
 [mcp_servers.codebase-memory-mcp]
-command = "/home/abhi/.local/bin/codebase-memory-mcp"
+command = "codebase-memory-mcp"
 
 [mcp_servers.context-mode]
 command = "npx"

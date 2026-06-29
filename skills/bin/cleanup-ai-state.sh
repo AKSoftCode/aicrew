@@ -9,7 +9,7 @@ set -euo pipefail
 # Examples:
 #   cleanup-ai-state.sh
 #   cleanup-ai-state.sh 7
-#   cleanup-ai-state.sh 3 /home/abhi/Workspace/3DTrace.ai
+#   cleanup-ai-state.sh 3 /path/to/your/project
 
 DAYS="${1:-3}"
 ROOT="${2:-$(pwd)}"

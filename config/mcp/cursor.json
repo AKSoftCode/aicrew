@@ -23,7 +23,9 @@
     "filesystem": {
       "command": "npx",
       "args": [
-        "/home/abhi/Workspace/3DTrace.ai"
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/path/to/your/workspace"
       ]
     },
     "memory": {
@@ -53,8 +55,10 @@
     "sqlite": {
       "command": "npx",
       "args": [
+        "-y",
+        "@modelcontextprotocol/server-sqlite",
         "--db-path",
-        "/home/abhi/Workspace/3DTrace.ai/backend/3dtrace_poc.db"
+        "/path/to/your/database.db"
       ]
     },
     "postgres": {
@@ -64,11 +68,11 @@
         "@modelcontextprotocol/server-postgres"
       ],
       "env": {
-        "POSTGRES_CONNECTION_STRING": "postgresql://username:password@localhost:5432/3dtrace"
+        "POSTGRES_CONNECTION_STRING": "postgresql://username:password@localhost:5432/yourdb"
       }
     },
     "GitKraken": {
-      "command": "/home/abhi/.config/Cursor/User/globalStorage/eamodio.gitlens/gk",
+      "command": "${HOME}/.config/Cursor/User/globalStorage/eamodio.gitlens/gk",
       "type": "stdio",
       "name": "GitKraken",
       "args": [
@@ -80,7 +84,7 @@
       "env": {}
     },
     "codebase-memory-mcp": {
-      "command": "/home/abhi/.local/bin/codebase-memory-mcp",
+      "command": "codebase-memory-mcp",
       "args": []
     },
     "context-mode": {
@@ -91,12 +95,13 @@
       ]
     },
     "token-optimizer-mcp": {
-      "command": "node",
+      "command": "npx",
       "args": [
-        "/home/abhi/.local/lib/node_modules/token-optimizer-mcp/dist/server/index.js"
+        "-y",
+        "token-optimizer-mcp"
       ],
       "env": {
-        "TOKEN_OPTIMIZER_CACHE_DIR": "/home/abhi/.cache/token-optimizer-mcp"
+        "TOKEN_OPTIMIZER_CACHE_DIR": "${HOME}/.cache/token-optimizer-mcp"
       }
     }
   }
